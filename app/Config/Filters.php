@@ -34,6 +34,10 @@ class Filters extends BaseFilters
         'forcehttps'    => ForceHTTPS::class,
         'pagecache'     => PageCache::class,
         'performance'   => PerformanceMetrics::class,
+        'session'     => \CodeIgniter\Shield\Filters\SessionAuth::class,
+        'auth-rates'  => \CodeIgniter\Shield\Filters\AuthRates::class,
+        'group'     => \CodeIgniter\Shield\Filters\GroupFilter::class,
+        'permission'  => \CodeIgniter\Shield\Filters\PermissionFilter::class,
     ];
 
     /**
@@ -106,5 +110,13 @@ class Filters extends BaseFilters
      *
      * @var array<string, array<string, list<string>>>
      */
-    public array $filters = [];
+    public array $filters = [
+        'auth-rates' => [
+            'before' => [
+                'login*',
+                'register',
+                'auth/*'
+            ],
+        ]
+    ];
 }
