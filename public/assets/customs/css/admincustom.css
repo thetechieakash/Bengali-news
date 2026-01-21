@@ -1,0 +1,59 @@
+.toggle-switch {
+    position: relative;
+    width: 30px;
+    height: 18px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-switch .slider {
+    position: absolute;
+    inset: 0;
+    cursor: pointer;
+    background: #adb5bd;
+    /* Bootstrap gray */
+    border-radius: 50px;
+    transition: 0.3s ease;
+}
+
+.toggle-switch .slider::before {
+    content: "";
+    position: absolute;
+    height: 12px;
+    width: 12px;
+    left: 0px;
+    top: 3px;
+    background: #fff;
+    border-radius: 50%;
+    transition: 0.3s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+/* Checked State */
+.toggle-switch input:checked+.slider {
+    background: linear-gradient(135deg, #0d6efd, #0a58ca);
+    /* Bootstrap primary */
+}
+
+.toggle-switch input:checked+.slider::before {
+    transform: translateX(22px);
+}
+
+/* Focus */
+.toggle-switch input:focus+.slider {
+    box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, .4);
+}
+.table th,
+.jsgrid .jsgrid-table th,
+.table td,
+.jsgrid .jsgrid-table td {
+    vertical-align: middle;
+    line-height: 1;
+    white-space: nowrap;
+    padding: 3px;
+    height: unset !important;
+}
