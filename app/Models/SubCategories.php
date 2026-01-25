@@ -4,9 +4,9 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class SubCatagories extends Model
+class SubCategories extends Model
 {
-    protected $table            = 'sub_catagories';
+    protected $table            = 'sub_categories';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
@@ -27,7 +27,7 @@ class SubCatagories extends Model
     // Validation
     protected $validationRules      = [
         'cat_id' => 'required',
-        'sub_cat_slug' => 'required|is_unique'
+        'sub_cat_slug' => 'required|is_unique[sub_categories.sub_cat_slug]'
     ];
     protected $validationMessages   = [
         'sub_cat_slug' => [
@@ -38,4 +38,10 @@ class SubCatagories extends Model
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
 
+    public function getAllSubCats()
+    {
+        return $this->select('sub_categories.*,categories.cat AS category_name')
+            ->join('categories', 'categories.id = sub_categories.cat_id' ,'left')
+            ->findAll();
+    }
 }

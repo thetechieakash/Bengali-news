@@ -4,9 +4,9 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class Catagories extends Model
+class Categories extends Model
 {
-    protected $table            = 'catagories';
+    protected $table            = 'categories';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
@@ -25,7 +25,7 @@ class Catagories extends Model
 
     // Validation
     protected $validationRules      = [
-        'slug' => 'required|is_unique[catagories.slug]',
+        'slug' => 'required|is_unique[categories.slug]',
     ];
     protected $validationMessages   = [
         'slug' => [

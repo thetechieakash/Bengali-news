@@ -4,7 +4,7 @@ namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
 
-class CreateSubCatagoriesTable extends Migration
+class CreateSubCategoriesTable extends Migration
 {
     public function up()
     {
@@ -47,11 +47,12 @@ class CreateSubCatagoriesTable extends Migration
             ],
         ]);
         $this->forge->addKey('id', true);
-        $this->forge->createTable('sub_catagories');
+        $this->forge->addForeignKey('cat_id', 'categories', 'id', 'CASCADE', 'CASCADE');
+        $this->forge->createTable('sub_categories');
     }
 
     public function down()
     {
-        $this->forge->dropTable('sub_catagories');
+        $this->forge->dropTable('sub_categories');
     }
 }

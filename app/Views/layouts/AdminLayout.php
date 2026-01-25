@@ -19,21 +19,13 @@
     <!-- Plugin css for this page -->
     <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/datatables.net-bs4/dataTables.bootstrap4.css">
     <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/js/select.dataTables.min.css">
-<<<<<<< HEAD
-=======
     <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/jquery-toast-plugin/jquery.toast.min.css">
     <?= $this->renderSection('plugin') ?>
->>>>>>> feature
     <!-- End plugin css for this page -->
     <!-- inject:css -->
     <link rel="stylesheet" href="<?= base_url() ?>assets/css/vertical-layout-light/style.css">
     <!-- endinject -->
     <link rel="shortcut icon" href="<?= base_url() ?>assets/images/favicon.png" />
-<<<<<<< HEAD
-</head>
-
-<body class="with-welcome-text">
-=======
     <link rel="stylesheet" href="<?= base_url('assets/customs/css/admincustom.css') ?>">
     <style>
         #global-loader {
@@ -68,7 +60,6 @@
         <img src="<?= base_url('assets/images/ripple.svg') ?>" class="loader-img" alt="Loader">
     </div>
     <!-- End Pre Loader -->
->>>>>>> feature
     <div class="container-scroller">
         <!-- <div class="row p-0 m-0 proBanner" id="proBanner">
             <div class="col-md-12 p-0 m-0">
@@ -427,27 +418,12 @@
             <!-- partial -->
             <div class="main-panel">
                 <div class="content-wrapper">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <div class="home-tab">
-                                <?= $this->renderSection('content') ?>
-                            </div>
-                        </div>
-                    </div>
+                    <?= $this->renderSection('content') ?>
+                    
                 </div>
                 <!-- content-wrapper ends -->
                 <!-- partial:partials/_footer.html -->
-<<<<<<< HEAD
-                <footer class="footer">
-                    <div class="d-sm-flex justify-content-center justify-content-sm-between">
-                        <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Premium <a
-                                href="<?= base_url() ?>https://www.bootstrapdash.com/" target="_blank">Bootstrap admin template</a> from BootstrapDash.</span>
-                        <span class="float-none float-sm-end d-block mt-1 mt-sm-0 text-center">Copyright © 2023. All rights reserved.</span>
-                    </div>
-                </footer>
-=======
                 <?= $this->include('admin/Components/Footer.php') ?>
->>>>>>> feature
                 <!-- partial -->
             </div>
             <!-- main-panel ends -->
@@ -473,17 +449,12 @@
     <!-- endinject -->
     <!-- Custom js for this page-->
     <script src="<?= base_url() ?>assets/js/jquery.cookie.js" type="text/javascript"></script>
-<<<<<<< HEAD
-=======
     <script src="<?= base_url() ?>assets/vendors/jquery-toast-plugin/jquery.toast.min.js"></script>
     <script src="<?= base_url() ?>assets/customs/js/custom.toast.js"></script>
->>>>>>> feature
     <?= $this->renderSection('jsLib') ?>
     <!-- <script src="<?= base_url() ?>assets/js/dashboard.js"></script> -->
     <!-- <script src="<?= base_url() ?>assets/js/Chart.roundedBarCharts.js"></script> -->
     <!-- End custom js for this page-->
-<<<<<<< HEAD
-=======
     <script>
         /* Loading Js*/
         $(window).on('load', function() {
@@ -493,7 +464,6 @@
         });
     </script>
     <?= $this->renderSection('script') ?>
->>>>>>> feature
 </body>
 
 </html>

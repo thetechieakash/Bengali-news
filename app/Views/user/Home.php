@@ -604,6 +604,7 @@
                             </div>
                             <div class="utf_newsletter_form">
                                 <form action="#" method="post">
+                                    <?= csrf_field() ?>
                                     <div class="form-group">
                                         <input type="email" name="email" id="utf_newsletter_form-email" class="form-control form-control-lg" placeholder="E-Mail Address" autocomplete="off">
                                         <button class="btn btn-primary" type="button">Subscribe</button>
