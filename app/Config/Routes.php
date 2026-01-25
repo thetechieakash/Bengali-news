@@ -19,7 +19,6 @@ $routes->group('admin', ['filter' => 'group:superadmin,admin,developer'], functi
     $routes->post('category/update-status', 'Admin\CatagoriesController::updateStatus');
     $routes->post('category/delete', 'Admin\CatagoriesController::deleteCatagory');
     $routes->post('sub-catagories', 'Admin\CatagoriesController::createSubCatagory');
-
 });
 
 $routes->set404Override(function () {
