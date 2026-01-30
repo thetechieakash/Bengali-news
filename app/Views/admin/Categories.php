@@ -162,9 +162,4 @@
 <?= $this->include('admin/Js/Catagories.js.php'); ?>
 <!-- Page js ends  -->
 
-<script>
-    $(document).ready(function() {
-        $('#cat-listing').DataTable();
-    })
-</script>
 <?= $this->endSection() ?>

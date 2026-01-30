@@ -200,4 +200,23 @@ class SubCatagoriesController extends BaseController
             'message' => 'Sub category deleted successfully'
         ]);
     }
+    
+    public function getByCategories()
+    {
+        $catIds = $this->request->getPost('category_ids');
+
+        if (empty($catIds)) {
+            return $this->response->setJSON([]);
+        }
+
+        $subCatModel = new SubCategories();
+
+        $subCats = $subCatModel
+            ->whereIn('cat_id', $catIds)
+            ->where('status', 1)
+            ->orderBy('sub_cat_name', 'ASC')
+            ->findAll();
+
+        return $this->response->setJSON($subCats);
+    }
 }

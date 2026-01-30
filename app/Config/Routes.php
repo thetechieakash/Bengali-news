@@ -25,6 +25,15 @@ $routes->group('admin', ['filter' => 'group:superadmin,admin,developer'], functi
     $routes->post('sub-categories/update-active', 'Admin\SubCatagoriesController::updateActive');
     $routes->post('sub-categories/update-status', 'Admin\SubCatagoriesController::updateStatus');
     $routes->post('sub-categories/delete', 'Admin\SubCatagoriesController::deleteSubCategory');
+    $routes->post('sub-categories/by-categories', 'Admin\SubCatagoriesController::getByCategories');
+
+
+    $routes->get('all-news', 'Admin\PostController::index');
+    $routes->get('news', 'Admin\PostController::news');
+    $routes->post('news/create', 'Admin\PostController::createNewsPost');
+    $routes->get('news/update/(:num)', 'Admin\PostController::updateNews/$1');
+    $routes->post('news/update/(:num)', 'Admin\PostController::updateNewsPost/$1');
+    $routes->post('news/delete/(:num)', 'Admin\PostController::deleteNewsPost/$1');
 });
 
 $routes->set404Override(function () {

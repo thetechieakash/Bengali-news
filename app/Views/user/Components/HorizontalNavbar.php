@@ -59,11 +59,7 @@ $categories = [
             <div class="text-start navbar-brand-wrapper d-flex align-items-center justify-content-start me-lg-3">
                 <div>
                     <a class="navbar-brand brand-logo" href="<?= base_url() ?>">
-<<<<<<< HEAD
                         <img src="<?= base_url() ?>assets/images/bengali-logo.svg" alt="logo" />
-=======
-                        <img src="<?= base_url() ?>assets/images/logo.jpg" alt="logo" />
->>>>>>> feature
                     </a>
                     <a class="navbar-brand brand-logo-mini" href="<?= base_url() ?>">
                         <img src="<?= base_url() ?>assets/images/bangla-logo-mini.svg" alt="logo" />

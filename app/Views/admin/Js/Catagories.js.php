@@ -1,5 +1,9 @@
 <script>
     $(document).ready(function() {
+        // Data table init
+        $('#cat-listing').DataTable();
+
+        // Add fucntion
         const catForm = $('#catform');
         if (catForm) {
             catForm.on('submit', async (e) => {
