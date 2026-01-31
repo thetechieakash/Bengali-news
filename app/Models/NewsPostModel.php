@@ -42,25 +42,33 @@ class NewsPostModel extends Model
             ->where('news_posts.id', $postId)
             ->first();
     }
-    public function getPostForEdit(int $postId): ?array
+    public function getPostForEdit(int|string $identifier): ?array
     {
-        $post = $this->where('id', $postId)->first();
+        // Detect whether ID or slug
+        if (is_numeric($identifier)) {
+            $post = $this->where(['id' => (int) $identifier, 'status' => 1])->first();
+        } else {
+            $post = $this->where(['slug' => $identifier, 'status' => 1])->first();
+        }
 
         if (!$post) {
             return null;
         }
-
+        $postId = $post['id'];
         $db = db_connect();
 
         /** ---------- CATEGORIES ---------- */
-        $post['categories'] = array_column(
-            $db->table('news_post_categories')
-                ->select('category_id')
-                ->where('news_post_id', $postId)
-                ->get()
-                ->getResultArray(),
-            'category_id'
-        );
+        $post['categories'] = $db->table('news_post_categories npc')
+            ->select([
+                'c.id',
+                'c.cat as name',
+                'c.slug as slug'
+            ])
+            ->join('categories c', 'c.id = npc.category_id')
+            ->where('npc.news_post_id', $postId)
+            ->get()
+            ->getResultArray();
+
 
         $post['subcategories'] = $db->table('news_post_sub_categories npsc')
             ->select([
@@ -72,6 +80,8 @@ class NewsPostModel extends Model
             ->where('npsc.news_post_id', $postId)
             ->get()
             ->getResultArray();
+            
+        $post['category_ids'] = array_column($post['categories'], 'id');
         $post['subcategory_ids'] = array_column($post['subcategories'], 'id');
 
 

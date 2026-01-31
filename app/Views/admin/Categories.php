@@ -85,7 +85,7 @@
                                         <?php foreach ($cats as $cat): ?>
                                             <?php $sl++; ?>
                                             <tr>
-                                                <td><?= $sl ?></td>
+                                                <td class="serial-no"><?= $sl ?>.</td>
                                                 <td><?= $cat['cat'] ?></td>
                                                 <td>
                                                     <div class="d-flex align-items-center gap-2">

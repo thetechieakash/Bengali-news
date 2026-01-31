@@ -9,7 +9,6 @@
 <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/dropify/dropify.min.css">
 <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/jquery-tags-input/jquery.tagsinput.min.css">
 <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/flatpickr/flatpickr.min.css">
-<link rel="stylesheet" href="<?= base_url() ?>assets/vendors/quill/quill.snow.css">
 <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/glightbox/glightbox.min.css" />
 
 
@@ -134,8 +133,7 @@
                 <div class="card-body">
                     <div class="form-group">
                         <h4 class="mb-2">Description</h4>
-                        <input type="hidden" name="description" id="description_input" value="<?= esc($post['description'] ?? '') ?>">
-                        <div id="description" class="quill-container"></div>
+                        <textarea name="description" id="editor" class="form-control"></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary me-2">Save</button>
                 </div>
@@ -154,16 +152,15 @@
 <script src="<?= base_url() ?>assets/vendors/flatpickr/flatpickr.min.js"></script>
 <script src="<?= base_url() ?>assets/vendors/quill/quill.min.js"></script>
 <script src="<?= base_url() ?>assets/vendors/glightbox/glightbox.min.js"></script>
+<script src="<?= base_url() ?>assets/vendors/ckeditor/ckeditor.js""></script>
 
 
 <?= $this->endSection() ?>
 
 <?= $this->section('script') ?>
-<script src="<?= base_url() ?>assets/js/dropify.js"></script>
-
+<script src=" <?= base_url() ?>assets/js/dropify.js"></script>
 <!-- Page js start -->
 <?= $this->include('admin/Js/CreateNews.js.php'); ?>
-
 
 <!-- Page js ends  -->
 <?= $this->endSection() ?>

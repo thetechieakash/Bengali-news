@@ -56,33 +56,35 @@ class PostController extends BaseController
             'tags'            => trim($request['tags']),
             'postDateRaw'     => trim($request['date']),
             'categories'      => (array) $request['categories'],
-            'subCategories'   => (array) $request['subcategories'],
+            'subCategories'   => isset($request['subcategories']) ? (array) $request['subcategories'] : [],
             'thumbnailType'   => $request['thumbnail_type'],
             'thumbnailLink'   => trim($request['thumbnail_link']),
         ];
-
+        $status = 0;
         /* ---------------------------------
      * 2. VALIDATION (FAST FAIL)
      * --------------------------------- */
         $errors = [];
 
+        /* ---- REQUIRED ---- */
         if ($data['headline'] === '') {
             $errors['headline'] = 'Headline is required';
+        }
+
+        if ($data['description'] === '') {
+            $errors['description'] = 'Description is required';
         }
 
         if (empty($data['categories'])) {
             $errors['categories'] = 'At least one category is required';
         }
 
-        if (empty($data['subCategories'])) {
-            $errors['subcategories'] = 'At least one subcategory is required';
-        }
-
+        /* ---- OPTIONAL VALIDATION ---- */
         if (!in_array($data['thumbnailType'], ['link', 'image'], true)) {
             $errors['thumbnail_type'] = 'Invalid thumbnail type';
         }
 
-        if ($data['thumbnailType'] === 'link' && !filter_var($data['thumbnailLink'], FILTER_VALIDATE_URL)) {
+        if ($data['thumbnailType'] === 'link' && $data['thumbnailLink'] && !filter_var($data['thumbnailLink'], FILTER_VALIDATE_URL)) {
             $errors['thumbnail_link'] = 'Invalid thumbnail URL';
         }
 
@@ -96,18 +98,20 @@ class PostController extends BaseController
         /* ---------------------------------
      * 3. VALIDATE SUBCATEGORY OWNERSHIP
      * --------------------------------- */
-        $validSubCats = (new SubCategories())
-            ->whereIn('id', $data['subCategories'])
-            ->whereIn('cat_id', $data['categories'])
-            ->countAllResults();
+        if (!empty($data['subCategories'])) {
+            $validSubCats = (new SubCategories())
+                ->whereIn('id', $data['subCategories'])
+                ->whereIn('cat_id', $data['categories'])
+                ->countAllResults();
 
-        if ($validSubCats !== count($data['subCategories'])) {
-            return $this->response->setJSON([
-                'success' => false,
-                'errors'  => [
-                    'subcategories' => 'Invalid subcategory selection'
-                ]
-            ]);
+            if ($validSubCats !== count($data['subCategories'])) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'errors'  => [
+                        'subcategories' => 'Invalid subcategory selection'
+                    ]
+                ]);
+            }
         }
 
         /* ---------------------------------
@@ -178,13 +182,15 @@ class PostController extends BaseController
             }
 
             /* -------- SUBCATEGORIES -------- */
-            $subPivot = new NewsPostSubCategoryModel();
-            foreach ($data['subCategories'] as $subId) {
-                if ($subPivot->insert([
-                    'news_post_id'    => $postId,
-                    'sub_category_id' => $subId
-                ]) === false) {
-                    throw new \Exception(json_encode($subPivot->errors()));
+            if (!empty($data['subCategories'])) {
+                $subPivot = new NewsPostSubCategoryModel();
+                foreach ($data['subCategories'] as $subId) {
+                    if ($subPivot->insert([
+                        'news_post_id'    => $postId,
+                        'sub_category_id' => $subId
+                    ]) === false) {
+                        throw new \Exception(json_encode($subPivot->errors()));
+                    }
                 }
             }
 
@@ -282,11 +288,10 @@ class PostController extends BaseController
                 ->orderBy('cat', 'ASC')
                 ->findAll()
         ];
-        // echo "<pre>";
-        // print_r($data);
-        // die();
+
         return view('admin/UpdateNews', $data);
     }
+
     public function updateNewsPost($id)
     {
         $request = $this->request->getPost();
@@ -311,27 +316,25 @@ class PostController extends BaseController
      * --------------------------------- */
         $errors = [];
 
+        /* ---- REQUIRED ---- */
         if ($data['headline'] === '') {
             $errors['headline'] = 'Headline is required';
         }
 
-        if (!$data['categories']) {
+        if ($data['description'] === '') {
+            $errors['description'] = 'Description is required';
+        }
+
+        if (empty($data['categories'])) {
             $errors['categories'] = 'At least one category is required';
         }
 
-        if (!$data['subCategories']) {
-            $errors['subcategories'] = 'At least one subcategory is required';
-        }
-
+        /* ---- OPTIONAL ---- */
         if (!in_array($data['thumbnailType'], ['link', 'image'], true)) {
             $errors['thumbnail_type'] = 'Invalid thumbnail type';
         }
 
-        if (
-            $data['thumbnailType'] === 'link' &&
-            $data['thumbnailLink'] &&
-            !filter_var($data['thumbnailLink'], FILTER_VALIDATE_URL)
-        ) {
+        if ($data['thumbnailType'] === 'link' && $data['thumbnailLink'] && !filter_var($data['thumbnailLink'], FILTER_VALIDATE_URL)) {
             $errors['thumbnail_link'] = 'Invalid thumbnail URL';
         }
 
@@ -342,20 +345,24 @@ class PostController extends BaseController
             ]);
         }
 
+
         /* ---------------------------------
      * 3. VALIDATE SUBCATEGORY OWNERSHIP
      * --------------------------------- */
-        $validSubCats = (new SubCategories())
-            ->whereIn('id', $data['subCategories'])
-            ->whereIn('cat_id', $data['categories'])
-            ->countAllResults();
+        if (!empty($data['subCategories'])) {
+            $validSubCats = (new SubCategories())
+                ->whereIn('id', $data['subCategories'])
+                ->whereIn('cat_id', $data['categories'])
+                ->countAllResults();
 
-        if ($validSubCats !== count($data['subCategories'])) {
-            return $this->response->setJSON([
-                'success' => false,
-                'message' => 'Invalid subcategory selection'
-            ]);
+            if ($validSubCats !== count($data['subCategories'])) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Invalid subcategory selection'
+                ]);
+            }
         }
+
 
         /* ---------------------------------
      * 4. DATE
@@ -436,12 +443,15 @@ class PostController extends BaseController
             $subPivot = new NewsPostSubCategoryModel();
             $subPivot->where('news_post_id', $id)->delete();
 
-            foreach ($data['subCategories'] as $subId) {
-                $subPivot->insert([
-                    'news_post_id'    => $id,
-                    'sub_category_id' => $subId
-                ]);
+            if (!empty($data['subCategories'])) {
+                foreach ($data['subCategories'] as $subId) {
+                    $subPivot->insert([
+                        'news_post_id'    => $id,
+                        'sub_category_id' => $subId
+                    ]);
+                }
             }
+
 
             /* -------- SYNC TAGS -------- */
             $postTagModel = new NewsPostTagModel();
@@ -576,7 +586,6 @@ class PostController extends BaseController
         }
     }
 
-
     public function deleteNewsPost($id)
     {
         $db = db_connect();
@@ -595,12 +604,13 @@ class PostController extends BaseController
             /* -------- DELETE THUMBNAIL FILE -------- */
             $thumb = $thumbModel->where('news_post_id', $id)->first();
 
-            if ($thumb && $thumb['type'] === 'image' && $thumb['thumbnail_url']) {
-                $path = ROOTPATH . 'public/' . parse_url($thumb['thumbnail_url'], PHP_URL_PATH);
+            if ($thumb && $thumb['type'] === 'image' && str_contains($thumb['thumbnail_url'], base_url())) {
+                $path = ROOTPATH . 'public/' . ltrim(parse_url($thumb['thumbnail_url'], PHP_URL_PATH), '/');
                 if (is_file($path)) {
                     unlink($path);
                 }
             }
+
 
             /* -------- DELETE PIVOT DATA -------- */
             (new NewsPostCategoryModel())->where('news_post_id', $id)->delete();
@@ -613,6 +623,9 @@ class PostController extends BaseController
 
             $db->transCommit();
 
+            if ($db->transStatus() === false) {
+                throw new \Exception('Transaction failed');
+            }
             return $this->response->setJSON([
                 'success' => true,
                 'message' => 'News deleted successfully'

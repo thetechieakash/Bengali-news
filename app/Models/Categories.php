@@ -37,6 +37,9 @@ class Categories extends Model
     protected $cleanValidationRules = true;
 
     public function getAllCats(){
-        return $this->findAll();
+        return $this->orderBy('created_at', 'DESC')->findAll();
+    }
+    public function getMultipleCatsById($id){
+        return $this->select()->where('id')->findAll();
     }
 }

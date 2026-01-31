@@ -9,7 +9,6 @@
 <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/dropify/dropify.min.css">
 <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/jquery-tags-input/jquery.tagsinput.min.css">
 <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/flatpickr/flatpickr.min.css">
-<link rel="stylesheet" href="<?= base_url() ?>assets/vendors/quill/quill.snow.css">
 <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/glightbox/glightbox.min.css" />
 
 
@@ -158,8 +157,7 @@
                             <div class="card-body">
                                 <div class="form-group">
                                     <h4 class="mb-2">Description</h4>
-                                    <input type="hidden" name="description" id="description_input" value="<?= esc($post['description'] ?? '') ?>">
-                                    <div id="description" class="quill-container"></div>
+                                    <textarea name="description" id="editor" class="form-control"><?= esc($post['description'] ?? '') ?></textarea>
                                 </div>
                                 <?php if (isset($update)): ?>
                                     <button type="submit" class="btn btn-primary me-2" id="update">Update</button>
@@ -182,8 +180,8 @@
 <script src="<?= base_url() ?>assets/vendors/select2/select2.min.js"></script>
 <script src="<?= base_url() ?>assets/vendors/dropify/dropify.min.js"></script>
 <script src="<?= base_url() ?>assets/vendors/flatpickr/flatpickr.min.js"></script>
-<script src="<?= base_url() ?>assets/vendors/quill/quill.min.js"></script>
-<script src="<?= base_url() ?>assets/vendors/glightbox/glightbox.min.js"></script>
+<script src="<?= base_url() ?>assets/vendors/ckeditor/ckeditor.js""></script>
+<script src=" <?= base_url() ?>assets/vendors/glightbox/glightbox.min.js"></script>
 
 
 <?= $this->endSection() ?>

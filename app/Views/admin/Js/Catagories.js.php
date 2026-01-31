@@ -24,13 +24,12 @@
                             Object.values(resp.errors).forEach(key => {
                                 showDangerToast(key)
                             })
-                            catForm[0].reset();
                         } else {
                             showDangerToast(resp.message);
+                            catForm[0].reset();
                         }
                     } else {
                         showSuccessToast(resp.message)
-                        catForm[0].reset();
                         setTimeout(() => {
                             location.reload();
                         }, 1000);
@@ -41,13 +40,6 @@
                 }
             });
         }
-        const categoryItems = $('.category-items');
-
-        categoryItems.on('click', function(e) {
-            e.preventDefault()
-            $('#addcatcard').addClass('d-none');
-            $('#addsubcatcard').removeClass('d-none');
-        });
 
         // Open modal function 
         $(document).on('click', '.editBtn', function() {
@@ -73,19 +65,20 @@
 
         // Toggle functions
 
-        $('.toggle-is-active').click(async function(e) {
-            const element = $(this);
+        $('#cat-listing').on('change', '.toggle-is-active', async function(e) {
+            const checkbox = $(this);
+            const previousState = !checkbox.prop('checked');
 
-            let isActive = true
-            let id = $(this).data('id');
-            let value = $(this).is(':checked') ? 1 : 0;
+            const id = checkbox.data('id');
+            const value = checkbox.prop('checked') ? 1 : 0;
 
-            if (!confirm('Are you sure you want to update ?')) {
-                e.preventDefault();
-                return
-            };
+            if (!confirm('Are you sure you want to update?')) {
+                checkbox.prop('checked', previousState);
+                return;
+            }
+
             try {
-                const sendData = await fetch('<?= base_url('admin/category/update-active') ?>', {
+                const res = await fetch('<?= base_url('admin/category/update-active') ?>', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -95,31 +88,37 @@
                         value
                     })
                 });
-                const data = await sendData.json();
 
-                if (data.success) {
-                    showSuccessToast(data.message);
-                } else {
+                const data = await res.json();
+
+                if (!data.success) {
+                    checkbox.prop('checked', previousState); //  rollback
                     showDangerToast(data.message);
+                } else {
+                    showSuccessToast(data.message);
                 }
 
-            } catch (error) {
-                console.error('Active ajax error', error);
+            } catch (err) {
+                checkbox.prop('checked', previousState); //  rollback
                 showDangerToast('Something went wrong, try again later');
+                console.error(err);
             }
-        });
+        });;
 
-        $('.toggle-status').click(async function() {
+        $('#cat-listing').on('change', '.toggle-status', async function(e) {
+            const checkbox = $(this);
+            const previousState = !checkbox.prop('checked');
 
-            let id = $(this).data('id');
-            let value = $(this).is(':checked') ? 1 : 0;
+            const id = checkbox.data('id');
+            const value = checkbox.prop('checked') ? 1 : 0;
 
             if (!confirm('Are you sure you want to update status?')) {
-                e.preventDefault();
-                return
-            };
+                checkbox.prop('checked', previousState);
+                return;
+            }
+
             try {
-                const sendData = await fetch('<?= base_url('admin/category/update-status') ?>', {
+                const res = await fetch('<?= base_url('admin/category/update-status') ?>', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -129,19 +128,23 @@
                         value
                     })
                 });
-                const data = await sendData.json();
 
-                if (data.success) {
-                    showSuccessToast(data.message);
-                } else {
+                const data = await res.json();
+
+                if (!data.success) {
+                    checkbox.prop('checked', previousState); // rollback
                     showDangerToast(data.message);
+                } else {
+                    showSuccessToast(data.message);
                 }
 
-            } catch (error) {
-                console.error('Active ajax error', error);
+            } catch (err) {
+                checkbox.prop('checked', previousState); // rollback
                 showDangerToast('Something went wrong, try again later');
+                console.error(err);
             }
         });
+
 
         // Update functions 
 
@@ -184,19 +187,7 @@
         let currentCatSlug = null;
         // Add sub category functions
         $(document).on('click', '.addSubCat', function(e) {
-            e.preventDefault()
-            // let id = $(this).data('id');
-            // let name = $(this).data('name');
-            // let slug = $(this).data('slug');
-
-            // $('#cat_id').val(id);
-            // $('#cat_name').val(name).prop("readonly", true);
-            // $('#cat_slug').val(slug);
-            // $('#editModal').modal('show');
-
-            // $('#updateBtn').hide();
-            // $('#addsubcatform').show();
-            // $('#addSubCatBtn').show();
+            e.preventDefault();
             currentCatId = $(this).data('id');
             currentCatSlug = $(this).data('slug');
 
@@ -209,41 +200,6 @@
             $('#updateBtn').hide();
             $('#addsubcatform').show();
             $('#addSubCatBtn').show();
-
-            // $('#addSubCatBtn').click(async function(e) {
-            //     e.preventDefault();
-            //     const subCatName = $('#sub_cat_name').val();
-            //     const subCatStatus = $('#sub_cat_status').prop('checked');
-            //     console.log(subCatStatus);
-
-            //     try {
-            //         const sendData = await fetch("<?= base_url('admin/sub-categories') ?>", {
-            //             method: 'POST',
-            //             headers: {
-            //                 'Content-Type': 'application/json'
-            //             },
-            //             body: JSON.stringify({
-            //                 id,
-            //                 slug,
-            //                 subCatName,
-            //                 subCatStatus
-            //             })
-            //         });
-
-            //         const data = await sendData.json();
-
-            //         if (data.success) {
-            //             showSuccessToast(data.message);
-            //             $('#editModal').modal('hide');
-            //         } else {
-            //             showDangerToast(data.message);
-            //         }
-            //     } catch (error) {
-            //         console.error('New sub add ajax error', error);
-            //         showDangerToast('Something went wrong, try again later');
-            //     }
-
-            // });
         })
         $('#addSubCatBtn').on('click', async function(e) {
             e.preventDefault();
@@ -295,14 +251,16 @@
 
         // category delete function 
 
-        $('.deletebtn').click(async function() {
+        $('#cat-listing').on('click', '.deletebtn', async function() {
             let id = $(this).data('id');
+
             if (!confirm('Are you sure you want to delete?')) return;
+
             try {
                 const sendData = await fetch("<?= base_url('admin/category/delete') ?>", {
                     method: 'POST',
                     headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
                         id
@@ -313,9 +271,7 @@
 
                 if (data.success) {
                     showSuccessToast(data.message);
-                    setTimeout(() => {
-                        location.reload();
-                    }, 1000);
+                    setTimeout(() => location.reload(), 1000);
                 } else {
                     showDangerToast(data.message);
                 }
@@ -325,5 +281,6 @@
                 showDangerToast('Something went wrong, try again later');
             }
         });
+
     });
 </script>

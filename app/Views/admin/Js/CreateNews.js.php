@@ -1,5 +1,11 @@
 <script>
     $(function() {
+        // CKEDITOR config
+        CKEDITOR.replace('editor', {
+            height: '400px',
+        });
+
+        // GLightbox init 
         const lightbox = GLightbox();
 
         /* ----------------------------------------------------
@@ -51,51 +57,51 @@
         /* ----------------------------------------------------
          * Quill editor
          * -------------------------------------------------- */
-        const quill = new Quill('#description', {
-            theme: 'snow',
-            modules: {
-                toolbar: [
-                    [{
-                        header: [1, 2, 3, 4, 5, 6, false]
-                    }],
-                    [{
-                        font: []
-                    }],
-                    ['bold', 'italic', 'underline', 'strike'],
-                    ['blockquote', 'code-block'],
-                    [{
-                        list: 'ordered'
-                    }, {
-                        list: 'bullet'
-                    }],
-                    [{
-                        script: 'sub'
-                    }, {
-                        script: 'super'
-                    }],
-                    [{
-                        indent: '-1'
-                    }, {
-                        indent: '+1'
-                    }],
-                    [{
-                        direction: 'rtl'
-                    }],
-                    [{
-                        size: ['small', false, 'large', 'huge']
-                    }],
-                    [{
-                        color: []
-                    }, {
-                        background: []
-                    }],
-                    [{
-                        align: []
-                    }],
-                    ['clean']
-                ]
-            }
-        });
+        // const quill = new Quill('#description', {
+        //     theme: 'snow',
+        //     modules: {
+        //         toolbar: [
+        //             [{
+        //                 header: [1, 2, 3, 4, 5, 6, false]
+        //             }],
+        //             [{
+        //                 font: []
+        //             }],
+        //             ['bold', 'italic', 'underline', 'strike'],
+        //             ['blockquote', 'code-block'],
+        //             [{
+        //                 list: 'ordered'
+        //             }, {
+        //                 list: 'bullet'
+        //             }],
+        //             [{
+        //                 script: 'sub'
+        //             }, {
+        //                 script: 'super'
+        //             }],
+        //             [{
+        //                 indent: '-1'
+        //             }, {
+        //                 indent: '+1'
+        //             }],
+        //             [{
+        //                 direction: 'rtl'
+        //             }],
+        //             [{
+        //                 size: ['small', false, 'large', 'huge']
+        //             }],
+        //             [{
+        //                 color: []
+        //             }, {
+        //                 background: []
+        //             }],
+        //             [{
+        //                 align: []
+        //             }],
+        //             ['clean']
+        //         ]
+        //     }
+        // });
 
         /* ----------------------------------------------------
          * Select2
@@ -203,8 +209,7 @@
 
             document.getElementById('newsForm').reset();
 
-            quill.setContents([]);
-            $('#description_input').val('');
+            CKEDITOR.instances.editor.setData('');
 
             $('#tags').importTags('');
 
@@ -240,18 +245,27 @@
 
             if (!$('#headline').val().trim()) {
                 showDangerToast('Headline is required');
-                return;
-            }
-            if (!$('#categories').val()?.length) {
-                showDangerToast('Please select at least one category');
-                return;
-            }
-            if (!quill.getText().trim()) {
-                showDangerToast('Description is required');
+                submitBtn.prop('disabled', false);
                 return;
             }
 
-            $('#description_input').val(quill.root.innerHTML);
+            if (!$('#categories').val()?.length) {
+                showDangerToast('Please select at least one category');
+                submitBtn.prop('disabled', false);
+                return;
+            }
+
+            const editorData = CKEDITOR.instances.editor.getData();
+            if (!editorData.replace(/<[^>]*>/g, '').trim()) {
+                showDangerToast('Description is required');
+                submitBtn.prop('disabled', false);
+                return;
+            }
+
+            // Sync CKEditor → textarea
+            for (let i in CKEDITOR.instances) {
+                CKEDITOR.instances[i].updateElement();
+            }
 
             $.ajax({
                 url: "<?= base_url('admin/news/create') ?>",
@@ -259,28 +273,22 @@
                 data: new FormData(this),
                 processData: false,
                 contentType: false,
-                enctype: 'multipart/form-data',
-                success: function(res) {
+                success(res) {
                     if (res.success) {
                         showSuccessToast(res.message);
-                        setTimeout(() => {
-                            window.location.href = res.redirect;
-                        }, 1000);
-                        submitBtn.prop('disabled', false);
-
+                        setTimeout(() => window.location.href = res.redirect, 1000);
                     } else {
                         showDangerToast(res.message);
                     }
-                    console.log(res);
+                    submitBtn.prop('disabled', false);
                 },
-                error: function(err) {
+                error() {
                     showDangerToast('Something went wrong');
-                    console.log('Create news fetch error', err);
-
                     submitBtn.prop('disabled', false);
                 }
             });
         });
+
 
 
     });

@@ -6,7 +6,8 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 $routes->get('/', 'User\Home::index');
-$routes->get('post', 'User\Post::index');
+$routes->get('post/(:segment)', 'User\Post::index/$1');
+$routes->get('category/(:any)', 'User\Post::category/$1');
 
 service('auth')->routes($routes);
 

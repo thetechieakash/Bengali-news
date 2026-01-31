@@ -1,6 +1,5 @@
 <?php
 $uri = uri_string();
-
 ?>
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
     <ul class="nav">
@@ -17,12 +16,12 @@ $uri = uri_string();
                 <span class="menu-title">Catagories</span>
             </a>
         </li> -->
-        <li class="nav-item">
+        <li class="nav-item <?= ($uri === 'admin/categories' || $uri === 'admin/sub-categories') ? 'active' : '' ?>">
             <a class="nav-link" data-bs-toggle="collapse" href="#catagories" aria-expanded="false" aria-controls="catagories">
                 <i class="mdi mdi-grid-large menu-icon"></i> <span class="menu-title">News Categories</span>
                 <i class="menu-arrow"></i>
             </a>
-            <div class="collapse" id="catagories">
+            <div class="collapse <?= ($uri === 'admin/categories' || $uri === 'admin/sub-categories') ? 'show' : '' ?>" id="catagories">
                 <ul class="nav flex-column sub-menu">
                     <li class="nav-item">
                         <a class="nav-link <?= $uri === 'admin/categories' ? 'active' : '' ?>" href="<?= base_url('admin/categories') ?>">Catagories</a>
@@ -35,18 +34,18 @@ $uri = uri_string();
             </div>
         </li>
         <li class="nav-item nav-category">News and Posts</li>
-        <li class="nav-item">
+        <li class="nav-item <?= ($uri === 'admin/all-news' || $uri === 'admin/news') ? 'active' : '' ?>">
             <a class="nav-link" data-bs-toggle="collapse" href="#news" aria-expanded="false" aria-controls="news">
                 <i class="mdi mdi-grid-large menu-icon"></i> <span class="menu-title">News</span>
                 <i class="menu-arrow"></i>
             </a>
-            <div class="collapse" id="news">
+            <div class="collapse  <?= ($uri === 'admin/all-news' || $uri === 'admin/news') ? 'show' : '' ?>" id="news">
                 <ul class="nav flex-column sub-menu">
                     <li class="nav-item">
                         <a class="nav-link <?= $uri === 'admin/all-news' ? 'active' : '' ?>" href="<?= base_url('admin/all-news') ?>">All news</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link <?= $uri === 'admin/news' ? 'active' : '' ?>" href="<?= base_url('admin/news') ?>">Create  news</a>
+                        <a class="nav-link <?= $uri === 'admin/news' ? 'active' : '' ?>" href="<?= base_url('admin/news') ?>">Create news</a>
                     </li>
 
                 </ul>

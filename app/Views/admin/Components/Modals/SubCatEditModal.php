@@ -21,7 +21,7 @@
             </div>
 
             <div class="modal-footer">
-                <button class="btn btn-primary" id="updateBtn">Update</button>
+                <button class="btn btn-primary" id="updateSubCatBtn">Update</button>
             </div>
 
         </div>

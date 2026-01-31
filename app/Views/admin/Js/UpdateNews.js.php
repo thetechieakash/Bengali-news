@@ -2,6 +2,12 @@
     const selectedSubCatIds = <?= json_encode($post['subcategory_ids'] ?? []) ?>;
     const preloadedSubCats = <?= json_encode($post['subcategories'] ?? []) ?>;
     $(function() {
+        // CKEDITOR config
+        CKEDITOR.replace('editor', {
+            height: '400px',
+        });
+
+        // GLightbox init 
         const lightbox = GLightbox();
         /* ----------------------------------------------------
          * Thumbnail toggle
@@ -49,59 +55,6 @@
             allowInput: false
         });
 
-        /* ----------------------------------------------------
-         * Quill editor
-         * -------------------------------------------------- */
-        const quill = new Quill('#description', {
-            theme: 'snow',
-            modules: {
-                toolbar: [
-                    [{
-                        header: [1, 2, 3, 4, 5, 6, false]
-                    }],
-                    [{
-                        font: []
-                    }],
-                    ['bold', 'italic', 'underline', 'strike'],
-                    ['blockquote', 'code-block'],
-                    [{
-                        list: 'ordered'
-                    }, {
-                        list: 'bullet'
-                    }],
-                    [{
-                        script: 'sub'
-                    }, {
-                        script: 'super'
-                    }],
-                    [{
-                        indent: '-1'
-                    }, {
-                        indent: '+1'
-                    }],
-                    [{
-                        direction: 'rtl'
-                    }],
-                    [{
-                        size: ['small', false, 'large', 'huge']
-                    }],
-                    [{
-                        color: []
-                    }, {
-                        background: []
-                    }],
-                    [{
-                        align: []
-                    }],
-                    ['clean']
-                ]
-            }
-        });
-
-        const existingContent = document.getElementById('description_input').value;
-        if (update) {
-            quill.root.innerHTML = existingContent;
-        }
 
         /* ----------------------------------------------------
          * Select2
@@ -228,65 +181,34 @@
 
         $(document).on('click', '#update', function(e) {
             e.preventDefault();
+            const btn = $(this).prop('disabled', true);
 
-            const form = document.getElementById('newsForm');
-            const updateBtn = $('#update');
-
-            updateBtn.prop('disabled', true);
-
-            if (!$('#headline').val().trim()) {
-                showDangerToast('Headline is required');
-                updateBtn.prop('disabled', false);
-                return;
-            }
-
-            if (!$('#categories').val()?.length) {
-                showDangerToast('Please select at least one category');
-                updateBtn.prop('disabled', false);
-                return;
-            }
-
-            if (!quill.getText().trim()) {
+            const editorData = CKEDITOR.instances.editor.getData();
+            if (!editorData.replace(/<[^>]*>/g, '').trim()) {
                 showDangerToast('Description is required');
-                updateBtn.prop('disabled', false);
+                btn.prop('disabled', false);
                 return;
             }
 
-            $('#description_input').val(quill.root.innerHTML);
-
-            const POST_ID = <?= json_encode($post['id'] ?? null) ?>;
+            // Sync CKEditor → textarea
+            for (let i in CKEDITOR.instances) {
+                CKEDITOR.instances[i].updateElement();
+            }
 
             $.ajax({
-                url: `<?= base_url('admin/news/update') ?>/${POST_ID}`,
+                url: "<?= base_url('admin/news/update/' . ($post['id'] ?? '')) ?>",
                 type: "POST",
-                data: new FormData(form),
+                data: new FormData(document.getElementById('newsForm')),
                 processData: false,
                 contentType: false,
-                enctype: 'multipart/form-data',
-                success: function(res) {
+                success(res) {
                     if (res.success) {
                         showSuccessToast(res.message);
-                        setTimeout(() => {
-                            window.location.href = res.redirect;
-                        }, 1000);
-
+                        setTimeout(() => location.href = res.redirect, 1000);
                     } else {
-                        if (typeof res.errors == "object") {
-                            Object.values(res.errors).forEach(key => {
-                                showDangerToast(key)
-                            })
-                        } else {
-                            showDangerToast(res.message);
-                        }
+                        showDangerToast(res.message);
                     }
-                    updateBtn.prop('disabled', false);
-                    console.log(res);
-                },
-                error: function(err) {
-                    showDangerToast('Something went wrong');
-                    console.log('Create news fetch error', err);
-
-                    updateBtn.prop('disabled', false);
+                    btn.prop('disabled', false);
                 }
             });
         });
