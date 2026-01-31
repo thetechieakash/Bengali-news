@@ -7,6 +7,9 @@
             height: '400px',
         });
 
+        // Loader 
+        const loader = $('#panding-loader');
+        
         // GLightbox init 
         const lightbox = GLightbox();
         /* ----------------------------------------------------
@@ -194,7 +197,7 @@
             for (let i in CKEDITOR.instances) {
                 CKEDITOR.instances[i].updateElement();
             }
-
+            loader.fadeIn(150);
             $.ajax({
                 url: "<?= base_url('admin/news/update/' . ($post['id'] ?? '')) ?>",
                 type: "POST",
@@ -208,6 +211,15 @@
                     } else {
                         showDangerToast(res.message);
                     }
+                    btn.prop('disabled', false);
+                },
+                error(err) {
+                    showDangerToast('Server error. Please try again.');
+                    console.error('Post Delete server error', err);
+                },
+
+                complete() {
+                    loader.fadeOut(150);
                     btn.prop('disabled', false);
                 }
             });

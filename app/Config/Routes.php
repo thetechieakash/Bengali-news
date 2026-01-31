@@ -34,6 +34,7 @@ $routes->group('admin', ['filter' => 'group:superadmin,admin,developer'], functi
     $routes->post('news/create', 'Admin\PostController::createNewsPost');
     $routes->get('news/update/(:num)', 'Admin\PostController::updateNews/$1');
     $routes->post('news/update/(:num)', 'Admin\PostController::updateNewsPost/$1');
+    $routes->post('news/update-status', 'Admin\PostController::updateStatus');
     $routes->post('news/delete/(:num)', 'Admin\PostController::deleteNewsPost/$1');
 });
 

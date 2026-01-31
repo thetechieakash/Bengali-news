@@ -6,7 +6,8 @@
 <?= $this->section('plugin') ?>
 <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/select2/select2.min.css">
 <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/select2-bootstrap-theme/select2-bootstrap.min.css">
-<link rel="stylesheet" href="<?= base_url() ?>assets/vendors/dropify/dropify.min.css">
+<link rel="stylesheet" href="<?= base_url() ?>assets/vendors/dropify/dist/css/dropify.css">
+<link rel="stylesheet" href="<?= base_url() ?>assets/vendors/dropify/dist/css/dropify.min.css">
 <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/jquery-tags-input/jquery.tagsinput.min.css">
 <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/flatpickr/flatpickr.min.css">
 <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/glightbox/glightbox.min.css" />
@@ -148,7 +149,7 @@
 <?= $this->section('jsLib') ?>
 <script src="<?= base_url() ?>assets/vendors/jquery-tags-input/jquery.tagsinput.min.js"></script>
 <script src="<?= base_url() ?>assets/vendors/select2/select2.min.js"></script>
-<script src="<?= base_url() ?>assets/vendors/dropify/dropify.min.js"></script>
+<script src="<?= base_url() ?>assets/vendors/dropify/dist/js/dropify.min.js"></script>
 <script src="<?= base_url() ?>assets/vendors/flatpickr/flatpickr.min.js"></script>
 <script src="<?= base_url() ?>assets/vendors/quill/quill.min.js"></script>
 <script src="<?= base_url() ?>assets/vendors/glightbox/glightbox.min.js"></script>

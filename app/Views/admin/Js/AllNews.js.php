@@ -16,40 +16,52 @@
 
         // Toggle functions
 
+        $('#news-listing').on('change', '.toggle-status', async function() {
+            const checkbox = $(this);
+            const previousState = !checkbox.prop('checked');
 
-        $('.toggle-status').click(async function() {
-
-            let id = $(this).data('id');
-            let value = $(this).is(':checked') ? 1 : 0;
+            const id = checkbox.data('id');
+            const value = checkbox.is(':checked') ? 1 : 0;
 
             if (!confirm('Are you sure you want to update status?')) {
-                e.preventDefault();
-                return
-            };
+                checkbox.prop('checked', previousState);
+                return;
+            }
+
+            // Optional: disable checkbox while processing
+            checkbox.prop('disabled', true);
+
             try {
-                const sendData = await fetch('<?= base_url('admin/category/update-status') ?>', {
+                const response = await fetch('<?= base_url('admin/news/update-status') ?>', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
                     },
                     body: JSON.stringify({
                         id,
                         value
                     })
                 });
-                const data = await sendData.json();
 
-                if (data.success) {
-                    showSuccessToast(data.message);
-                } else {
+                const data = await response.json();
+
+                if (!data.success) {
+                    checkbox.prop('checked', previousState); // rollback
                     showDangerToast(data.message);
+                } else {
+                    showSuccessToast(data.message);
                 }
 
-            } catch (error) {
-                console.error('Active ajax error', error);
+            } catch (err) {
+                checkbox.prop('checked', previousState); // rollback
                 showDangerToast('Something went wrong, try again later');
+                console.error(err);
+            } finally {
+                checkbox.prop('disabled', false);
             }
         });
+
 
 
         // Post delete function 
@@ -69,7 +81,7 @@
                     if (res.success) {
                         showSuccessToast(res.message);
                         setTimeout(() => {
-                            location.reload(); 
+                            location.reload();
                         }, 1000);
                     } else {
                         showDangerToast(res.message || 'Delete failed')

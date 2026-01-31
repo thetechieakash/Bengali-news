@@ -12,7 +12,7 @@
         <div class="row">
             <div class="col-md-12">
                 <ul class="breadcrumb">
-                    <li><a href="#">Home</a></li>
+                    <li><a href="<?= base_url() ?>">Home</a></li>
                     <li><?= esc($post['headline']) ?></li>
                 </ul>
             </div>
@@ -34,7 +34,8 @@
                         <h1 class="utf_post_title"><?= esc($post['headline']) ?></h1>
                         <div class="utf_post_meta">
                             <span class="utf_post_author"><?= esc($post['author']) ?></span>
-                            <span class="utf_post_date"> 15 Jan, 2022</span>
+                            <?php $formattedDate = (new DateTime($post['created_at']))->format('d M, Y'); ?>
+                            <span class="utf_post_date"><?= $formattedDate ?></span>
                             <!-- <span class="post-hits">
                                 <i class="fa fa-eye"></i> 21
                             </span> -->
@@ -49,39 +50,36 @@
 
                     <div class="utf_post_content-area">
                         <div class="post-media post-featured-image">
-                            <a href="<?= base_url() ?>assets/images/news/lifestyle/health5.jpg" class="glightbox">
-                                <img src="<?= base_url() ?>assets/images/news/lifestyle/health5.jpg" class="img-fluid" alt=""></a>
+                            <a href="<?= esc($post['thumbnail']['thumbnail_url']) ?>" class="glightbox">
+                                <img src="<?= esc($post['thumbnail']['thumbnail_url']) ?>" class="img-fluid" alt=""></a>
                         </div>
                         <div class="entry-content">
-                            <p>Lorem Ipsum is simply dummy text of the printing and type setting industry. Lorem Ipsum has been the industry's standard dummy text ever since when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
-                            <p>Lorem Ipsum is simply dummy text of the printing and type setting industry. Lorem Ipsum has been the industry's standard dummy text ever since when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
-                            <blockquote>Lorem Ipsum is simply dummy text of the printing and type setting industry. Lorem Ipsum has been the industry's standard dummy text ever since when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic.</blockquote>
-                            <p>Lorem Ipsum is simply dummy text of the printing and type setting industry. Lorem Ipsum has been the industry's standard dummy text ever since when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
-                            <ul class="list-round mr_bottom-20">
-                                <li>Lorem Ipsum is simply dummy text of the printing.</li>
-                                <li>Lorem Ipsum is simply dummy text of the printing.</li>
-                                <li>Lorem Ipsum is simply dummy text of the printing.</li>
-                                <li>Lorem Ipsum is simply dummy text of the printing.</li>
-                            </ul>
-                            <p>Lorem Ipsum is simply dummy text of the printing and type setting industry. Lorem Ipsum has been the industry's standard dummy text ever since when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                            <?= $post['description'] ?>
                         </div>
 
                         <div class="tags-area clearfix">
                             <div class="post-tags">
                                 <span>Tags:</span>
-                                <a href="#"># Business</a>
-                                <a href="#"># Corporate</a>
-                                <a href="#"># Services</a>
-                                <a href="#"># Customer</a>
+                                <?php foreach ($post['tags'] as $tag): ?>
+                                    <a href="#"># <?= $tag['name'] ?></a>
+                                <?php endforeach ?>
                             </div>
                         </div>
 
                         <div class="share-items clearfix">
                             <ul class="post-social-icons unstyled">
-                                <li class="facebook"> <a href="#"> <i class="fa fa-facebook"></i> <span class="ts-social-title">Facebook</span></a> </li>
-                                <li class="twitter"> <a href="#"> <i class="fa fa-twitter"></i> <span class="ts-social-title">Twitter</span></a> </li>
-                                <li class="gplus"> <a href="#"> <i class="fa fa-google-plus"></i> <span class="ts-social-title">Google +</span></a> </li>
-                                <li class="pinterest"> <a href="#"> <i class="fa fa-pinterest"></i> <span class="ts-social-title">Pinterest</span></a> </li>
+                                <?php $postUrl   = current_url(); ?>
+                                <li class="facebook">
+                                    <a href="https://www.facebook.com/sharer/sharer.php?u=<?= $postUrl ?>" target="_blank" rel="noopener">
+                                        <i class="fa fa-facebook"></i>
+                                        <span class="ts-social-title">Facebook</span>
+                                    </a>
+                                </li>
+                                <li class="twitter">
+                                    <a href="https://twitter.com/intent/tweet?url=<?= $postUrl ?>&text=<?= esc($post['headline']) ?>" target="_blank" rel="noopener"> <i class="fa fa-twitter"></i>
+                                        <span class="ts-social-title">Twitter</span>
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                     </div>

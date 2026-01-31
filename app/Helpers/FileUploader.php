@@ -7,11 +7,17 @@ use CodeIgniter\Files\FileSizeUnit;
 
 class FileUploader
 {
+    protected array $allowedTypes = [
+        'image/jpeg',
+        'image/jpg',
+        'image/png',
+        'image/webp',
+        'image/gif',
+    ];
 
-    // File type, max size in kb and destination 
-    protected $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-    protected $maxSizeKB = 2048;
-    protected $destination;
+    protected int $maxSizeKB = 2048;
+    protected string $destination;
+    protected int $maxWidth = 1920;
 
     public function __construct(string $destination)
     {
@@ -34,13 +40,17 @@ class FileUploader
         return $this;
     }
 
-    //  Handle single file upload
+    public function setMaxWidth(int $width): self
+    {
+        $this->maxWidth = $width;
+        return $this;
+    }
+
     public function upload(UploadedFile $file): array
     {
         return $this->processFile($file);
     }
 
-    //  Handle multiple file uploads
     public function uploadMultiple(array $files): array
     {
         $results = [];
@@ -53,51 +63,73 @@ class FileUploader
 
         return $results;
     }
-    // Compress Image
-    protected function compressImage(string $filePath, int $quality = 85): bool
+
+    /* ---------------------------------------------------
+     |  INTERNALS
+     --------------------------------------------------- */
+
+    protected function processFile(UploadedFile $file): array
     {
-        $info = getimagesize($filePath);
-        if (!$info) {
-            return false;
+        if (!$file->isValid()) {
+            return ['status' => false, 'message' => 'Invalid file'];
         }
 
-        $image = match ($info['mime']) {
-            'image/jpeg' => imagecreatefromjpeg($filePath),
-            'image/png'  => imagecreatefrompng($filePath),
-            'image/webp' => imagecreatefromwebp($filePath),
-            default      => null,
-        };
-
-        if (!$image) {
-            return false;
+        if (!in_array($file->getMimeType(), $this->allowedTypes, true)) {
+            return ['status' => false, 'message' => 'File type not allowed'];
         }
 
-        $result = match ($info['mime']) {
-            'image/jpeg' => imagejpeg($image, $filePath, $quality),
-            'image/png'  => imagepng($image, $filePath, 6),
-            'image/webp' => imagewebp($image, $filePath, $quality),
-        };
+        if ($file->getSizeByBinaryUnit(FileSizeUnit::KB) > $this->maxSizeKB) {
+            return ['status' => false, 'message' => 'File size exceeds limit'];
+        }
 
-        unset($image); // ✅ replaces deprecated imagedestroy()
+        $mime = $file->getMimeType();
+        $tmpPath = $file->getTempName();
 
-        return $result;
+        /* ---------- GIF: STORE AS-IS ---------- */
+        if ($mime === 'image/gif') {
+            $name = pathinfo($file->getClientName(), PATHINFO_FILENAME);
+            $newName = $name . '_' . time() . '.gif';
+            $file->move($this->destination, $newName);
+
+            return [
+                'status'    => true,
+                'file_name' => $newName,
+                'file_path' => $this->destination . $newName,
+                'type'      => 'gif'
+            ];
+        }
+
+        /* ---------- IMAGE → WEBP ---------- */
+        $webpName = pathinfo($file->getClientName(), PATHINFO_FILENAME)
+            . '_' . time() . '.webp';
+
+        $webpPath = $this->destination . $webpName;
+
+        if (!$this->convertToWebP($tmpPath, $webpPath, 85)) {
+            return ['status' => false, 'message' => 'Image conversion failed'];
+        }
+
+        return [
+            'status'    => true,
+            'file_name' => $webpName,
+            'file_path' => $webpPath,
+            'type'      => 'webp'
+        ];
     }
 
-    // Convert to WebP
-    protected function convertToWebP(
-        string $sourcePath,
-        string $destinationPath,
-        int $quality = 85
-    ): bool {
-        $info = getimagesize($sourcePath);
+    /* ---------- IMAGE HELPERS ---------- */
+
+    protected function convertToWebP(string $source, string $dest, int $quality): bool
+    {
+        $info = getimagesize($source);
         if (!$info) {
             return false;
         }
 
         $image = match ($info['mime']) {
-            'image/jpeg' => imagecreatefromjpeg($sourcePath),
-            'image/png'  => imagecreatefrompng($sourcePath),
-            'image/webp' => imagecreatefromwebp($sourcePath),
+            'image/jpeg' => imagecreatefromjpeg($source),
+            'image/png'  => imagecreatefrompng($source),
+            'image/webp' => imagecreatefromwebp($source),
             default      => null,
         };
 
@@ -105,66 +137,49 @@ class FileUploader
             return false;
         }
 
-        // Preserve transparency (important for PNGs)
+        $image = $this->resizeIfNeeded($image);
+
         imagepalettetotruecolor($image);
         imagealphablending($image, true);
         imagesavealpha($image, true);
 
-        $result = imagewebp($image, $destinationPath, $quality);
-
-        unset($image); // ✅ modern cleanup
+        $result = imagewebp($image, $dest, $quality);
+        unset($image);
 
         return $result;
     }
 
-
-    // Internal reusable upload logic
-    protected function processFile(UploadedFile $file): array
+    protected function resizeIfNeeded($image)
     {
-        if (!$file->isValid()) {
-            return ['status' => false, 'message' => 'Invalid file.'];
+        $width  = imagesx($image);
+        $height = imagesy($image);
+
+        if ($width <= $this->maxWidth) {
+            return $image;
         }
 
-        if ($file->hasMoved()) {
-            return ['status' => false, 'message' => 'File already moved.'];
-        }
+        $newHeight = (int)(($this->maxWidth / $width) * $height);
 
-        if (!in_array($file->getMimeType(), $this->allowedTypes)) {
-            return ['status' => false, 'message' => 'File type not allowed.'];
-        }
+        $resized = imagecreatetruecolor($this->maxWidth, $newHeight);
 
-        if ($file->getSizeByBinaryUnit(FileSizeUnit::KB) > $this->maxSizeKB) {
-            return ['status' => false, 'message' => 'File size exceeds the limit.'];
-        }
+        imagealphablending($resized, false);
+        imagesavealpha($resized, true);
 
-        $newName = $file->getRandomName();
-        $originalPath = $this->destination . $newName;
-        $file->move($this->destination, $newName);
-        //  Convert to WebP
-        $webpName = pathinfo($newName, PATHINFO_FILENAME) . '.webp';
-        $webpPath = $this->destination . $webpName;
+        imagecopyresampled(
+            $resized,
+            $image,
+            0,
+            0,
+            0,
+            0,
+            $this->maxWidth,
+            $newHeight,
+            $width,
+            $height
+        );
 
-        $converted = $this->convertToWebP($originalPath, $webpPath, 85);
-        // Optional: remove original file
-        if ($converted) {
-            unlink($originalPath); // Delete original only if conversion is successful
-            return [
-                'status'     => true,
-                'file_name'  => $webpName,
-                'file_path'  => $webpPath
-            ];
-        } else {
-            return [
-                'status' => false,
-                'message' => 'Failed to convert image to WebP.'
-            ];
-        }
-        return [
-            'status'    => true,
-            // 'file_name' => $newName,
-            // 'file_path' => $this->destination . $newName,
-            'file_name'  => $webpName,
-            'file_path'  => $webpPath
-        ];
+        unset($image);
+
+        return $resized;
     }
 }

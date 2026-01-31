@@ -26,71 +26,67 @@ class NewsPostModel extends Model
         'status',
     ];
 
-    /**
-     * Get post by id
-     */
-    public function getPostById(int $postId)
+    // Frontend / public use ONLY
+    public function getActivePostForUser(string $slug)
     {
-        return $this->select()->where('id', $postId)->first();
+        return $this->getPostWithRelations($slug, true);
     }
-    /**
-     * Get post with categories, sub categories & tags
-     */
-    public function getPostWithRelations(int $postId)
-    {
-        return $this->select('news_posts.*')
-            ->where('news_posts.id', $postId)
-            ->first();
-    }
+    // Admin / internal use (unchanged behavior)
     public function getPostForEdit(int|string $identifier): ?array
     {
-        // Detect whether ID or slug
+        return $this->getPostWithRelations($identifier, false);
+    }
+
+    protected function getPostWithRelations(int|string $identifier, bool $onlyActive): ?array
+    {
+        $builder = $this->builder();
+
         if (is_numeric($identifier)) {
-            $post = $this->where(['id' => (int) $identifier, 'status' => 1])->first();
+            $builder->where('id', (int) $identifier);
         } else {
-            $post = $this->where(['slug' => $identifier, 'status' => 1])->first();
+            $builder->where('slug', $identifier);
         }
+
+        if ($onlyActive) {
+            $builder->where('status', 1);
+        }
+
+        $post = $builder->get()->getRowArray();
 
         if (!$post) {
             return null;
         }
+
         $postId = $post['id'];
         $db = db_connect();
 
         /** ---------- CATEGORIES ---------- */
         $post['categories'] = $db->table('news_post_categories npc')
-            ->select([
-                'c.id',
-                'c.cat as name',
-                'c.slug as slug'
-            ])
+            ->select('c.id, c.cat AS name, c.slug')
             ->join('categories c', 'c.id = npc.category_id')
             ->where('npc.news_post_id', $postId)
             ->get()
             ->getResultArray();
 
-
+        /** ---------- SUBCATEGORIES ---------- */
         $post['subcategories'] = $db->table('news_post_sub_categories npsc')
-            ->select([
-                'sc.id',
-                'sc.cat_id',
-                'sc.sub_cat_name'
-            ])
+            ->select('sc.id, sc.cat_id, sc.sub_cat_name')
             ->join('sub_categories sc', 'sc.id = npsc.sub_category_id')
             ->where('npsc.news_post_id', $postId)
             ->get()
             ->getResultArray();
-            
-        $post['category_ids'] = array_column($post['categories'], 'id');
+
+        $post['category_ids']    = array_column($post['categories'], 'id');
         $post['subcategory_ids'] = array_column($post['subcategories'], 'id');
 
-
+        /** ---------- TAGS ---------- */
         $post['tags'] = $db->table('news_post_tags npt')
             ->select('t.id, t.name')
             ->join('tags t', 't.id = npt.tag_id')
             ->where('npt.news_post_id', $postId)
             ->get()
             ->getResultArray();
+
         /** ---------- THUMBNAIL ---------- */
         $post['thumbnail'] = $db->table('news_post_thumbnails')
             ->where('news_post_id', $postId)

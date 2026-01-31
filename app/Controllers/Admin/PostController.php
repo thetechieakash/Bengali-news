@@ -41,6 +41,23 @@ class PostController extends BaseController
         return view('admin/CreateNews', $data);
     }
 
+    public function updateNews($id)
+    {
+        $catModel = new Categories();
+        $newsModel = new NewsPostModel();
+        $data = [
+            'pageTitle' => 'Update News',
+            'update' => true,
+            'post' => $newsModel->getPostForEdit($id),
+            'categories' => $catModel
+                ->where('status', 1)
+                ->orderBy('cat', 'ASC')
+                ->findAll()
+        ];
+
+        return view('admin/UpdateNews', $data);
+    }
+
     public function createNewsPost()
     {
         // $request = $this->request;
@@ -60,7 +77,6 @@ class PostController extends BaseController
             'thumbnailType'   => $request['thumbnail_type'],
             'thumbnailLink'   => trim($request['thumbnail_link']),
         ];
-        $status = 0;
         /* ---------------------------------
      * 2. VALIDATION (FAST FAIL)
      * --------------------------------- */
@@ -96,8 +112,21 @@ class PostController extends BaseController
         }
 
         /* ---------------------------------
-     * 3. VALIDATE SUBCATEGORY OWNERSHIP
+     * 3. VALIDATE SUBCATEGORIES OWNERSHIP
      * --------------------------------- */
+        $validCats = (new Categories())
+            ->whereIn('id', $data['categories'])
+            ->where('status', 1)
+            ->countAllResults();
+
+        if ($validCats !== count($data['categories'])) {
+            return $this->response->setJSON([
+                'success' => false,
+                'errors'  => [
+                    'categories' => 'Invalid or inactive category selected'
+                ]
+            ]);
+        }
         if (!empty($data['subCategories'])) {
             $validSubCats = (new SubCategories())
                 ->whereIn('id', $data['subCategories'])
@@ -134,17 +163,21 @@ class PostController extends BaseController
         $postDateTime = null;
         if ($data['postDateRaw']) {
             $dt = \DateTime::createFromFormat('d/m/Y H:i', $data['postDateRaw']);
-            if ($dt !== false) {
-                $postDateTime = $dt->format('Y-m-d H:i:s');
+            if (!$dt) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'errors' => ['date' => 'Invalid date format']
+                ]);
             }
+
             if ($dt < new \DateTime()) {
                 return $this->response->setJSON([
                     'success' => false,
-                    'errors'  => [
-                        'date' => 'Post date must be in the future'
-                    ]
+                    'errors' => ['date' => 'Post date must be in the future']
                 ]);
             }
+
+            $postDateTime = $dt->format('Y-m-d H:i:s');
         }
 
         /* ---------------------------------
@@ -154,12 +187,12 @@ class PostController extends BaseController
         $db->transBegin();
 
         try {
-
+            $user = auth()->user();
             /* -------- MAIN POST -------- */
             $postId = $postModel->insert([
                 'headline'          => $data['headline'],
                 'slug'              => $slug,
-                'author'            => session('admin_name') ?? auth()->id() ?? auth()->user()->getEmail(),
+                'author'            => $user ? ($user->username ?? $user->getEmail() ?? $user->id) : 'system',
                 'post_date_time'    => $postDateTime,
                 'short_description' => $data['shortDesc'],
                 'description'       => $data['description'],
@@ -275,23 +308,6 @@ class PostController extends BaseController
         }
     }
 
-    public function updateNews($id)
-    {
-        $catModel = new Categories();
-        $newsModel = new NewsPostModel();
-        $data = [
-            'pageTitle' => 'Update News',
-            'update' => true,
-            'post' => $newsModel->getPostForEdit($id),
-            'categories' => $catModel
-                ->where('status', 1)
-                ->orderBy('cat', 'ASC')
-                ->findAll()
-        ];
-
-        return view('admin/UpdateNews', $data);
-    }
-
     public function updateNewsPost($id)
     {
         $request = $this->request->getPost();
@@ -347,8 +363,21 @@ class PostController extends BaseController
 
 
         /* ---------------------------------
-     * 3. VALIDATE SUBCATEGORY OWNERSHIP
+     * 3. VALIDATE CATEGORIES OWNERSHIP
      * --------------------------------- */
+        $validCats = (new Categories())
+            ->whereIn('id', $data['categories'])
+            ->where('status', 1)
+            ->countAllResults();
+
+        if ($validCats !== count($data['categories'])) {
+            return $this->response->setJSON([
+                'success' => false,
+                'errors'  => [
+                    'categories' => 'Invalid or inactive category selected'
+                ]
+            ]);
+        }
         if (!empty($data['subCategories'])) {
             $validSubCats = (new SubCategories())
                 ->whereIn('id', $data['subCategories'])
@@ -373,17 +402,21 @@ class PostController extends BaseController
 
             $dt = \DateTime::createFromFormat('d/m/Y H:i', $data['postDateRaw']);
 
-            if ($dt !== false) {
-                $postDateTime = $dt->format('Y-m-d H:i:s'); // adds :00 seconds
+            if (!$dt) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'errors' => ['date' => 'Invalid date format']
+                ]);
             }
+
             if ($dt < new \DateTime()) {
                 return $this->response->setJSON([
                     'success' => false,
-                    'errors'  => [
-                        'date' => 'Post date must be in the future'
-                    ]
+                    'errors' => ['date' => 'Post date must be in the future']
                 ]);
             }
+
+            $postDateTime = $dt->format('Y-m-d H:i:s');
         }
 
         /* ---------------------------------
@@ -420,23 +453,27 @@ class PostController extends BaseController
             }
 
             /* -------- UPDATE MAIN POST -------- */
-            $postModel->update($id, [
+            if ($postModel->update($id, [
                 'headline'          => $data['headline'],
                 'slug'              => $slug,
                 'short_description' => $data['shortDesc'],
                 'description'       => $data['description'],
                 'post_date_time'    => $postDateTime,
-            ]);
+            ]) === false) {
+                throw new \Exception(json_encode($postModel->errors()));
+            }
 
             /* -------- SYNC CATEGORIES -------- */
             $catPivot = new NewsPostCategoryModel();
             $catPivot->where('news_post_id', $id)->delete();
 
             foreach ($data['categories'] as $catId) {
-                $catPivot->insert([
+                if ($catPivot->insert([
                     'news_post_id' => $id,
                     'category_id'  => $catId
-                ]);
+                ]) === false) {
+                    throw new \Exception(json_encode($postModel->errors()));
+                }
             }
 
             /* -------- SYNC SUBCATEGORIES -------- */
@@ -500,20 +537,20 @@ class PostController extends BaseController
 
                 // delete file if it exists and is local
                 if ($thumb['type'] === 'image' && $thumb['thumbnail_url']) {
-                    $oldPath = ROOTPATH . 'public/' . parse_url($thumb['thumbnail_url'], PHP_URL_PATH);
+                    $oldPath = ROOTPATH . 'public' . parse_url($thumb['thumbnail_url'], PHP_URL_PATH);
                     if (is_file($oldPath)) {
                         unlink($oldPath);
                     }
                 }
 
                 $thumbModel->delete($thumb['id']);
-            }
-            /* ---- CASE 2: USER UPLOADED NEW IMAGE ---- */ elseif ($data['thumbnailType'] === 'image' && $file && $file->isValid()) {
+            } elseif ($data['thumbnailType'] === 'image' && $file && $file->isValid()) {
 
-
+                /* ---- CASE 2: USER UPLOADED NEW IMAGE ---- */
                 // remove old file first
+
                 if ($thumb && $thumb['type'] === 'image') {
-                    $oldPath = ROOTPATH . 'public/' . parse_url($thumb['thumbnail_url'], PHP_URL_PATH);
+                    $oldPath = ROOTPATH . 'public' . parse_url($thumb['thumbnail_url'], PHP_URL_PATH);
                     if (is_file($oldPath)) {
                         unlink($oldPath);
                     }
@@ -545,7 +582,7 @@ class PostController extends BaseController
 
                 // delete old image if exists
                 if ($thumb && $thumb['type'] === 'image') {
-                    $oldPath = ROOTPATH . 'public/' . parse_url($thumb['thumbnail_url'], PHP_URL_PATH);
+                    $oldPath = ROOTPATH . 'public' . parse_url($thumb['thumbnail_url'], PHP_URL_PATH);
                     if (is_file($oldPath)) {
                         unlink($oldPath);
                     }
@@ -605,7 +642,7 @@ class PostController extends BaseController
             $thumb = $thumbModel->where('news_post_id', $id)->first();
 
             if ($thumb && $thumb['type'] === 'image' && str_contains($thumb['thumbnail_url'], base_url())) {
-                $path = ROOTPATH . 'public/' . ltrim(parse_url($thumb['thumbnail_url'], PHP_URL_PATH), '/');
+                $path = ROOTPATH . 'public' . ltrim(parse_url($thumb['thumbnail_url'], PHP_URL_PATH), '/');
                 if (is_file($path)) {
                     unlink($path);
                 }
@@ -637,6 +674,59 @@ class PostController extends BaseController
             return $this->response->setJSON([
                 'success' => false,
                 'message' => 'Failed to delete news',
+                'debug'   => ENVIRONMENT !== 'production' ? $e->getMessage() : null
+            ]);
+        }
+    }
+
+    public function updateStatus()
+    {
+        $data  = $this->request->getJSON(true);
+
+        $id    = isset($data['id']) ? (int) $data['id'] : 0;
+        $value = isset($data['value']) ? (int) $data['value'] : null;
+
+        /* -----------------------------
+     * 1. BASIC VALIDATION
+     * ----------------------------- */
+        if ($id <= 0 || !in_array($value, [0, 1], true)) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Invalid request'
+            ]);
+        }
+
+        $postModel = new NewsPostModel();
+
+        /* -----------------------------
+     * 2. CHECK POST EXISTS
+     * ----------------------------- */
+        $post = $postModel->find($id);
+        if (!$post) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'News post not found'
+            ]);
+        }
+
+        /* -----------------------------
+     * 3. UPDATE STATUS
+     * ----------------------------- */
+        try {
+            if ($postModel->update($id, ['status' => $value]) === false) {
+                throw new \Exception(json_encode($postModel->errors()));
+            }
+
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => $value
+                    ? 'News published successfully'
+                    : 'News unpublished successfully'
+            ]);
+        } catch (\Throwable $e) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Failed to update status',
                 'debug'   => ENVIRONMENT !== 'production' ? $e->getMessage() : null
             ]);
         }

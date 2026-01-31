@@ -5,6 +5,9 @@
             height: '400px',
         });
 
+        // Loader 
+        const loader = $('#panding-loader');
+
         // GLightbox init 
         const lightbox = GLightbox();
 
@@ -53,55 +56,6 @@
             yearSelectorType: "static",
             allowInput: false
         });
-
-        /* ----------------------------------------------------
-         * Quill editor
-         * -------------------------------------------------- */
-        // const quill = new Quill('#description', {
-        //     theme: 'snow',
-        //     modules: {
-        //         toolbar: [
-        //             [{
-        //                 header: [1, 2, 3, 4, 5, 6, false]
-        //             }],
-        //             [{
-        //                 font: []
-        //             }],
-        //             ['bold', 'italic', 'underline', 'strike'],
-        //             ['blockquote', 'code-block'],
-        //             [{
-        //                 list: 'ordered'
-        //             }, {
-        //                 list: 'bullet'
-        //             }],
-        //             [{
-        //                 script: 'sub'
-        //             }, {
-        //                 script: 'super'
-        //             }],
-        //             [{
-        //                 indent: '-1'
-        //             }, {
-        //                 indent: '+1'
-        //             }],
-        //             [{
-        //                 direction: 'rtl'
-        //             }],
-        //             [{
-        //                 size: ['small', false, 'large', 'huge']
-        //             }],
-        //             [{
-        //                 color: []
-        //             }, {
-        //                 background: []
-        //             }],
-        //             [{
-        //                 align: []
-        //             }],
-        //             ['clean']
-        //         ]
-        //     }
-        // });
 
         /* ----------------------------------------------------
          * Select2
@@ -266,6 +220,7 @@
             for (let i in CKEDITOR.instances) {
                 CKEDITOR.instances[i].updateElement();
             }
+            loader.fadeIn(150);
 
             $.ajax({
                 url: "<?= base_url('admin/news/create') ?>",
@@ -282,14 +237,16 @@
                     }
                     submitBtn.prop('disabled', false);
                 },
-                error() {
+                error(err) {
                     showDangerToast('Something went wrong');
+                    console.error('Post Create server error', err);
                     submitBtn.prop('disabled', false);
+                },
+                complete() {
+                    loader.fadeOut(150);
+                    btn.prop('disabled', false);
                 }
             });
         });
-
-
-
     });
 </script>

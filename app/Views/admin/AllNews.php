@@ -30,7 +30,8 @@
                             <tr>
                                 <td><?= $sl ?>.</td>
                                 <td><a href=""><?= mb_strimwidth($post['headline'], 0, 50, "...") ?></a> </td>
-                                <td><?= $post['updated_at'] ?></td>
+                                <?php $formattedDate = (new DateTime($post['updated_at']))->format('d M, Y h:i A'); ?>
+                                <td><?= $formattedDate ?></td>
 
                                 <td>
                                     <div class="d-flex align-items-center gap-2">
