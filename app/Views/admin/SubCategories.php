@@ -33,7 +33,7 @@
                                         <?php foreach ($subCats as $cat): ?>
                                             <?php $sl++; ?>
                                             <tr>
-                                                <td><?= $sl ?></td>
+                                                <td><?= $sl ?>.</td>
                                                 <td><?= $cat['category_name'] ?></td>
                                                 <td><?= $cat['sub_cat_name'] ?></td>
                                                 <td>

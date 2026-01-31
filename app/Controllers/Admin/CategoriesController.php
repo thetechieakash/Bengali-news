@@ -5,6 +5,7 @@ namespace App\Controllers\Admin;
 use App\Controllers\BaseController;
 use App\Helpers\Slug;
 use App\Models\Categories;
+use App\Models\SubCategories;
 
 class CategoriesController extends BaseController
 {
@@ -30,7 +31,12 @@ class CategoriesController extends BaseController
         }
 
         $data = $this->request->getPost();
-
+        if (empty(trim($data['category'] ?? ''))) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Category name is required'
+            ]);
+        }
         $model = new Categories();
         $slugHelper = new Slug();
 
@@ -51,6 +57,7 @@ class CategoriesController extends BaseController
         }
 
         $model->insert($insertableData);
+        cache()->delete('navbar_categories');
 
         return $this->response->setJSON([
             'success' => true,
@@ -102,6 +109,7 @@ class CategoriesController extends BaseController
         ];
 
         $model->update($id, $updateData);
+        cache()->delete('navbar_categories');
 
         return $this->response->setJSON([
             'success' => true,
@@ -111,43 +119,119 @@ class CategoriesController extends BaseController
 
     public function updateActive()
     {
-        $data = $this->request->getJSON(true);
-        $id = $data['id'] ?? null;
-        $value = $data['value'] ?? null;
-        if (!$id) {
+        $data  = $this->request->getJSON(true);
+        $id    = $data['id'] ?? null;
+        $value = isset($data['value']) ? (int) $data['value'] : null;
+
+        if (!$id || !in_array($value, [0, 1], true)) {
             return $this->response->setJSON([
                 'success' => false,
                 'message' => 'Invalid request'
             ]);
         }
-        $model = new Categories();
 
-        $model->update($id, ['is_active' => (int)$value]);
-        return $this->response->setJSON([
-            'success' => true,
-            'message' => 'Updated successfully'
-        ]);
+        $db = db_connect();
+        $db->transBegin();
+
+        try {
+            $catModel    = new Categories();
+            $subCatModel = new SubCategories();
+
+            /* -------- UPDATE CATEGORY -------- */
+            $catModel->update($id, ['is_active' => $value]);
+
+            /* -------- IF CATEGORY DISABLED → DISABLE ALL SUB CATEGORIES -------- */
+            if ($value === 0) {
+                $subCatModel
+                    ->where('cat_id', $id)
+                    ->set(['is_active' => 0])
+                    ->update();
+            }
+
+            cache()->delete('navbar_categories');
+
+            $db->transCommit();
+
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => $value
+                    ? 'Category activated successfully'
+                    : 'Category and its subcategories deactivated'
+            ]);
+        } catch (\Throwable $e) {
+            $db->transRollback();
+
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Update failed',
+                'debug'   => ENVIRONMENT !== 'production' ? $e->getMessage() : null
+            ]);
+        }
     }
+
 
     public function updateStatus()
     {
-        $data = $this->request->getJSON(true);
-        $id = $data['id'] ?? null;
-        $value = $data['value'] ?? null;
-        if (!$id) {
+        $data  = $this->request->getJSON(true);
+        $id    = $data['id'] ?? null;
+        $value = isset($data['value']) ? (int) $data['value'] : null;
+
+        if (!$id || !in_array($value, [0, 1], true)) {
             return $this->response->setJSON([
                 'success' => false,
                 'message' => 'Invalid request'
             ]);
         }
-        $model = new Categories();
 
-        $model->update($id, ['status' => (int)$value]);
-        return $this->response->setJSON([
-            'success' => true,
-            'message' => 'Updated successfully'
-        ]);
+        $db = db_connect();
+        $db->transBegin();
+
+        try {
+            $catModel    = new Categories();
+            $subCatModel = new SubCategories();
+
+            /* ---------- CATEGORY UPDATE ---------- */
+            $catUpdate = [
+                'status' => $value
+            ];
+
+            if ($value === 0) {
+                $catUpdate['is_active'] = 0;
+            }
+
+            $catModel->update($id, $catUpdate);
+
+            /* ---------- SUBCATEGORY SYNC ---------- */
+            if ($value === 0) {
+                $subCatModel
+                    ->where('cat_id', $id)
+                    ->set([
+                        'status'    => 0,
+                        'is_active' => 0
+                    ])
+                    ->update();
+            }
+
+            cache()->delete('navbar_categories');
+
+            $db->transCommit();
+
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Category and subcategories updated successfully'
+            ]);
+        } catch (\Throwable $e) {
+            $db->transRollback();
+
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Failed to update category status',
+                'debug'   => ENVIRONMENT !== 'production' ? $e->getMessage() : null
+            ]);
+        }
     }
+
+
 
     public function deleteCategory()
     {
@@ -160,22 +244,61 @@ class CategoriesController extends BaseController
                 'message' => 'Invalid request'
             ]);
         }
+        $db = db_connect();
+        $db->transBegin();
 
-        $model = new Categories();
-        $cat = $model->find($id);
+        try {
+            $categoryModel     = new Categories();
+            $subCategoryModel  = new SubCategories();
 
-        if (!$cat) {
+            $category = $categoryModel->find($id);
+
+            if (!$category) {
+                throw new \Exception('Category not found');
+            }
+
+            /* -------- GET SUB CATEGORY IDS -------- */
+            $subCategoryIds = $subCategoryModel
+                ->where('cat_id', $id)
+                ->findColumn('id');
+
+            /* -------- DELETE POST ↔ CATEGORY LINKS -------- */
+            $db->table('news_post_categories')
+                ->where('category_id', $id)
+                ->delete();
+
+            /* -------- DELETE POST ↔ SUBCATEGORY LINKS -------- */
+            if (!empty($subCategoryIds)) {
+                $db->table('news_post_sub_categories')
+                    ->whereIn('sub_category_id', $subCategoryIds)
+                    ->delete();
+            }
+
+            /* -------- DELETE SUB CATEGORIES -------- */
+            $subCategoryModel
+                ->where('cat_id', $id)
+                ->delete();
+
+            /* -------- DELETE CATEGORY -------- */
+            $categoryModel->delete($id);
+            cache()->delete('navbar_categories');
+
+
+            $db->transCommit();
+
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Category and related subcategories deleted successfully'
+            ]);
+        } catch (\Throwable $e) {
+
+            $db->transRollback();
+
             return $this->response->setJSON([
                 'success' => false,
-                'message' => 'Category not found'
+                'message' => 'Failed to delete category',
+                'debug'   => ENVIRONMENT !== 'production' ? $e->getMessage() : null
             ]);
         }
-
-        $model->delete($id);
-
-        return $this->response->setJSON([
-            'success' => true,
-            'message' => 'Category deleted successfully'
-        ]);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Libraries\CategoryService;
 use CodeIgniter\Controller;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
@@ -30,6 +31,7 @@ abstract class BaseController extends Controller
     /**
      * @return void
      */
+    protected $data = [];
     public function initController(RequestInterface $request, ResponseInterface $response, LoggerInterface $logger)
     {
         // Load here all helpers you want to be available in your controllers that extend BaseController.
@@ -38,6 +40,7 @@ abstract class BaseController extends Controller
 
         // Caution: Do not edit this line.
         parent::initController($request, $response, $logger);
+        $this->data['navbarCategories'] = CategoryService::getNavbarCategories();
 
         // Preload any models, libraries, etc, here.
         // $this->session = service('session');

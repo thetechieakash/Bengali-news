@@ -16,16 +16,20 @@
 
         // Toggle functions
 
-        $('.toggle-is-active').click(async function(e) {
-            let id = $(this).data('id');
-            let value = $(this).prop('checked') ? 1 : 0;
+        $('#sub-cat-listing').on('change', '.toggle-is-active', async function() {
+            const checkbox = $(this);
+            const previousState = !checkbox.prop('checked');
 
-            if (!confirm('Are you sure you want to update ?')) {
-                e.preventDefault();
-                return
-            };
+            const id = checkbox.data('id');
+            const value = checkbox.prop('checked') ? 1 : 0;
+
+            if (!confirm('Are you sure you want to update?')) {
+                checkbox.prop('checked', previousState);
+                return;
+            }
+
             try {
-                const sendData = await fetch('<?= base_url('admin/sub-categories/update-active') ?>', {
+                const res = await fetch('<?= base_url('admin/sub-categories/update-active') ?>', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -35,30 +39,39 @@
                         value
                     })
                 });
-                const data = await sendData.json();
 
-                if (data.success) {
-                    showSuccessToast(data.message);
-                } else {
+                const data = await res.json();
+
+                if (!data.success) {
+                    checkbox.prop('checked', previousState);
                     showDangerToast(data.message);
+                } else {
+                    showSuccessToast(data.message);
                 }
 
-            } catch (error) {
-                console.error('Active ajax error', error);
+            } catch (err) {
+                checkbox.prop('checked', previousState);
                 showDangerToast('Something went wrong, try again later');
+                console.error(err);
             }
         });
 
-        $('.toggle-status').click(async function() {
-            let id = $(this).data('id');
-            let value = $(this).is(':checked') ? 1 : 0;
+
+
+        $('#sub-cat-listing').on('change', '.toggle-status', async function() {
+            const checkbox = $(this);
+            const previousState = !checkbox.prop('checked');
+
+            const id = checkbox.data('id');
+            const value = checkbox.prop('checked') ? 1 : 0;
 
             if (!confirm('Are you sure you want to update status?')) {
-                e.preventDefault();
-                return
-            };
+                checkbox.prop('checked', previousState);
+                return;
+            }
+
             try {
-                const sendData = await fetch('<?= base_url('admin/sub-categories/update-status') ?>', {
+                const res = await fetch('<?= base_url('admin/sub-categories/update-status') ?>', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -68,23 +81,31 @@
                         value
                     })
                 });
-                const data = await sendData.json();
 
-                if (data.success) {
-                    showSuccessToast(data.message);
-                } else {
+                const data = await res.json();
+
+                if (!data.success) {
+                    checkbox.prop('checked', previousState);
                     showDangerToast(data.message);
+                } else {
+                    showSuccessToast(data.message);
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
                 }
 
-            } catch (error) {
-                console.error('Active ajax error', error);
+            } catch (err) {
+                checkbox.prop('checked', previousState);
                 showDangerToast('Something went wrong, try again later');
+                console.error(err);
             }
         });
+
+
 
         // Update functions 
 
-        $('#updateBtn').click(async function(e) {
+        $(document).on('click', '.updateSubCatBtn', async function(e) {
             let subCatId = $('#sub_cat_id').val();
             let catId = $('#cat_id').val();
             let newCatName = $('#sub_cat_name').val();

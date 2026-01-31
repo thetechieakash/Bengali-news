@@ -13,6 +13,7 @@ class Home extends BaseController
         $data = [
             'pageTitle' => 'Home',
         ];
+        return view('user/Home', array_merge($this->data, $data));
 
         // $user = auth()->user();
         // dd([
@@ -22,6 +23,5 @@ class Home extends BaseController
         //     'can_admin' => $user->can('admin.access'),
         //     'can_news' => $user->can('news.create'),
         // ]);
-        return view('user/Home', $data);
     }
 }

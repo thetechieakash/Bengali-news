@@ -13,7 +13,7 @@
             <div class="col-md-12">
                 <ul class="breadcrumb">
                     <li><a href="#">Home</a></li>
-                    <li>Lifestyle</li>
+                    <li><?= esc($post['headline']) ?></li>
                 </ul>
             </div>
         </div>
@@ -27,10 +27,13 @@
         <div class="row">
             <div class="col-lg-8 col-md-12">
                 <div class="single-post">
-                    <div class="utf_post_title-area"> <a class="utf_post_cat" href="#">Health</a>
-                        <h2 class="utf_post_title">Lorem Ipsum is simply dummy text of the printing and type setting industry simply dummy text type.</h2>
+                    <div class="utf_post_title-area">
+                        <?php foreach ($post['categories'] as $cats): ?>
+                            <a class="utf_post_cat" href="<?= $cats['slug'] ?>"><?= $cats['name'] ?></a>
+                        <?php endforeach; ?>
+                        <h1 class="utf_post_title"><?= esc($post['headline']) ?></h1>
                         <div class="utf_post_meta">
-                            <span class="utf_post_author"> By John Wick </span>
+                            <span class="utf_post_author"><?= esc($post['author']) ?></span>
                             <span class="utf_post_date"> 15 Jan, 2022</span>
                             <!-- <span class="post-hits">
                                 <i class="fa fa-eye"></i> 21
