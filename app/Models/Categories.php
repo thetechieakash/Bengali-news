@@ -36,10 +36,12 @@ class Categories extends Model
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
 
-    public function getAllCats(){
+    public function getAllCats()
+    {
         return $this->orderBy('created_at', 'DESC')->findAll();
     }
-    public function getMultipleCatsById($id){
-        return $this->select()->where('id')->findAll();
+    public function getSpecificCatBySlug($slug)
+    {
+        return $this->where(['slug' => $slug, 'is_active' => 1])->first();
     }
 }

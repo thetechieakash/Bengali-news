@@ -7,8 +7,8 @@
 </footer> -->
 <div class="container">
     <footer class="pt-5">
-        <div class="row">
-            <div class="col-2">
+        <div class="row align-items-center">
+            <div class="col-6 col-md-2">
                 <h5>Section</h5>
                 <ul class="nav flex-column">
                     <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Home</a></li>
@@ -19,7 +19,7 @@
                 </ul>
             </div>
 
-            <div class="col-2">
+            <div class="col-6 col-md-2">
                 <h5>Section</h5>
                 <ul class="nav flex-column">
                     <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Home</a></li>
@@ -30,7 +30,7 @@
                 </ul>
             </div>
 
-            <div class="col-2">
+            <div class="col-6 col-md-2">
                 <h5>Section</h5>
                 <ul class="nav flex-column">
                     <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Home</a></li>
@@ -41,8 +41,16 @@
                 </ul>
             </div>
 
-            <div class="col-4 offset-1">
-                <form>
+            <div class="col-12 col-md-4 offset-md-1 mt-3 mt-md-0">
+                <div class="widget color-primary">
+                    <h3 class="utf_block_title"><span>Follow Us</span></h3>
+                    <ul class="social-icon">
+                        <li><a href="#" target="_blank"><i class="fa fa-facebook"></i></a></li>
+                        <li><a href="#" target="_blank"><i class="fa fa-twitter"></i></a></li>
+                        <li><a href="#" target="_blank"><i class="fa fa-youtube"></i></a></li>
+                    </ul>
+                </div>
+                <form class="mt-3">
                     <h5>Subscribe to our newsletter</h5>
                     <p>Monthly digest of whats new and exciting from us.</p>
                     <div class="d-flex w-100 gap-2">
@@ -56,7 +64,7 @@
 
         <div class="d-flex justify-content-between pt-4 my-4 border-top">
             <p>© <?= date('Y') ?> <a class="navbar-brand brand-logo" href="<?= base_url() ?>">খবর বাংলা </a>|| All rights reserved.</p>
-            <p>Made by <a href="">'Akash'</a></p>
+            <p>Made by <a href="https://github.com/thetechieakash" target="_blank">'Akash'</a></p>
         </div>
     </footer>
 </div>

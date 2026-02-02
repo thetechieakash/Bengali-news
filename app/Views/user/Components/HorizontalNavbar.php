@@ -77,50 +77,36 @@ $categories = [
                         <span class="menu-title">হোম</span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="<?= base_url('post') ?>">
-                        <span class="menu-title">মহানগর</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#!">
-                        <span class="menu-title">রাজ্য</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#!">
-                        <span class="menu-title">দেশ</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#!">
-                        <span class="menu-title">বিদেশ</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <span class="menu-title">খেলা</span>
-                        <i class="menu-arrow"></i></a>
-                    <div class="submenu cs">
-                        <ul class="submenu-item">
+                <?php if (isset($navbarCategories)): ?>
+                    <?php foreach ($navbarCategories as $navcats): ?>
+                        <?php if (!empty($navcats['subs'])): ?>
                             <li class="nav-item">
-                                <a class="nav-link" href="#!">ক্রিকেট</a>
+                                <a href="<?= base_url('category/') . $navcats['slug'] ?>" class="nav-link">
+                                    <span class="menu-title"><?= $navcats['name']  ?></span>
+                                    <i class="menu-arrow"></i></a>
+                                <div class="submenu cs">
+                                    <ul class="submenu-item">
+                                        <?php foreach ($navcats['subs'] as $subNavcats): ?>
+
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="<?= base_url('category/') . $navcats['slug'] . '/' . 'sub-categorie/' . $subNavcats['sub_cat_name'] ?>"><?= $subNavcats['sub_cat_name'] ?></a>
+                                            </li>
+                                        <?php endforeach ?>
+
+                                    </ul>
+                                </div>
                             </li>
+                        <?php else: ?>
                             <li class="nav-item">
-                                <a class="nav-link" href="#!">ফুটবল</a>
+                                <a class="nav-link" href="<?= base_url('categorie/') . $navcats['slug'] ?>">
+                                    <span class="menu-title"><?= $navcats['name']  ?></span>
+                                </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#!">অন্যান্য</a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#!">
-                        <span class="menu-title">বিনোদন</span>
-                    </a>
-                </li>
-                <li class="nav-item mega-menu">
+                        <?php endif ?>
+                    <?php endforeach ?>
+                <?php endif ?>
+
+                <!-- <li class="nav-item mega-menu">
                     <a href="#" class="nav-link">
                         <span class="menu-title">এছাড়াও</span>
                         <i class="menu-arrow"></i>
@@ -147,7 +133,7 @@ $categories = [
                             </ul>
                         </div>
                     </div>
-                </li>
+                </li> -->
             </ul>
         </div>
     </nav>

@@ -14,51 +14,43 @@
         <div class="row">
             <div class="col-12">
                 <div class="table-responsive">
-                    <table id="news-listing" class="table">
+                    <table id="users-listing" class="table">
                         <thead>
                             <tr>
                                 <th>SL #</th>
-                                <th>Post</th>
-                                <th>Post Date</th>
+                                <th>Username</th>
+                                <th>Email</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php $sl = 0; ?>
-                            <?php foreach ($news as $post): ?>
+                            <?php foreach ($users as $user): ?>
                                 <?php $sl++; ?>
                                 <tr>
-                                    <td><?= $sl ?>.</td>
-                                    <td><a href=""><?= mb_strimwidth($post['headline'], 0, 50, "...") ?></a> </td>
-                                    <?php $formattedDate = (new DateTime($post['updated_at']))->format('d M, Y h:i A'); ?>
+                                    <td><?= $sl ?></td>
+                                    <td><?= $user->username ?></td>
+                                    <td><?= $user->email ?></td>
+                                    <?php $formattedDate = (new DateTime($user->created_at))->format('d M, Y h:i A'); ?>
                                     <td><?= $formattedDate ?></td>
-
-                                    <td>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <label class="toggle-switch mb-0">
-                                                <input type="checkbox" name="activestatus"
-                                                    class="toggle-status"
-                                                    data-id="<?= $post['id'] ?>"
-                                                    <?= $post['status'] == 1 ? 'checked' : '' ?>>
-                                                <span class="slider"></span>
-                                            </label>
-                                        </div>
-                                    </td>
                                     <td>
                                         <div class="dropdown">
                                             <button class="btn btn-success btn-sm dropdown-toggle" type="button" id="dropdownAction" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                 Modify
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="dropdownAction">
-                                                <button class="dropdown-item editBtn"
-                                                    data-id="<?= $post['id'] ?>">Edit</button>
-                                                <button class="dropdown-item deleteBtn"
-                                                    data-id="<?= $post['id'] ?>">Delete</button>
+                                                <button class="dropdown-item editBtn" data-id="<?= $user->id ?>"
+                                                    data-username="<?= $user->username ?>"
+                                                    data-email="<?= $user->email ?>">Edit</button>
+                                                <button class="dropdown-item authorizationBtn" data-id="<?= $user->id ?>">Authorization</button>
+                                                <div class="dropdown-divider"></div>
+                                                <button class="dropdown-item deletebtn" data-id="<?= $user->id ?>">Delete</button>
                                             </div>
                                         </div>
                                     </td>
                                 </tr>
+
                             <?php endforeach; ?>
                         </tbody>
                     </table>
@@ -68,6 +60,7 @@
     </div>
 </div>
 <!-- Page modals start  -->
+<?= $this->include('admin/Components/Modals/UpdateUserModal.php'); ?>
 <!-- Page modals ends  -->
 
 <?= $this->endSection() ?>
@@ -78,6 +71,6 @@
 <?= $this->endSection() ?>
 
 <?= $this->section('script') ?>
-<?= $this->include('admin/Js/AllNews.js.php'); ?>
+<?= $this->include('admin/Js/Users.js.php'); ?>
 
 <?= $this->endSection() ?>

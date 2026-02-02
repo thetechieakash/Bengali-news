@@ -26,7 +26,6 @@ class CategoryService
         $categories = [];
 
         $cats = $catModel
-            ->where('is_active', 1)
             ->where('status', 1)
             ->orderBy('created_at', 'ASC')
             ->findAll();
@@ -34,7 +33,6 @@ class CategoryService
         foreach ($cats as $cat) {
             $subs = $subModel
                 ->where('cat_id', $cat['id'])
-                ->where('is_active', 1)
                 ->where('status', 1)
                 ->orderBy('created_at', 'ASC')
                 ->findAll();
@@ -43,6 +41,7 @@ class CategoryService
                 'id'   => $cat['id'],
                 'name' => $cat['cat'],
                 'slug' => $cat['slug'],
+                'is_active' => $cat['is_active'],
                 'subs' => $subs
             ];
         }

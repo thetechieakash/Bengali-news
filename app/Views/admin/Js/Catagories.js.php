@@ -56,7 +56,7 @@
             $('#cat_status').val(status);
             $('#cat_navbar').val(navbar);
 
-            $('#editModal').modal('show');
+            $('#editCatModal').modal('show');
 
             $('#updateBtn').show();
             $('#addsubcatform').hide();
@@ -171,7 +171,7 @@
                 const data = await response.json();
                 if (data.success) {
                     showSuccessToast(data.message);
-                    $('#editModal').modal('hide');
+                    $('#editCatModal').modal('hide');
                     setTimeout(() => {
                         location.reload();
                     }, 1000);
@@ -195,7 +195,7 @@
             $('#cat_name').val($(this).data('name')).prop("readonly", true);
             $('#cat_slug').val(currentCatSlug);
 
-            $('#editModal').modal('show');
+            $('#editCatModal').modal('show');
 
             $('#updateBtn').hide();
             $('#addsubcatform').show();
@@ -230,7 +230,7 @@
 
                 if (resp.success) {
                     showSuccessToast(resp.message);
-                    $('#editModal').modal('hide');
+                    $('#editCatModal').modal('hide');
                     $('#sub_cat_name').val('');
                     $('#sub_cat_status').prop('checked', false);
                 } else {

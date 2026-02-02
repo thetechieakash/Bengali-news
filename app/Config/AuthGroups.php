@@ -68,17 +68,30 @@ class AuthGroups extends ShieldAuthGroups
      * If a permission is not listed here it cannot be used.
      */
     public array $permissions = [
-        'admin.access',
-        'admin.users.manage',
-        'admin.settings',
-        'users.create',
-        'users.edit',
-        'beta.access',
+        'user.manage',
+        'user.create',
+        'user.update',
+        'user.delete',
+        'category.manage',
+        'category.create',
+        'category.update',
+        'category.delete',
+        'tags.manage',
+        'tags.create',
+        'tags.update',
+        'tags.delete',
+        'news.manage',
         'news.create',
         'news.update',
         'news.delete',
-        'news.publish',
-        'category.manage',
+        'comments.manage',
+        'comments.create',
+        'comments.update',
+        'comments.delete',
+        'ads.manage',
+        'ads.create',
+        'ads.update',
+        'ads.delete',
     ];
 
     /**

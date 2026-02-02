@@ -4,31 +4,26 @@ namespace App\Helpers;
 
 class Slug
 {
-    public function slugify($text_string, string $divider = '-')
+    public function slugify(string $text, string $divider = '-'): string
     {
-        // replace non letter or digits by divider
-        $text = preg_replace('~[^\pL\d]+~u', $divider, $text_string);
+        // 1. Normalize whitespace
+        $text = trim($text);
 
-        // transliterate
-        $text = @iconv('utf-8', 'us-ascii//TRANSLIT', $text);
+        // 2. Remove punctuation & symbols (keep letters & numbers of all languages)
+        $text = preg_replace('/[^\p{L}\p{N}\s]+/u', '', $text);
 
-        // remove unwanted characters
-        $text = preg_replace('~[^-\w]+~', '', $text);
+        // 3. Replace spaces with divider
+        $text = preg_replace('/\s+/u', $divider, $text);
 
-        // trim
+        // 4. Remove duplicate dividers
+        $text = preg_replace('/' . preg_quote($divider, '/') . '+/', $divider, $text);
+
+        // 5. Trim divider
         $text = trim($text, $divider);
 
-        // remove duplicate divider
-        $text = preg_replace('~-+~', $divider, $text);
+        // 6. Lowercase (Unicode-safe)
+        $text = mb_strtolower($text, 'UTF-8');
 
-        // lowercase
-        $text = strtolower($text);
-
-        if (empty($text)) {
-            //return 'n-a';
-            return preg_replace('/\s+/u', '-', trim($text_string));
-        }
-
-        return $text;
+        return $text ?: 'n-a';
     }
 }

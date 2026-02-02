@@ -61,7 +61,9 @@
             </div>
 
             <div class="col-lg-4 col-md-12 pad-l">
-                <div class="row">
+                <div class="widget text-center"> <img class="banner img-fluid" src="<?= base_url() ?>assets/images/banner-ads/ad-sidebar.png" alt="" /> </div>
+
+                <!-- <div class="row">
                     <div class="col-md-12">
                         <div class="utf_post_overaly_style text-center first clearfix">
                             <div class="utf_post_thumb"> <a href="#"><img class="img-fluid" src="<?= base_url() ?>assets/images/news/tech/gadget2.jpg" alt="" /></a> </div>
@@ -81,7 +83,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
@@ -594,25 +596,7 @@
                             </ul>
                         </div>
                     </div>
-
-                    <div class="widget color-primary m-bottom-0">
-                        <h3 class="utf_block_title"><span>Newsletter</span></h3>
-                        <div class="utf_newsletter_block">
-                            <div class="utf_newsletter_introtext">
-                                <h4>Subscribe Newsletter!</h4>
-                                <p>Monthly digest of whats new and exciting from us.</p>
-                            </div>
-                            <div class="utf_newsletter_form">
-                                <form action="#" method="post">
-                                    <?= csrf_field() ?>
-                                    <div class="form-group">
-                                        <input type="email" name="email" id="utf_newsletter_form-email" class="form-control form-control-lg" placeholder="E-Mail Address" autocomplete="off">
-                                        <button class="btn btn-primary" type="button">Subscribe</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="widget text-center"> <img class="banner img-fluid" src="<?= base_url() ?>assets/images/banner-ads/ad-sidebar.png" alt="" /> </div>
                 </div>
             </div>
         </div>

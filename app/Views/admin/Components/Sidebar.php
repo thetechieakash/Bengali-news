@@ -42,19 +42,26 @@ $uri = uri_string();
             <div class="collapse  <?= ($uri === 'admin/all-news' || $uri === 'admin/news') ? 'show' : '' ?>" id="news">
                 <ul class="nav flex-column sub-menu">
                     <li class="nav-item">
-                        <a class="nav-link <?= $uri === 'admin/all-news' ? 'active' : '' ?>" href="<?= base_url('admin/all-news') ?>">All news</a>
+                        <a class="nav-link <?= $uri === 'admin/all-news' ? 'active' : '' ?>" href="<?= base_url('admin/all-news') ?>">All News</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link <?= $uri === 'admin/news' ? 'active' : '' ?>" href="<?= base_url('admin/news') ?>">Create news</a>
+                        <a class="nav-link <?= $uri === 'admin/news' ? 'active' : '' ?>" href="<?= base_url('admin/news') ?>">Create News</a>
                     </li>
 
                 </ul>
             </div>
         </li>
-        <li class="nav-item">
-            <a class="nav-link " href="">
+        <li class="nav-item nav-category">User Manager</li>
+        <li class="nav-item <?= $uri === 'admin/all-users' ? 'active' : '' ?>">
+            <a class="nav-link" href="<?= base_url('admin/all-users') ?>">
                 <i class="mdi mdi-grid-large menu-icon"></i>
-                <span class="menu-title"><?= $uri ?></span>
+                <span class="menu-title">All User</span>
+            </a>
+        </li>
+        <li class="nav-item <?= $uri === 'admin/user' ? 'active' : '' ?>">
+            <a class="nav-link" href="<?= base_url('admin/user') ?>">
+                <i class="mdi mdi-grid-large menu-icon"></i>
+                <span class="menu-title">Create User</span>
             </a>
         </li>
     </ul>

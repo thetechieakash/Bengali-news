@@ -6,7 +6,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>News Now || <?= $this->renderSection('pageTitle') ?></title>
+    <title>Bangla Khobor || <?= $this->renderSection('pageTitle') ?></title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/css/vendor.bundle.base.css">
@@ -22,7 +22,7 @@
     <!-- inject:css -->
     <link rel="stylesheet" href="<?= base_url() ?>assets/css/horizontal-layout-light/style.css">
     <!-- endinject -->
-    <link rel="shortcut icon" href="<?= base_url() ?>assets/images/favicon.png" />
+    <link rel="shortcut icon" href="<?= base_url() ?>assets/images/bangla-logo-mini.svg" />
     <link rel="stylesheet" href="<?= base_url() ?>assets/customs/css/style.css">
     <link rel="stylesheet" href="<?= base_url() ?>assets/customs/css/custom.css">
 </head>
@@ -77,6 +77,13 @@
                                     <?= $this->renderSection('content') ?>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="utf_ad_content_area text-center utf_banner_area">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm-12"> <img class="img-fluid" src="<?= base_url() ?>assets/images/banner-ads/ad-content-one.jpg" alt="" /> </div>
                         </div>
                     </div>
                 </div>

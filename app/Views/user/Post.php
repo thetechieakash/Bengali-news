@@ -217,17 +217,7 @@
 
             <div class="col-lg-4 col-md-12">
                 <div class="sidebar utf_sidebar_right">
-                    <div class="widget color-primary">
-                        <h3 class="utf_block_title"><span>Follow Us</span></h3>
-                        <ul class="social-icon">
-                            <li><a href="#" target="_blank"><i class="fa fa-rss"></i></a></li>
-                            <li><a href="#" target="_blank"><i class="fa fa-facebook"></i></a></li>
-                            <li><a href="#" target="_blank"><i class="fa fa-twitter"></i></a></li>
-                            <li><a href="#" target="_blank"><i class="fa fa-google-plus"></i></a></li>
-                            <li><a href="#" target="_blank"><i class="fa fa-vimeo-square"></i></a></li>
-                            <li><a href="#" target="_blank"><i class="fa fa-youtube"></i></a></li>
-                        </ul>
-                    </div>
+                    <div class="widget text-center"> <img class="banner img-fluid" src="<?= base_url() ?>assets/images/banner-ads/ad-sidebar.png" alt="" /> </div>
 
                     <div class="widget color-primary">
                         <h3 class="utf_block_title">

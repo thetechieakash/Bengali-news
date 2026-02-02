@@ -8,20 +8,20 @@ use App\Models\NewsPostModel;
 use CodeIgniter\Exceptions\PageNotFoundException;
 
 
-class Post extends BaseController
+class Category extends BaseController
 {
     public function index($identifier): string
     {
-        $newsModel = new NewsPostModel();
-        $post = $newsModel->getActivePostForUser($identifier);
-        if (!$post) {
+
+        $catModel = new Categories();
+        $category = $catModel->getSpecificCatBySlug($identifier);
+        if (!$category) {
             throw PageNotFoundException::forPageNotFound();
         }
         $data = [
-            'pageTitle' => 'Post',
-            'post' => $post,
-
+            'pageTitle' => $category['cat'],
+            'category' => $category
         ];
-        return view('user/Post', array_merge($this->data, $data));
+        return view('user/Category', array_merge($this->data, $data));
     }
 }
