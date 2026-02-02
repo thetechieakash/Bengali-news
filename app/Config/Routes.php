@@ -41,6 +41,7 @@ $routes->group('admin', ['filter' => 'group:superadmin,admin,developer'], functi
     $routes->post('user/create', 'Admin\UserController::createUser');
     $routes->post('user/update', 'Admin\UserController::updateUser');
     $routes->post('user/delete', 'Admin\UserController::deleteUser');
+    $routes->post('user/restore', 'Admin\UserController::restoreUser');
     $routes->get('user/authorization/(:num)', 'Admin\AuthorizationController::index/$1');
 });
 

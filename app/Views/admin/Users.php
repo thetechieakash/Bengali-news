@@ -33,19 +33,33 @@
                                     <td><?= $user->username ?></td>
                                     <td><?= $user->email ?></td>
                                     <?php $formattedDate = (new DateTime($user->created_at))->format('d M, Y h:i A'); ?>
-                                    <td><?= $formattedDate ?></td>
+                                    <!-- <td><?= $formattedDate ?></td> -->
                                     <td>
+                                        <?php if ($user->deleted_at): ?>
+                                            <span class="badge bg-danger">Deactivated</span>
+                                        <?php else: ?>
+                                            <span class="badge bg-success">Active</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+
+
+
                                         <div class="dropdown">
                                             <button class="btn btn-success btn-sm dropdown-toggle" type="button" id="dropdownAction" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                 Modify
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="dropdownAction">
-                                                <button class="dropdown-item editBtn" data-id="<?= $user->id ?>"
-                                                    data-username="<?= $user->username ?>"
-                                                    data-email="<?= $user->email ?>">Edit</button>
-                                                <button class="dropdown-item authorizationBtn" data-id="<?= $user->id ?>">Authorization</button>
-                                                <div class="dropdown-divider"></div>
-                                                <button class="dropdown-item deletebtn" data-id="<?= $user->id ?>">Delete</button>
+                                                <?php if ($user->deleted_at): ?>
+                                                    <button class="dropdown-item restorebtn" data-id="<?= $user->id ?>">Reactivate</button>
+                                                <?php else: ?>
+                                                    <button class="dropdown-item editBtn" data-id="<?= $user->id ?>"
+                                                        data-username="<?= $user->username ?>"
+                                                        data-email="<?= $user->email ?>">Edit</button>
+                                                    <button class="dropdown-item authorizationBtn" data-id="<?= $user->id ?>">Authorization</button>
+                                                    <div class="dropdown-divider"></div>
+                                                    <button class="dropdown-item deletebtn" data-id="<?= $user->id ?>">Delete</button>
+                                                <?php endif; ?>
                                             </div>
                                         </div>
                                     </td>

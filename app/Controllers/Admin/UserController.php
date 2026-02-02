@@ -4,7 +4,7 @@ namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
 use CodeIgniter\Shield\Entities\User;
-
+use CodeIgniter\Shield\Models\UserModel;
 
 
 class UserController extends BaseController
@@ -13,6 +13,7 @@ class UserController extends BaseController
     {
         $users = auth()->getProvider(true);
         $usersList = $users->withIdentities()
+            ->withDeleted()
             ->withGroups()
             ->withPermissions()
             ->orderBy('created_at', 'DESC')
@@ -184,6 +185,34 @@ class UserController extends BaseController
         return $this->response->setJSON([
             'success' => true,
             'message' => 'User deleted successfully'
+        ]);
+    }
+
+    public function restoreUser()
+    {
+        if (! auth()->loggedIn()) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Unauthorized'
+            ])->setStatusCode(401);
+        }
+
+        $userId = $this->request->getPost('user_id');
+
+        if (! $userId) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'User ID is required'
+            ]);
+        }
+
+        $users = new UserModel();
+
+        $users->where('id', $userId)->set('deleted_at', null)->update();
+
+        return $this->response->setJSON([
+            'success' => true,
+            'message' => 'User reactivated successfully'
         ]);
     }
 }
