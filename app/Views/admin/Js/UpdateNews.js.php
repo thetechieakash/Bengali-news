@@ -9,7 +9,7 @@
 
         // Loader 
         const loader = $('#panding-loader');
-        
+
         // GLightbox init 
         const lightbox = GLightbox();
         /* ----------------------------------------------------
@@ -32,15 +32,54 @@
         });
 
         /* ----------------------------------------------------
-         * Tags input
+         * Tags select2
          * -------------------------------------------------- */
-        $('#tags').tagsInput({
+        ;
+        $('#tags').select2({
+            theme: 'bootstrap',
+            placeholder: 'Type to add tags',
+            multiple: true,
+            tags: true,
+            minimumInputLength: 1,
             width: '100%',
-            height: '75%',
-            defaultText: 'Add tag',
-            removeWithBackspace: true,
-            maxChars: 20
+
+            ajax: {
+                url: "<?= base_url('admin/tags/search') ?>",
+                dataType: 'json',
+                delay: 300,
+                data(params) {
+                    return {
+                        q: params.term
+                    };
+                },
+                processResults(data) {
+                    return {
+                        results: data.map(tag => ({
+                            id: tag.name,
+                            text: tag.name
+                        }))
+                    };
+                }
+            },
+
+            createTag(params) {
+                const term = params.term.trim().toLowerCase();
+                if (!term) return null;
+
+                const exists = $('#tags option').filter(function() {
+                    return $(this).text().toLowerCase() === term;
+                }).length;
+
+                if (exists) return null;
+
+                return {
+                    id: term,
+                    text: term,
+                    newTag: true
+                };
+            }
         });
+
 
         /* ----------------------------------------------------
          * Flatpickr
@@ -182,9 +221,54 @@
         });
 
 
-        $(document).on('click', '#update', function(e) {
-            e.preventDefault();
-            const btn = $(this).prop('disabled', true);
+        // $(document).on('click', '#update', function(e) {
+        //     e.preventDefault();
+        //     const btn = $(this).prop('disabled', true);
+
+        //     const editorData = CKEDITOR.instances.editor.getData();
+        //     if (!editorData.replace(/<[^>]*>/g, '').trim()) {
+        //         showDangerToast('Description is required');
+        //         btn.prop('disabled', false);
+        //         return;
+        //     }
+
+        //     // Sync CKEditor → textarea
+        //     for (let i in CKEDITOR.instances) {
+        //         CKEDITOR.instances[i].updateElement();
+        //     }
+        //     loader.fadeIn(150);
+        //     $.ajax({
+        //         url: "<?= base_url('admin/news/update/' . ($post['id'] ?? '')) ?>",
+        //         type: "POST",
+        //         data: new FormData(document.getElementById('newsForm')),
+        //         processData: false,
+        //         contentType: false,
+        //         success(res) {
+        //             if (res.success) {
+        //                 showSuccessToast(res.message);
+        //                 setTimeout(() => location.href = res.redirect, 1000);
+        //             } else {
+        //                 showDangerToast(res.message);
+        //             }
+        //             btn.prop('disabled', false);
+        //         },
+        //         error(err) {
+        //             showDangerToast('Server error. Please try again.');
+        //             console.error('Post Delete server error', err);
+        //         },
+
+        //         complete() {
+        //             loader.fadeOut(150);
+        //             btn.prop('disabled', false);
+        //         }
+        //     });
+        // });
+
+        function submitPost(status) {
+            $('#post_status').val(status);
+
+            const btn = status === 1 ? $('#publish') : $('#update');
+            btn.prop('disabled', true);
 
             const editorData = CKEDITOR.instances.editor.getData();
             if (!editorData.replace(/<[^>]*>/g, '').trim()) {
@@ -193,13 +277,14 @@
                 return;
             }
 
-            // Sync CKEditor → textarea
             for (let i in CKEDITOR.instances) {
                 CKEDITOR.instances[i].updateElement();
             }
+
             loader.fadeIn(150);
+
             $.ajax({
-                url: "<?= base_url('admin/news/update/' . ($post['id'] ?? '')) ?>",
+                url: "<?= base_url('admin/news/update/' . $post['id']) ?>",
                 type: "POST",
                 data: new FormData(document.getElementById('newsForm')),
                 processData: false,
@@ -211,18 +296,26 @@
                     } else {
                         showDangerToast(res.message);
                     }
-                    btn.prop('disabled', false);
                 },
-                error(err) {
-                    showDangerToast('Server error. Please try again.');
-                    console.error('Post Delete server error', err);
+                error() {
+                    showDangerToast('Server error');
                 },
-
                 complete() {
                     loader.fadeOut(150);
                     btn.prop('disabled', false);
                 }
             });
+        }
+
+        $(document).on('click', '#update', function(e) {
+            e.preventDefault();
+            submitPost(0); // SAVE ONLY
         });
+
+        $(document).on('click', '#publish', function(e) {
+            e.preventDefault();
+            submitPost(1); // SAVE + PUBLISH
+        });
+
     });
 </script>

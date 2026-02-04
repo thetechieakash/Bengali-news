@@ -25,7 +25,7 @@
                     <!-- <p class="card-description">Basic form elements</p> -->
                     <div class="form-group">
                         <label for="headline">Headline</label>
-                        <input type="text" class="form-control" id="headline" name="headline" placeholder="Headline" value="" required>
+                        <input type="text" class="form-control" id="headline" name="headline" placeholder="Headline" value="" autocomplete="off" required>
                     </div>
                     <div class="form-group">
                         <label for="shortdesc">Short Description</label>
@@ -33,14 +33,7 @@
                     </div>
                     <div class="form-group">
                         <label for="tags">Tags</label>
-
-                        <input class="form-control" name="tags" id="tags" value="" />
-                    </div>
-                    <div class="form-group">
-                        <label for="date">
-                            Post Date <small class="text-muted">(leave empty to publish now)</small>
-                        </label>
-                        <input class="form-control datetimepicker" type="text" placeholder="Pick a date" name="date" value="">
+                        <select class="form-control" id="tags" name="tags[]" multiple="multiple"></select>
                     </div>
                 </div>
             </div>

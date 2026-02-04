@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\Slug;
 use CodeIgniter\Model;
 
 class TagModel extends Model
@@ -14,4 +15,20 @@ class TagModel extends Model
     protected $allowedFields = [
         'name',
     ];
+
+    public function getOrCreate(string $name): int
+    {
+        $name = trim($name);
+
+        $tag = $this
+            ->where('LOWER(name)', mb_strtolower($name))
+            ->first();
+
+        if ($tag) {
+            return (int) $tag['id'];
+        }
+
+        $this->insert(['name' => $name]);
+        return $this->getInsertID();
+    }
 }

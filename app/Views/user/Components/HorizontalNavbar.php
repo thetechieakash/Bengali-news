@@ -1,50 +1,16 @@
-<?php $uri = uri_string();
-$categories = [
-    'হোম' => [],
-    'মহানগর' => [],
-    'লাইফস্টাইল' => [
-        'সম্পর্ক',
-        'ফ্যাশন',
-        'পেট্রোল',
-        'টেক',
-        'গোয়েন্দাগিরি',
-    ],
-    'ট্রেন্ডিং' => [],
-    'রাজ্য' => [],
-    'দেশ' => [],
-    'খেলা' => [
-        'ক্রিকেট',
-        'ফুটবল',
-        'অন্যান্য',
-    ],
-    'সম্পাদকীয়' => [
-        'আমাদের কথা',
-        'উত্তর সম্পাদকীয়',
-    ],
-    'সংস্কৃতি' => [],
-    'অপরাধ' => [],
-    'ধর্মকথা' => [],
-    'ওপার বাংলা' => [],
-    'বিদেশ' => [],
-    'বিনোদন' => [
-        'হলি বলি টলি',
-        'ভিডিও',
-        'সংস্কৃতি',
-        'টেলি দুনিয়া',
-    ],
-    'ছবিঘর' => [],
-    'ভিডিও' => [],
-    'রাশিফল' => [],
-    'বিজ্ঞান ও পরিবেশ' => [],
-    'চাকরির খবর' => [],
-    'রোববার' => [],
-    'ফিচার' => [],
-    'বাঁকা কথা' => [],
-    'দেশবিদেশ' => [],
-    'যোগাযোগ' => [],
-    'ইতিহাস' => [],
-];
+<?php
+$uri = uri_string();
 
+$activeNavCats = [];
+$megaMenuCats  = [];
+
+foreach ($navbarCategories as $cat) {
+    if ((int)$cat['is_active'] === 1) {
+        $activeNavCats[] = $cat;
+    } else {
+        $megaMenuCats[] = $cat;
+    }
+}
 ?>
 <div class="horizontal-menu">
     <nav class="navbar top-navbar bg-transparent col-lg-12 col-12 p-0 py-3">
@@ -77,63 +43,72 @@ $categories = [
                         <span class="menu-title">হোম</span>
                     </a>
                 </li>
-                <?php if (isset($navbarCategories)): ?>
-                    <?php foreach ($navbarCategories as $navcats): ?>
-                        <?php if (!empty($navcats['subs'])): ?>
-                            <li class="nav-item">
-                                <a href="<?= base_url('category/') . $navcats['slug'] ?>" class="nav-link">
-                                    <span class="menu-title"><?= $navcats['name']  ?></span>
-                                    <i class="menu-arrow"></i></a>
-                                <div class="submenu cs">
-                                    <ul class="submenu-item">
-                                        <?php foreach ($navcats['subs'] as $subNavcats): ?>
+                <?php foreach ($activeNavCats as $cat): ?>
+                    <?php if (!empty($cat['subs'])): ?>
+                        <li class="nav-item <?= str_contains($uri, $cat['slug']) ? 'active' : '' ?>">
+                            <a href="<?= base_url('category/' . $cat['slug']) ?>" class="nav-link">
+                                <span class="menu-title"><?= esc($cat['name']) ?></span>
+                                <i class="menu-arrow"></i>
+                            </a>
 
+                            <div class="submenu cs">
+                                <ul class="submenu-item">
+                                    <?php foreach ($cat['subs'] as $sub): ?>
+                                        <?php if ((int)$sub['is_active'] === 1): ?>
                                             <li class="nav-item">
-                                                <a class="nav-link" href="<?= base_url('category/') . $navcats['slug'] . '/' . 'sub-categorie/' . $subNavcats['sub_cat_name'] ?>"><?= $subNavcats['sub_cat_name'] ?></a>
-                                            </li>
-                                        <?php endforeach ?>
-
-                                    </ul>
-                                </div>
-                            </li>
-                        <?php else: ?>
-                            <li class="nav-item">
-                                <a class="nav-link" href="<?= base_url('categorie/') . $navcats['slug'] ?>">
-                                    <span class="menu-title"><?= $navcats['name']  ?></span>
-                                </a>
-                            </li>
-                        <?php endif ?>
-                    <?php endforeach ?>
-                <?php endif ?>
-
-                <!-- <li class="nav-item mega-menu">
-                    <a href="#" class="nav-link">
-                        <span class="menu-title">এছাড়াও</span>
-                        <i class="menu-arrow"></i>
-                    </a>
-                    <div class="submenu sub-menu-grid">
-                        <div class="sub-menu-grid-layout">
-                            <ul>
-                                <?php foreach ($categories as $key => $subs) : ?>
-                                    <li>
-                                        <a class="nav-link" href="#!">
-                                            <span class="menu-title"><?= $key ?></span>
-                                        </a>
-                                    </li>
-                                    <?php if (is_array($subs) && count($subs) > 0): ?>
-                                        <?php foreach ($subs as $key => $sub) : ?>
-                                            <li>
-                                                <a class="nav-link" href="#!">
-                                                    <span class="menu-title"><?= $sub ?></span>
+                                                <a class="nav-link"
+                                                    href="<?= base_url('category/' . $cat['slug'] . '/sub-category/' . $sub['sub_cat_slug']) ?>">
+                                                    <?= esc($sub['sub_cat_name']) ?>
                                                 </a>
                                             </li>
-                                        <?php endforeach; ?>
-                                    <?php endif; ?>
-                                <?php endforeach; ?>
-                            </ul>
+                                        <?php endif ?>
+                                    <?php endforeach ?>
+                                </ul>
+                            </div>
+                        </li>
+                    <?php else: ?>
+                        <li class="nav-item <?= str_contains($uri, $cat['slug']) ? 'active' : '' ?>">
+                            <a class="nav-link" href="<?= base_url('category/' . $cat['slug']) ?>">
+                                <span class="menu-title"><?= esc($cat['name']) ?></span>
+                            </a>
+                        </li>
+                    <?php endif ?>
+                <?php endforeach ?>
+
+                <?php if (!empty($megaMenuCats)): ?>
+                    <li class="nav-item mega-menu">
+                        <a href="#" class="nav-link">
+                            <span class="menu-title">এছাড়াও</span>
+                            <i class="menu-arrow"></i>
+                        </a>
+
+                        <div class="submenu sub-menu-grid">
+                            <div class="sub-menu-grid-layout">
+                                <ul>
+                                    <?php foreach ($megaMenuCats as $cat): ?>
+                                        <li class="nav-item fw-bold">
+                                            <a class="nav-link" href="<?= base_url('category/' . $cat['slug']) ?>">
+                                                <span class="menu-title"><?= esc($cat['name']) ?></span>
+                                            </a>
+                                        </li>
+
+                                        <?php if (!empty($cat['subs'])): ?>
+                                            <?php foreach ($cat['subs'] as $sub): ?>
+                                                <li class="nav-item ps-3">
+                                                    <a class="nav-link sub-cat"
+                                                        href="<?= base_url('category/' . $cat['slug'] . '/sub-category/' . $sub['sub_cat_slug']) ?>">
+                                                        <?= esc($sub['sub_cat_name']) ?>
+                                                    </a>
+                                                </li>
+                                            <?php endforeach ?>
+                                        <?php endif ?>
+                                    <?php endforeach ?>
+                                </ul>
+                            </div>
                         </div>
-                    </div>
-                </li> -->
+                    </li>
+                <?php endif ?>
+
             </ul>
         </div>
     </nav>

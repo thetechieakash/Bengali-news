@@ -2,28 +2,35 @@
 
 namespace App\Helpers;
 
+use Normalizer;
+
 class Slug
 {
     public function slugify(string $text, string $divider = '-'): string
     {
-        // 1. Normalize whitespace
+        // 1. Trim
         $text = trim($text);
 
-        // 2. Remove punctuation & symbols (keep letters & numbers of all languages)
-        $text = preg_replace('/[^\p{L}\p{N}\s]+/u', '', $text);
+        // 2. Normalize Unicode (CRITICAL for Bengali)
+        if (class_exists(Normalizer::class)) {
+            $text = Normalizer::normalize($text, Normalizer::FORM_C);
+        }
 
-        // 3. Replace spaces with divider
+        // 3. Remove punctuation (keep letters, numbers, AND combining marks)
+        $text = preg_replace('/[^\p{L}\p{N}\p{M}\s]+/u', '', $text);
+
+        // 4. Replace whitespace with divider
         $text = preg_replace('/\s+/u', $divider, $text);
 
-        // 4. Remove duplicate dividers
+        // 5. Remove duplicate dividers
         $text = preg_replace('/' . preg_quote($divider, '/') . '+/', $divider, $text);
 
-        // 5. Trim divider
+        // 6. Trim dividers
         $text = trim($text, $divider);
 
-        // 6. Lowercase (Unicode-safe)
+        // 7. Lowercase (Unicode-safe)
         $text = mb_strtolower($text, 'UTF-8');
 
-        return $text ?: 'n-a';
+        return $text !== '' ? $text : 'n-a';
     }
 }

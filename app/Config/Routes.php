@@ -7,7 +7,8 @@ use CodeIgniter\Router\RouteCollection;
  */
 $routes->get('/', 'User\Home::index');
 $routes->get('post/(:segment)', 'User\Post::index/$1');
-$routes->get('category/(:any)', 'User\Category::index/$1');
+$routes->get('category/(:segment)', 'User\Category::index/$1');
+$routes->get('category/(:segment)/sub-category/(:segment)', 'User\SubCategory::index/$1/$2');
 
 service('auth')->routes($routes);
 
@@ -28,6 +29,9 @@ $routes->group('admin', ['filter' => 'group:superadmin,admin,developer'], functi
     $routes->post('sub-categories/delete', 'Admin\SubCatagoriesController::deleteSubCategory');
     $routes->post('sub-categories/by-categories', 'Admin\SubCatagoriesController::getByCategories');
 
+    // $routes->get('tags', 'Admin\TagsController::index');
+    $routes->get('tags/search', 'Admin\TagsController::search');
+
     $routes->get('news', 'Admin\PostController::news');
     $routes->get('all-news', 'Admin\PostController::index');
     $routes->post('news/create', 'Admin\PostController::createNewsPost');
@@ -42,7 +46,6 @@ $routes->group('admin', ['filter' => 'group:superadmin,admin,developer'], functi
     $routes->post('user/update', 'Admin\UserController::updateUser');
     $routes->post('user/delete', 'Admin\UserController::deleteUser');
     $routes->post('user/restore', 'Admin\UserController::restoreUser');
-    $routes->get('user/authorization/(:num)', 'Admin\AuthorizationController::index/$1');
 });
 
 $routes->set404Override(function () {

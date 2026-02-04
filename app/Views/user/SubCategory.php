@@ -13,7 +13,8 @@
             <div class="col-md-12">
                 <ul class="breadcrumb">
                     <li><a href="<?= base_url() ?>">Home</a></li>
-                    <li><?= esc($category['cat']) ?></li>
+                    <li><a href="<?= base_url("category/{$category['slug']}") ?>"><?= esc($category['cat']) ?></a></li>
+                    <li><?= esc($subCategory['sub_cat_name']) ?></li>
                 </ul>
             </div>
         </div>
@@ -27,17 +28,7 @@
             <div class="col-lg-8 col-md-12">
                 <div class="block category-listing category-style2 color-primary">
                     <h3 class="utf_block_title"><span><?= esc($category['cat']) ?></span></h3>
-                    <?php if (!empty($subCategory)): ?>
-                        <ul class="subCategory unstyled">
-                            <?php foreach ($subCategory as $subCat): ?>
-                                <li>
-                                    <a href="<?= base_url("category/{$category['slug']}/sub-category/{$subCat['sub_cat_slug']}") ?>">
-                                        <?= esc($subCat['sub_cat_name']) ?>
-                                    </a>
-                                </li>
-                            <?php endforeach; ?>
-                        </ul>
-                    <?php endif; ?>
+
                     <div class="utf_post_block_style post-list clearfix">
                         <div class="row">
                             <div class="col-lg-5 col-md-6">

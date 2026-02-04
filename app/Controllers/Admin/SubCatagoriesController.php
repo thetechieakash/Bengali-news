@@ -130,11 +130,11 @@ class SubCatagoriesController extends BaseController
 
     public function updateActive()
     {
-        $data = $this->request->getJSON(true);
+        $data  = $this->request->getJSON(true);
         $id    = $data['id'] ?? null;
         $value = (int) ($data['value'] ?? 0);
 
-        if (!$id) {
+        if (!$id || !in_array($value, [0, 1], true)) {
             return $this->response->setJSON([
                 'success' => false,
                 'message' => 'Invalid request'
@@ -153,33 +153,52 @@ class SubCatagoriesController extends BaseController
             ]);
         }
 
-        // If trying to activate → check parent
+        /* -------- WHEN ACTIVATING -------- */
         if ($value === 1) {
+
+            /* ---- CHECK PARENT CATEGORY ---- */
             $parent = $catModel->find($sub['cat_id']);
 
             if (
                 !$parent ||
-                (int)$parent['is_active'] !== 1 ||
-                (int)$parent['status'] !== 1
+                (int) $parent['is_active'] !== 1 ||
+                (int) $parent['status'] !== 1
             ) {
                 return $this->response->setJSON([
                     'success' => false,
                     'message' => 'Cannot activate subcategory while parent category is inactive'
                 ]);
             }
+
+            /* ---- LIMIT CHECK (MAX 5 ACTIVE PER CATEGORY) ---- */
+            if ((int) $sub['is_active'] === 0) {
+
+                $activeCount = $subModel
+                    ->where('cat_id', $sub['cat_id'])
+                    ->where('is_active', 1)
+                    ->countAllResults();
+
+                if ($activeCount >= 5) {
+                    return $this->response->setJSON([
+                        'success' => false,
+                        'message' => 'Only 5 subcategories can be active under a category. Disable another subcategory first.'
+                    ]);
+                }
+            }
         }
 
+        /* -------- UPDATE SUBCATEGORY -------- */
         $subModel->update($id, ['is_active' => $value]);
 
         cache()->delete('navbar_categories');
 
-
         return $this->response->setJSON([
             'success' => true,
-            'message' => 'Updated successfully'
+            'message' => $value
+                ? 'Subcategory activated successfully'
+                : 'Subcategory deactivated successfully'
         ]);
     }
-
 
     public function updateStatus()
     {

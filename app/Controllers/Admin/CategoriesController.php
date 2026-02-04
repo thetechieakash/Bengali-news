@@ -137,10 +137,36 @@ class CategoriesController extends BaseController
             $catModel    = new Categories();
             $subCatModel = new SubCategories();
 
+            /* -------- LIMIT CHECK (ONLY WHEN ACTIVATING) -------- */
+            if ($value === 1) {
+
+                // If already active, skip count check
+                $current = $catModel->select('is_active')->find($id);
+
+                if (!$current) {
+                    throw new \RuntimeException('Category not found');
+                }
+
+                if ((int) $current['is_active'] === 0) {
+                    $activeCount = $catModel
+                        ->where('is_active', 1)
+                        ->countAllResults();
+
+                    if ($activeCount >= 10) {
+                        $db->transRollback();
+
+                        return $this->response->setJSON([
+                            'success' => false,
+                            'message' => 'Only 10 categories can be active in the navbar. Please disable another category first.'
+                        ]);
+                    }
+                }
+            }
+
             /* -------- UPDATE CATEGORY -------- */
             $catModel->update($id, ['is_active' => $value]);
 
-            /* -------- IF CATEGORY DISABLED → DISABLE ALL SUB CATEGORIES -------- */
+            /* -------- IF CATEGORY DISABLED → DISABLE SUB CATEGORIES -------- */
             if ($value === 0) {
                 $subCatModel
                     ->where('cat_id', $id)
@@ -168,7 +194,6 @@ class CategoriesController extends BaseController
             ]);
         }
     }
-
 
     public function updateStatus()
     {

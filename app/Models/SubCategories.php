@@ -41,7 +41,18 @@ class SubCategories extends Model
     public function getAllSubCats()
     {
         return $this->select('sub_categories.*,categories.cat AS category_name')
-            ->join('categories', 'categories.id = sub_categories.cat_id' ,'left')
+            ->join('categories', 'categories.id = sub_categories.cat_id', 'left')
             ->findAll();
     }
+    
+    public function getSubCatsByCatId($id)
+    {
+        return $this->where(['cat_id' => $id, 'status' => 1])->findAll();
+    }
+
+    public function getSubCatsBySlug($slug)
+    {
+        return $this->where(['sub_cat_slug' => $slug, 'status' => 1])->first();
+    }
+    
 }

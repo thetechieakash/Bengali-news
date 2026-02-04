@@ -42,6 +42,17 @@ class Categories extends Model
     }
     public function getSpecificCatBySlug($slug)
     {
-        return $this->where(['slug' => $slug, 'is_active' => 1])->first();
+        return $this->where(['slug' => $slug, 'status' => 1])->first();
+    }
+
+    
+    public function randomCategory($limit){
+        $posts = $this->select('id, cat, slug')
+            ->where('status', 1)
+            ->orderBy('RAND()')
+            ->limit($limit)
+            ->get()
+            ->getResultArray();
+            return $posts;
     }
 }

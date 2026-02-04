@@ -33,13 +33,58 @@
         /* ----------------------------------------------------
          * Tags input
          * -------------------------------------------------- */
-        $('#tags').tagsInput({
-            width: '100%',
-            height: '75%',
-            defaultText: 'Add tag',
-            removeWithBackspace: true,
-            maxChars: 20
+        // $('#tags').tagsInput({
+        //     width: '100%',
+        //     height: '75%',
+        //     defaultText: 'Add tag',
+        //     removeWithBackspace: true,
+        //     maxChars: 20
+        // });
+
+
+        $('#tags').select2({
+            theme: 'bootstrap',
+            placeholder: 'Type to add tags',
+            minimumInputLength: 2,
+            tags: true, // allow creation
+            selectOnClose: true, // KEY FIX
+            closeOnSelect: true,
+            ajax: {
+                url: "<?= base_url('admin/tags/search') ?>",
+                dataType: 'json',
+                delay: 250,
+                data(params) {
+                    return {
+                        q: params.term
+                    };
+                },
+                processResults(data) {
+                    return {
+                        results: data.map(tag => ({
+                            id: tag.id,
+                            text: tag.name
+                        }))
+                    };
+                }
+            },
+            createTag(params) {
+                const term = params.term.trim().toLowerCase();
+                if (!term) return null;
+
+                const exists = $('#tags option').filter(function() {
+                    return $(this).text().toLowerCase() === term;
+                }).length;
+
+                if (exists) return null;
+
+                return {
+                    id: term,
+                    text: term,
+                    newTag: true
+                };
+            }
         });
+
 
         /* ----------------------------------------------------
          * Flatpickr
@@ -165,7 +210,7 @@
 
             CKEDITOR.instances.editor.setData('');
 
-            $('#tags').importTags('');
+            $('#tags').val(null).trigger('change');
 
             $('#categories').val(null).trigger('change');
             resetSubCategories();

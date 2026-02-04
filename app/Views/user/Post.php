@@ -50,8 +50,15 @@
 
                     <div class="utf_post_content-area">
                         <div class="post-media post-featured-image">
-                            <a href="<?= esc($post['thumbnail']['thumbnail_url']) ?>" class="glightbox">
-                                <img src="<?= esc($post['thumbnail']['thumbnail_url']) ?>" class="img-fluid" alt=""></a>
+                            <?php if ($post['thumbnail']['thumbnail_url']): ?>
+                                <a href="<?= esc($post['thumbnail']['thumbnail_url']) ?>" class="glightbox">
+                                    <img src="<?= esc($post['thumbnail']['thumbnail_url']) ?>" class="img-fluid" alt="">
+                                </a>
+                            <?php else: ?>
+                                <a href="https://fastly.picsum.photos/id/20/3670/2462.jpg?hmac=CmQ0ln-k5ZqkdtLvVO23LjVAEabZQx2wOaT4pyeG10I" class="glightbox">
+                                    <img src="https://fastly.picsum.photos/id/20/3670/2462.jpg?hmac=CmQ0ln-k5ZqkdtLvVO23LjVAEabZQx2wOaT4pyeG10I" class="img-fluid" alt="">
+                                </a>
+                            <?php endif; ?>
                         </div>
                         <div class="entry-content">
                             <?= $post['description'] ?>

@@ -49,9 +49,9 @@ class AuthGroups extends ShieldAuthGroups
             'title'       => 'Admin',
             'description' => 'Day to day administrators of the site.',
         ],
-        'developer' => [
-            'title'       => 'Developer',
-            'description' => 'Site programmers.',
+        'author' => [
+            'title'       => 'Author',
+            'description' => 'News publisher.',
         ],
         'user' => [
             'title'       => 'User',
@@ -105,16 +105,14 @@ class AuthGroups extends ShieldAuthGroups
     public array $matrix = [
         'superadmin' => ['*'],
         'admin' => [
-            'admin.access',
+            'category.*',
+            'tags.*',
             'news.*',
-            'category.manage',
+            'comments.*',
+            'ads.*',
         ],
-        'developer' => [
-            'admin.access',
-            'admin.settings',
-            'users.create',
-            'users.edit',
-            'beta.access',
+        'author' => [
+            'news.*'
         ],
         'user' => [],
     ];

@@ -23,7 +23,6 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title">Update post</h4>
-                    <!-- <p class="card-description">Basic form elements</p> -->
                     <div class="form-group">
                         <label for="headline">Headline</label>
                         <input type="text" class="form-control" id="headline" name="headline" placeholder="Headline" value="<?= esc($post['headline'] ?? '') ?>" required>
@@ -34,147 +33,141 @@
                     </div>
                     <div class="form-group">
                         <label for="tags">Tags</label>
+
                         <?php
                         $tags = array_map(fn($t) => $t['name'], $post['tags'] ?? []);
                         ?>
-                        <input class="form-control" name="tags" id="tags" value="<?= esc(implode(',', $tags)) ?>" />
-                    </div>
-                    <div class="form-group">
-                        <label for="date">
-                            Post Date <small class="text-muted">(leave empty to publish now)</small>
-                        </label>
-                        <?php
-                        $fpDate = '';
 
-                        if (!empty($post['post_date_time'])) {
-                            $dt = new DateTime($post['post_date_time']);
-                            $fpDate = $dt->format('d/m/Y H:i');
-                        }
-                        ?>
-                        <input class="form-control datetimepicker" type="text" placeholder="Pick a date" name="date" value="<?= esc($fpDate) ?>" ">
+                        <select class="form-control"
+                            name="tags[]"
+                            id="tags"
+                            multiple>
+                            <?php foreach ($tags as $tag): ?>
+                                <option value="<?= esc($tag) ?>" selected>
+                                    <?= esc($tag) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
                 </div>
             </div>
         </div>
         <div class=" col-md-4">
-                        <div class="card mt-3 mt-md-0">
-                            <div class="card-body">
-                                <h4 class="card-title">Choose Categories<span class="text-danger">*</span></h4>
-                                <div class="form-group">
-                                    <label>Categories<span class="text-danger">*</span></label>
-                                    <?php $selectedCats = $post['categories'] ?? []; ?>
-                                    <?php $selectedSubCats = $post['subcategories'] ?? []; ?>
-                                    <?php $selectedCats = $post['category_ids'] ?? []; ?>
-                                    <select class="multiple-select w-100"
-                                        multiple
-                                        name="categories[]"
-                                        id="categories">
-                                        <?php foreach ($categories as $cat): ?>
-                                            <option value="<?= $cat['id'] ?>"
-                                                <?= in_array($cat['id'], $selectedCats, true) ? 'selected' : '' ?>>
-                                                <?= esc($cat['cat']) ?>
-                                            </option>
-                                        <?php endforeach; ?>
-                                    </select>
-
-                                </div>
-                                <div class="form-group">
-                                    <label>Sub Categories<span class="text-danger">*</span></label>
-                                    <select class="multiple-select w-100"
-                                        multiple
-                                        name="subcategories[]"
-                                        id="subcategories">
-                                        <?php foreach ($post['subcategories'] as $sub): ?>
-                                            <option value="<?= $sub['id'] ?>" selected>
-                                                <?= esc($sub['sub_cat_name']) ?>
-                                            </option>
-                                        <?php endforeach ?>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
+            <div class="card mt-3 mt-md-0">
+                <div class="card-body">
+                    <h4 class="card-title">Choose Categories<span class="text-danger">*</span></h4>
+                    <div class="form-group">
+                        <label>Categories<span class="text-danger">*</span></label>
+                        <?php $selectedCats = $post['categories'] ?? []; ?>
+                        <?php $selectedSubCats = $post['subcategories'] ?? []; ?>
+                        <?php $selectedCats = $post['category_ids'] ?? []; ?>
+                        <select class="multiple-select w-100"
+                            multiple
+                            name="categories[]"
+                            id="categories">
+                            <?php foreach ($categories as $cat): ?>
+                                <option value="<?= $cat['id'] ?>"
+                                    <?= in_array($cat['id'], $selectedCats, true) ? 'selected' : '' ?>>
+                                    <?= esc($cat['cat']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
 
                     </div>
-                    <div class="col-12">
-                        <div class="card mt-3">
-                            <div class="card-body">
-                                <h4 class="mb-2"><?= isset($update) ? 'Update' : 'Add' ?> Thumbnail</h4>
-
-                                <div class="form-group row">
-                                    <div class="col-sm-4">
-                                        <div class="form-check">
-                                            <label class="form-check-label">
-                                                <input type="radio"
-                                                    class="form-check-input thumb-type"
-                                                    name="thumbnail_type"
-                                                    id="thumb_link"
-                                                    value="link">
-                                                Link
-                                            </label>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-sm-4">
-                                        <div class="form-check">
-                                            <label class="form-check-label">
-                                                <input type="radio"
-                                                    class="form-check-input thumb-type"
-                                                    name="thumbnail_type"
-                                                    id="thumb_image"
-                                                    value="image"
-                                                    checked>
-                                                Image
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- LINK INPUT -->
-                                <div id="thumbnail-link-wrapper">
-                                    <div class="form-group">
-                                        <label for="thumbnail_link">URL</label>
-                                        <input type="text"
-                                            class="form-control"
-                                            id="thumbnail_link"
-                                            name="thumbnail_link"
-                                            placeholder="https://example.com/image.jpg" value="">
-                                    </div>
-                                </div>
-
-                                <!-- IMAGE UPLOAD -->
-                                <div id="thumbnail-upload-wrapper">
-                                    <h4>Drop image</h4>
-                                    <input type="file"
-                                        class="dropify"
-                                        id="thumbnail_image"
-                                        name="thumbnail_image"
-                                        data-default-file="<?= $post['thumbnail']['thumbnail_url'] ?? '' ?>"
-                                        accept="image/*">
-                                    <input type="hidden" name="thumbnail_removed" id="thumbnail_removed" value="0">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="card mt-3">
-                            <div class="card-body">
-                                <div class="form-group">
-                                    <h4 class="mb-2">Description</h4>
-                                    <textarea name="description" id="editor" class="form-control"><?= esc($post['description'] ?? '') ?></textarea>
-                                </div>
-                                <?php if (isset($update)): ?>
-                                    <button type="submit" class="btn btn-primary me-2" id="update">Update</button>
-                                    <button class="btn btn-primary me-2" id="publish">Publish</button>
-                                    <button class="btn btn-primary me-2" id="preview">Preview</button>
-                                <?php else: ?>
-                                    <button type="submit" class="btn btn-primary me-2">Save</button>
-                                <?php endif; ?>
-                            </div>
-                        </div>
+                    <div class="form-group">
+                        <label>Sub Categories<span class="text-danger">*</span></label>
+                        <select class="multiple-select w-100"
+                            multiple
+                            name="subcategories[]"
+                            id="subcategories">
+                            <?php foreach ($post['subcategories'] as $sub): ?>
+                                <option value="<?= $sub['id'] ?>" selected>
+                                    <?= esc($sub['sub_cat_name']) ?>
+                                </option>
+                            <?php endforeach ?>
+                        </select>
                     </div>
                 </div>
-                <!-- Page modals start  -->
-                <!-- Page modals ends  -->
+            </div>
+
+        </div>
+        <div class="col-12">
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h4 class="mb-2"><?= isset($update) ? 'Update' : 'Add' ?> Thumbnail</h4>
+
+                    <div class="form-group row">
+                        <div class="col-sm-4">
+                            <div class="form-check">
+                                <label class="form-check-label">
+                                    <input type="radio"
+                                        class="form-check-input thumb-type"
+                                        name="thumbnail_type"
+                                        id="thumb_link"
+                                        value="link">
+                                    Link
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <div class="form-check">
+                                <label class="form-check-label">
+                                    <input type="radio"
+                                        class="form-check-input thumb-type"
+                                        name="thumbnail_type"
+                                        id="thumb_image"
+                                        value="image"
+                                        checked>
+                                    Image
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- LINK INPUT -->
+                    <div id="thumbnail-link-wrapper">
+                        <div class="form-group">
+                            <label for="thumbnail_link">URL</label>
+                            <input type="text"
+                                class="form-control"
+                                id="thumbnail_link"
+                                name="thumbnail_link"
+                                placeholder="https://example.com/image.jpg" value="">
+                        </div>
+                    </div>
+
+                    <!-- IMAGE UPLOAD -->
+                    <div id="thumbnail-upload-wrapper">
+                        <h4>Drop image</h4>
+                        <input type="file"
+                            class="dropify"
+                            id="thumbnail_image"
+                            name="thumbnail_image"
+                            data-default-file="<?= $post['thumbnail']['thumbnail_url'] ?? '' ?>"
+                            accept="image/*">
+                        <input type="hidden" name="thumbnail_removed" id="thumbnail_removed" value="0">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card mt-3">
+                <div class="card-body">
+                    <div class="form-group">
+                        <h4 class="mb-2">Description</h4>
+                        <textarea name="description" id="editor" class="form-control"><?= esc($post['description'] ?? '') ?></textarea>
+                    </div>
+                    <input type="hidden" name="status" id="post_status" value="<?= $post['status'] ?>">
+                        <button type="submit" class="btn btn-primary me-2" id="update">Update</button>
+                        <?php if ((int)$post['status'] === 0): ?>
+                            <button class="btn btn-success me-2" id="publish">Publish</button>
+                        <?php endif; ?>
+                        <button class="btn btn-primary me-2" id="preview">Preview</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </form>
 <?= $this->endSection() ?>
 

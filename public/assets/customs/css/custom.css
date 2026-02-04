@@ -1,7 +1,8 @@
 :root {
     --lightest-white: #fff;
     --dark-white: #a1a1a1;
-    --ticker-red: #2158f8;
+    --ticker-red: #e60023;
+    --ticker-blue: #2158f8;
 }
 
 @font-face {
@@ -104,7 +105,7 @@ h6 {
 
 /* RED LABEL */
 .breaking-label {
-    background: var(--ticker-red);
+    background: var(--ticker-blue);
     color: var(--lightest-white);
     font-weight: 800;
     padding: 10px 16px;
@@ -133,13 +134,13 @@ h6 {
 }
 
 .ticker-item a:hover {
-    color: var(--ticker-red);
+    color: var(--ticker-blue);
     text-decoration: none;
 }
 
 /* RED DOT */
 .ticker-item i {
-    color: var(--ticker-red);
+    color: var(--ticker-blue);
     margin-right: 10px;
 }
 
@@ -171,7 +172,7 @@ section {
 
 .news,
 .news-heading:hover {
-    color: var(--ticker-red);
+    color: var(--ticker-blue);
     text-decoration: none;
 }
 
@@ -189,11 +190,11 @@ h4,
 }
 
 .color-primary .utf_block_title>span {
-    background-color: var(--ticker-red);
+    background-color: var(--ticker-blue);
 }
 
 .color-primary .utf_block_title {
-    border-bottom: 2px dotted var(--ticker-red);
+    border-bottom: 2px dotted var(--ticker-blue);
 }
 
 .utf_featured_post .utf_post_date,
@@ -230,7 +231,7 @@ h4,
 
 .header-title {
     position: relative;
-    color: var(--ticker-red);
+    color: var(--ticker-blue);
     padding: 6px 16px;
     font-size: 2.5rem;
     font-weight: 600;
@@ -240,7 +241,7 @@ h4,
 
 .divider-title {
     position: relative;
-    background: var(--ticker-red);
+    background: var(--ticker-blue);
     color: #fff;
     padding: 6px 16px;
     font-size: 20px;
@@ -276,23 +277,37 @@ h4,
     height: 36px;
     line-height: 30px;
     color: var(--lightest-white);
-    background: var(--ticker-red);
+    background: var(--ticker-blue);
     font-weight: 700;
     font-size: 20px;
     padding: 0;
     border-radius: 30px;
 }
-.entry-content img{
+
+.entry-content img {
     width: 100%;
     max-width: 100%;
     height: 250px;
     object-fit: cover;
 }
-.entry-content iframe{
+
+.entry-content iframe {
     width: 100% !important;
     /* height: 450px !important; */
     border: none;
 }
+
+.horizontal-menu .bottom-navbar .page-navigation>.nav-item.mega-menu .submenu li a.sub-cat::before {
+    position: absolute;
+    content: "";
+    width: 6px;
+    height: 2px;
+    border-radius: 100%;
+    background: var(--ticker-red);
+    top: 12px;
+    left: 0;
+}
+
 @media only screen and (max-width: 767px) {
     ::-webkit-scrollbar {
         width: 0;

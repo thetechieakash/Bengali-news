@@ -12,51 +12,25 @@
         <div class="row">
             <div class="col-lg-8 col-md-12 pad-r">
                 <div id="utf_featured_slider" class="owl-carousel owl-theme utf_featured_slider content-bottom">
-                    <div class="item" style="background-image:url(<?= base_url() ?>assets/images/news/lifestyle/health5.jpg)">
-                        <div class="utf_featured_post">
-                            <div class="utf_post_content">
-                                <a class="utf_post_cat" href="#">Health</a>
-                                <h2 class="utf_post_title title-extra-large">
-                                    <a href="#">‘অর্থহীন’ SIR হচ্ছে বঙ্গে! জ্ঞানেশ কুমারকে মাঠে নামার নিদান দিয়ে শমীক বললেন, ‘এভাবে নির্বাচন হতে পারে না’</a>
-                                </h2>
-                                <div class="utf_post_meta">
-                                    <span class="utf_post_author">John Wick</span>
-                                    <span class="utf_post_date">25 Jan, 2022</span>
+                    <?php foreach ($carousal as $items): ?>
+                        <div class="item" style="background-image:url(<?= $items['thumbnail_url'] ?>)">
+                            <div class="utf_featured_post">
+                                <div class="utf_post_content">
+                                    <h2 class="utf_post_title title-extra-large">
+                                        <a href="#"><?= $items['headline'] ?></a>
+                                    </h2>
+                                    <div class="utf_post_meta">
+                                        <span class="utf_post_author"><?= $items['author'] ?></span>
+                                        <?php
+                                        $date = new DateTime($items['created_at']);
+                                        $formattedDate =  $date->format('d,M Y H:i'); ?>
+                                        <span class="utf_post_date"><?= $formattedDate ?></span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    <?php endforeach; ?>
 
-                    <div class="item" style="background-image:url(<?= base_url() ?>assets/images/news/tech/gadget2.jpg)">
-                        <div class="utf_featured_post">
-                            <div class="utf_post_content">
-                                <a class="utf_post_cat" href="#">Gadget</a>
-                                <h2 class="utf_post_title title-extra-large">
-
-                                    <a href="#">আগেই বাদ ৫৮ লক্ষের নাম, SIR শুনানিপর্বে এখনও পর্যন্ত চিহ্নিত কত ‘অবৈধ’ ভোটার?</a>
-                                </h2>
-                                <div class="utf_post_meta">
-                                    <span class="utf_post_author">John Wick</span>
-                                    <span class="utf_post_date">25 Jan, 2022</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="item" style="background-image:url(<?= base_url() ?>assets/images/news/lifestyle/travel5.jpg)">
-                        <div class="utf_featured_post">
-                            <div class="utf_post_content">
-                                <a class="utf_post_cat" href="#">Travel</a>
-                                <h2 class="utf_post_title title-extra-large">
-                                    <a href="#">দিল্লির আকাশে সুখোই-রাফালের সুরক্ষায় হাজার কেজি মুরগির মাংস! সাধারণতন্ত্র দিবসে অভিনব কৌশল</a>
-                                </h2>
-                                <div class="utf_post_meta">
-                                    <span class="utf_post_author">John Wick</span>
-                                    <span class="utf_post_date">25 Jan, 2022</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -94,160 +68,68 @@
 <section class="utf_block_wrapper pb-top-0">
     <div class="container">
         <div class="row">
-            <div class="col-lg-4 col-md-12">
-                <div class="block color-primary">
-                    <h3 class="utf_block_title">
-                        <span>মহানগর</span>
-                    </h3>
-                    <div class="utf_post_overaly_style clearfix">
-                        <div class="utf_post_thumb">
-                            <a href="#">
-                                <img class="img-fluid" src="<?= base_url() ?>assets/images/news/lifestyle/travel1.jpg" alt="" /> </a>
-                        </div>
-                        <div class="utf_post_content">
-                            <h2 class="utf_post_title">
-                                <a href="#">Zhang social media pop also known when smart innocent...</a>
-                            </h2>
-                            <div class="utf_post_meta">
-                                <span class="utf_post_author">
+            <?php foreach ($randomPost as  $post): ?>
+                <div class="col-lg-4 col-md-12">
+                    <div class="block color-primary">
+                        <h3 class="utf_block_title">
+                            <span><?= $post['category']['cat'] ?></span>
+                        </h3>
+                        <div class="utf_post_overaly_style clearfix">
+                            <div class="utf_post_thumb">
+                                <a href="#">
+                                    <img class="img-fluid" src="<?= base_url() ?>assets/images/news/lifestyle/travel1.jpg" alt="" /> </a>
+                            </div>
+                            <div class="utf_post_content">
+                                <h2 class="utf_post_title">
+                                    <a href="#">Zhang social media pop also known when smart innocent...</a>
+                                </h2>
+                                <div class="utf_post_meta">
+                                    <span class="utf_post_author">
 
-                                    John Wick
-                                </span>
-                                <span class="utf_post_date">
-                                    25 Jan, 2022</span>
+                                        John Wick
+                                    </span>
+                                    <span class="utf_post_date">
+                                        25 Jan, 2022</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="utf_list_post_block">
-                        <ul class="utf_list_post">
-                            <li class="clearfix">
-                                <div class="utf_post_block_style post-float clearfix">
-                                    <div class="utf_post_thumb"> <a href="#"> <img class="img-fluid" src="<?= base_url() ?>assets/images/news/lifestyle/travel2.jpg" alt="" /> </a> </div>
-                                    <div class="utf_post_content">
-                                        <h2 class="utf_post_title title-small"> <a href="#">Zhang social media pop also known when smart innocent...</a> </h2>
-                                        <div class="utf_post_meta"> <span class="utf_post_author"> John Wick</span> <span class="utf_post_date">25 Jan, 2022</span> </div>
+                        <div class="utf_list_post_block">
+                            <ul class="utf_list_post">
+                                <li class="clearfix">
+                                    <div class="utf_post_block_style post-float clearfix">
+                                        <div class="utf_post_thumb"> <a href="#"> <img class="img-fluid" src="<?= base_url() ?>assets/images/news/lifestyle/travel2.jpg" alt="" /> </a> </div>
+                                        <div class="utf_post_content">
+                                            <h2 class="utf_post_title title-small"> <a href="#">Zhang social media pop also known when smart innocent...</a> </h2>
+                                            <div class="utf_post_meta"> <span class="utf_post_author"> John Wick</span> <span class="utf_post_date">25 Jan, 2022</span> </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </li>
+                                </li>
 
-                            <li class="clearfix">
-                                <div class="utf_post_block_style post-float clearfix">
-                                    <div class="utf_post_thumb"> <a href="#"> <img class="img-fluid" src="<?= base_url() ?>assets/images/news/lifestyle/travel3.jpg" alt="" /> </a> </div>
-                                    <div class="utf_post_content">
-                                        <h2 class="utf_post_title title-small"> <a href="#">Zhang social media pop also known when smart innocent...</a> </h2>
-                                        <div class="utf_post_meta"> <span class="utf_post_author"> John Wick</span> <span class="utf_post_date">25 Jan, 2022</span> </div>
+                                <li class="clearfix">
+                                    <div class="utf_post_block_style post-float clearfix">
+                                        <div class="utf_post_thumb"> <a href="#"> <img class="img-fluid" src="<?= base_url() ?>assets/images/news/lifestyle/travel3.jpg" alt="" /> </a> </div>
+                                        <div class="utf_post_content">
+                                            <h2 class="utf_post_title title-small"> <a href="#">Zhang social media pop also known when smart innocent...</a> </h2>
+                                            <div class="utf_post_meta"> <span class="utf_post_author"> John Wick</span> <span class="utf_post_date">25 Jan, 2022</span> </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </li>
+                                </li>
 
-                            <li class="clearfix">
-                                <div class="utf_post_block_style post-float clearfix">
-                                    <div class="utf_post_thumb"> <a href="#"> <img class="img-fluid" src="<?= base_url() ?>assets/images/news/lifestyle/travel4.jpg" alt="" /> </a> </div>
-                                    <div class="utf_post_content">
-                                        <h2 class="utf_post_title title-small"> <a href="#">Zhang social media pop also known when smart innocent...</a> </h2>
-                                        <div class="utf_post_meta"> <span class="utf_post_author"> John Wick</span> <span class="utf_post_date">25 Jan, 2022</span> </div>
+                                <li class="clearfix">
+                                    <div class="utf_post_block_style post-float clearfix">
+                                        <div class="utf_post_thumb"> <a href="#"> <img class="img-fluid" src="<?= base_url() ?>assets/images/news/lifestyle/travel4.jpg" alt="" /> </a> </div>
+                                        <div class="utf_post_content">
+                                            <h2 class="utf_post_title title-small"> <a href="#">Zhang social media pop also known when smart innocent...</a> </h2>
+                                            <div class="utf_post_meta"> <span class="utf_post_author"> John Wick</span> <span class="utf_post_date">25 Jan, 2022</span> </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4 col-md-12">
-                <div class="block color-primary">
-                    <h3 class="utf_block_title"><span>দেশ</span></h3>
-                    <div class="utf_post_overaly_style clearfix">
-                        <div class="utf_post_thumb"> <a href="#"> <img class="img-fluid" src="<?= base_url() ?>assets/images/news/tech/gadget1.jpg" alt="" /> </a> </div>
-                        <div class="utf_post_content">
-                            <h2 class="utf_post_title"> <a href="#">Zhang social media pop also known when smart innocent...</a> </h2>
-                            <div class="utf_post_meta"> <span class="utf_post_author"> John Wick</span> <span class="utf_post_date">25 Jan, 2022</span> </div>
+                                </li>
+                            </ul>
                         </div>
                     </div>
-
-                    <div class="utf_list_post_block">
-                        <ul class="utf_list_post">
-                            <li class="clearfix">
-                                <div class="utf_post_block_style post-float clearfix">
-                                    <div class="utf_post_thumb"> <a href="#"> <img class="img-fluid" src="<?= base_url() ?>assets/images/news/tech/gadget2.jpg" alt="" /> </a> </div>
-                                    <div class="utf_post_content">
-                                        <h2 class="utf_post_title title-small"> <a href="#">Zhang social media pop also known when smart innocent...</a> </h2>
-                                        <div class="utf_post_meta"> <span class="utf_post_author"> John Wick</span> <span class="utf_post_date">25 Jan, 2022</span> </div>
-                                    </div>
-                                </div>
-                            </li>
-
-                            <li class="clearfix">
-                                <div class="utf_post_block_style post-float clearfix">
-                                    <div class="utf_post_thumb"> <a href="#"> <img class="img-fluid" src="<?= base_url() ?>assets/images/news/tech/gadget3.jpg" alt="" /> </a> </div>
-                                    <div class="utf_post_content">
-                                        <h2 class="utf_post_title title-small"> <a href="#">Zhang social media pop also known when smart innocent...</a> </h2>
-                                        <div class="utf_post_meta"> <span class="utf_post_author"> John Wick</span> <span class="utf_post_date">25 Jan, 2022</span> </div>
-                                    </div>
-                                </div>
-                            </li>
-
-                            <li class="clearfix">
-                                <div class="utf_post_block_style post-float clearfix">
-                                    <div class="utf_post_thumb"> <a href="#"> <img class="img-fluid" src="<?= base_url() ?>assets/images/news/tech/gadget4.jpg" alt="" /> </a> </div>
-                                    <div class="utf_post_content">
-                                        <h2 class="utf_post_title title-small"> <a href="#">Zhang social media pop also known when smart innocent...</a> </h2>
-                                        <div class="utf_post_meta"> <span class="utf_post_author"> John Wick</span> <span class="utf_post_date">25 Jan, 2022</span> </div>
-                                    </div>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
                 </div>
-            </div>
-
-            <div class="col-lg-4 col-md-12">
-                <div class="block color-primary">
-                    <h3 class="utf_block_title"><span>বিনোদন</span></h3>
-                    <div class="utf_post_overaly_style clearfix">
-                        <div class="utf_post_thumb"> <a href="#"> <img class="img-fluid" src="<?= base_url() ?>assets/images/news/lifestyle/health1.jpg" alt="" /> </a> </div>
-                        <div class="utf_post_content">
-                            <h2 class="utf_post_title"> <a href="#">That wearable on your wrist could soon track your health as …</a> </h2>
-                            <div class="utf_post_meta"> <span class="utf_post_author"> John Wick</span> <span class="utf_post_date">25 Jan, 2022</span> </div>
-                        </div>
-                    </div>
-
-                    <div class="utf_list_post_block">
-                        <ul class="utf_list_post">
-                            <li class="clearfix">
-                                <div class="utf_post_block_style post-float clearfix">
-                                    <div class="utf_post_thumb"> <a href="#"> <img class="img-fluid" src="<?= base_url() ?>assets/images/news/lifestyle/health2.jpg" alt="" /> </a> </div>
-                                    <div class="utf_post_content">
-                                        <h2 class="utf_post_title title-small"> <a href="#">Zhang social media pop also known when smart innocent...</a> </h2>
-                                        <div class="utf_post_meta"> <span class="utf_post_author"> John Wick</span> <span class="utf_post_date">25 Jan, 2022</span> </div>
-                                    </div>
-                                </div>
-                            </li>
-
-                            <li class="clearfix">
-                                <div class="utf_post_block_style post-float clearfix">
-                                    <div class="utf_post_thumb"> <a href="#"> <img class="img-fluid" src="<?= base_url() ?>assets/images/news/lifestyle/health3.jpg" alt="" /> </a> </div>
-                                    <div class="utf_post_content">
-                                        <h2 class="utf_post_title title-small"> <a href="#">Zhang social media pop also known when smart innocent...</a> </h2>
-                                        <div class="utf_post_meta"> <span class="utf_post_author"> John Wick</span> <span class="utf_post_date">25 Jan, 2022</span> </div>
-                                    </div>
-                                </div>
-                            </li>
-
-                            <li class="clearfix">
-                                <div class="utf_post_block_style post-float clearfix">
-                                    <div class="utf_post_thumb"> <a href="#"> <img class="img-fluid" src="<?= base_url() ?>assets/images/news/lifestyle/health4.jpg" alt="" /> </a> </div>
-                                    <div class="utf_post_content">
-                                        <h2 class="utf_post_title title-small"> <a href="#">Zhang social media pop also known when smart innocent...</a> </h2>
-                                        <div class="utf_post_meta"> <span class="utf_post_author"> John Wick</span> <span class="utf_post_date">25 Jan, 2022</span> </div>
-                                    </div>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+            <?php endforeach; ?>
         </div>
     </div>
 </section>
