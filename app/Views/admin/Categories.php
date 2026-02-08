@@ -32,33 +32,6 @@
                     </div>
                     <button type="submit" class="btn btn-primary text-white me-2">Submit</button>
                 </form>
-
-            </div>
-        </div>
-        <div class="card d-none" id="addsubcatcard">
-            <div class="card-body">
-                <h4 class="card-title">Add Sub Catagories</h4>
-                <!-- <p class="card-description">
-                    Basic form layout
-                </p> -->
-                <form class="forms-sample" id="catform" action="<?= base_url('admin/sub-catagories') ?>" method="post">
-                    <?= csrf_field() ?>
-                    <div class="form-group">
-                        <label for="category">Category</label>
-                        <input type="text" class="form-control" name="category" id="category" placeholder="Category Name">
-                    </div>
-                    <div class="form-group">
-                        <div class="d-flex align-items-center gap-2">
-                            <label class="toggle-switch mb-0">
-                                <input type="checkbox" name="status">
-                                <span class="slider"></span>
-                            </label>
-                            <span>In navbar?</span>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-primary text-white me-2">Submit</button>
-                </form>
-
             </div>
         </div>
     </div>
@@ -155,6 +128,7 @@
 <?= $this->section('jsLib') ?>
 <script src="<?= base_url() ?>assets/vendors/datatables.net/jquery.dataTables.js"></script>
 <script src="<?= base_url() ?>assets/vendors/datatables.net-bs4/dataTables.bootstrap4.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <?= $this->endSection() ?>
 
 <?= $this->section('script') ?>

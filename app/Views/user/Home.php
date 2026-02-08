@@ -5,7 +5,10 @@
 <?= $this->section('cssPlugins') ?>
 <?= $this->endSection() ?>
 <?= $this->section('content') ?>
+<?php
 
+use App\Helpers\StringShort;
+?>
 
 <section class="utf_featured_post_area mt-5 pt-4">
     <div class="container">
@@ -13,11 +16,11 @@
             <div class="col-lg-8 col-md-12 pad-r">
                 <div id="utf_featured_slider" class="owl-carousel owl-theme utf_featured_slider content-bottom">
                     <?php foreach ($carousal as $items): ?>
-                        <div class="item" style="background-image:url(<?= $items['thumbnail_url'] ?>)">
+                        <div class="item" style="background-image:url(<?= $items['thumbnail_url'] ?? base_url('assets/images/news/placeholder.png') ?>)">
                             <div class="utf_featured_post">
                                 <div class="utf_post_content">
                                     <h2 class="utf_post_title title-extra-large">
-                                        <a href="#"><?= $items['headline'] ?></a>
+                                        <a href="<?= base_url('news/' . $items['slug']) ?>"><?= StringShort::truncate($items['headline']) ?></a>
                                     </h2>
                                     <div class="utf_post_meta">
                                         <span class="utf_post_author"><?= $items['author'] ?></span>
@@ -68,68 +71,102 @@
 <section class="utf_block_wrapper pb-top-0">
     <div class="container">
         <div class="row">
-            <?php foreach ($randomPost as  $post): ?>
+            <?php foreach ($randomPosts as $item): ?>
+
+                <?php
+                $category = $item['category'];
+                $posts    = $item['posts'];
+
+                // Skip empty categories safely
+                if (empty($posts)) {
+                    continue;
+                }
+
+                $featured = $posts[0];                 // first post
+                $listPosts = array_slice($posts, 1);   // remaining (0–3)
+                ?>
+
                 <div class="col-lg-4 col-md-12">
                     <div class="block color-primary">
+
+                        <!-- CATEGORY TITLE -->
                         <h3 class="utf_block_title">
-                            <span><?= $post['category']['cat'] ?></span>
+                            <span><?= esc($category['cat']) ?></span>
                         </h3>
+
+                        <!-- FEATURED POST -->
                         <div class="utf_post_overaly_style clearfix">
                             <div class="utf_post_thumb">
-                                <a href="#">
-                                    <img class="img-fluid" src="<?= base_url() ?>assets/images/news/lifestyle/travel1.jpg" alt="" /> </a>
+                                <a href="<?= base_url('news/' . $featured['slug']) ?>">
+                                    <img class="img-fluid"
+                                        src="<?= $featured['thumbnail_url'] ?? base_url('assets/images/news/placeholder.png') ?>"
+                                        alt="<?= esc($featured['headline']) ?>">
+                                </a>
                             </div>
+
                             <div class="utf_post_content">
                                 <h2 class="utf_post_title">
-                                    <a href="#">Zhang social media pop also known when smart innocent...</a>
+                                    <a href="<?= base_url('news/' . $featured['slug']) ?>">
+                                        <?= StringShort::truncate($featured['headline'], 30) ?>
+                                    </a>
                                 </h2>
+
                                 <div class="utf_post_meta">
                                     <span class="utf_post_author">
-
-                                        John Wick
+                                        <?= esc($featured['author']) ?>
                                     </span>
                                     <span class="utf_post_date">
-                                        25 Jan, 2022</span>
+                                        <?= date('d M, Y', strtotime($featured['post_date_time'])) ?>
+                                    </span>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="utf_list_post_block">
-                            <ul class="utf_list_post">
-                                <li class="clearfix">
-                                    <div class="utf_post_block_style post-float clearfix">
-                                        <div class="utf_post_thumb"> <a href="#"> <img class="img-fluid" src="<?= base_url() ?>assets/images/news/lifestyle/travel2.jpg" alt="" /> </a> </div>
-                                        <div class="utf_post_content">
-                                            <h2 class="utf_post_title title-small"> <a href="#">Zhang social media pop also known when smart innocent...</a> </h2>
-                                            <div class="utf_post_meta"> <span class="utf_post_author"> John Wick</span> <span class="utf_post_date">25 Jan, 2022</span> </div>
-                                        </div>
-                                    </div>
-                                </li>
+                        <!-- LIST POSTS -->
+                        <?php if (!empty($listPosts)): ?>
+                            <div class="utf_list_post_block">
+                                <ul class="utf_list_post">
 
-                                <li class="clearfix">
-                                    <div class="utf_post_block_style post-float clearfix">
-                                        <div class="utf_post_thumb"> <a href="#"> <img class="img-fluid" src="<?= base_url() ?>assets/images/news/lifestyle/travel3.jpg" alt="" /> </a> </div>
-                                        <div class="utf_post_content">
-                                            <h2 class="utf_post_title title-small"> <a href="#">Zhang social media pop also known when smart innocent...</a> </h2>
-                                            <div class="utf_post_meta"> <span class="utf_post_author"> John Wick</span> <span class="utf_post_date">25 Jan, 2022</span> </div>
-                                        </div>
-                                    </div>
-                                </li>
+                                    <?php foreach ($listPosts as $post): ?>
+                                        <li class="clearfix">
+                                            <div class="utf_post_block_style post-float clearfix">
+                                                <div class="utf_post_thumb">
+                                                    <a href="<?= base_url('news/' . $post['slug']) ?>">
+                                                        <img class="img-fluid"
+                                                            src="<?= $post['thumbnail_url'] ?: base_url('assets/images/default.jpg') ?>"
+                                                            alt="">
+                                                    </a>
+                                                </div>
 
-                                <li class="clearfix">
-                                    <div class="utf_post_block_style post-float clearfix">
-                                        <div class="utf_post_thumb"> <a href="#"> <img class="img-fluid" src="<?= base_url() ?>assets/images/news/lifestyle/travel4.jpg" alt="" /> </a> </div>
-                                        <div class="utf_post_content">
-                                            <h2 class="utf_post_title title-small"> <a href="#">Zhang social media pop also known when smart innocent...</a> </h2>
-                                            <div class="utf_post_meta"> <span class="utf_post_author"> John Wick</span> <span class="utf_post_date">25 Jan, 2022</span> </div>
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
+                                                <div class="utf_post_content">
+                                                    <h2 class="utf_post_title title-small">
+                                                        <a href="<?= base_url('news/' . $post['slug']) ?>">
+                                                            <?= StringShort::truncate($post['headline'], 30) ?>
+                                                        </a>
+                                                    </h2>
+
+                                                    <div class="utf_post_meta">
+                                                        <span class="utf_post_author">
+                                                            <?= esc($post['author']) ?>
+                                                        </span>
+                                                        <span class="utf_post_date">
+                                                            <?= date('d M, Y', strtotime($post['post_date_time'])) ?>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    <?php endforeach; ?>
+
+                                </ul>
+                            </div>
+                        <?php endif; ?>
+
                     </div>
                 </div>
+
             <?php endforeach; ?>
+
         </div>
     </div>
 </section>

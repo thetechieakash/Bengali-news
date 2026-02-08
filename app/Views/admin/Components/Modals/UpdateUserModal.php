@@ -19,6 +19,15 @@
                         <input type="email" class="form-control form-control-lg" name="email" placeholder="Email" id="email">
                     </div>
                     <div class="form-group">
+                        <select class="form-select form-select-lg" name="role" placeholder="Email" placeholder="Select role">
+                            <option selected>Select role</option>
+                            <option value="superadmin">Super Admin</option>
+                            <option value="admin">Admin</option>
+                            <option value="author">Author</option>
+                            <option value="user">user</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <input type="password" class="form-control form-control-lg" name="password" placeholder="New Password">
                     </div>
                     <div class="mt-3 d-grid gap-2">

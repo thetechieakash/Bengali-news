@@ -100,6 +100,7 @@
 <?= $this->section('jsLib') ?>
 <script src="<?= base_url() ?>assets/vendors/datatables.net/jquery.dataTables.js"></script>
 <script src="<?= base_url() ?>assets/vendors/datatables.net-bs4/dataTables.bootstrap4.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <?= $this->endSection() ?>
 
 <?= $this->section('script') ?>

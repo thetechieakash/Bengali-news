@@ -73,7 +73,27 @@ class UserController extends BaseController
                 'errors'  => $users->errors()
             ]);
         }
+        /* -----------------------------
+     * ROLE / GROUP ASSIGNMENT
+     * ----------------------------- */
 
+        // Default role
+        $role = 'user';
+
+        // Only superadmin can assign roles
+        if (auth()->user()->inGroup('superadmin')) {
+            $requestedRole = $this->request->getPost('role');
+
+            if (in_array($requestedRole, ['superadmin', 'admin', 'author', 'user'], true)) {
+                $role = $requestedRole;
+            }
+        }
+
+        // Fetch saved user entity
+        $savedUser = $users->findById($userId);
+
+        // Assign Shield group
+        $savedUser->addGroup($role);
         return $this->response->setJSON([
             'success'  => true,
             'message'  => 'User created successfully',
@@ -125,6 +145,25 @@ class UserController extends BaseController
                 'errors'  => $users->errors()
             ]);
         }
+        /* -----------------------------
+     * ROLE / GROUP UPDATE
+     * ----------------------------- */
+        if (auth()->user()->inGroup('superadmin')) {
+
+            $requestedRole = $this->request->getPost('role');
+
+            if (in_array($requestedRole, ['superadmin', 'admin', 'author', 'user'], true)) {
+
+                // Remove old groups
+                $currentGroups = $user->getGroups();
+                if (! empty($currentGroups)) {
+                    $user->removeGroup(...$currentGroups);
+                }
+
+                // Assign new group
+                $user->addGroup($requestedRole);
+            }
+        }
         return $this->response->setJSON([
             'success'  => true,
             'message'  => 'User updated successfully',
@@ -140,7 +179,14 @@ class UserController extends BaseController
             ])->setStatusCode(401);
         }
 
-        $userId = $this->request->getPost('user_id');
+        if (! auth()->user()->inGroup('superadmin')) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => "You don't have permission to delete users"
+            ]);
+        }
+
+        $userId = (int) $this->request->getPost('user_id');
 
         if (! $userId) {
             return $this->response->setJSON([
@@ -149,18 +195,16 @@ class UserController extends BaseController
             ]);
         }
 
-        // Prevent self delete
-        if ((int) $userId === auth()->id()) {
+        // Prevent self-delete
+        if ($userId === auth()->id()) {
             return $this->response->setJSON([
                 'success' => false,
                 'message' => 'You cannot delete your own account'
             ]);
         }
 
-        // FRESH provider (important)
         $users = auth()->getProvider(true);
-
-        $user = $users->findById($userId);
+        $user  = $users->findById($userId);
 
         if (! $user) {
             return $this->response->setJSON([
@@ -168,12 +212,7 @@ class UserController extends BaseController
                 'message' => 'User not found'
             ]);
         }
-        if (!auth()->user()->inGroup('superadmin')) {
-            return $this->response->setJSON([
-                'success' => false,
-                'message' => "You don't have permission to delete user"
-            ]);
-        }
+
         if (! $users->delete($userId)) {
             return $this->response->setJSON([
                 'success' => false,
@@ -196,7 +235,12 @@ class UserController extends BaseController
                 'message' => 'Unauthorized'
             ])->setStatusCode(401);
         }
-
+        if (! auth()->user()->inGroup('superadmin')) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => "You don't have permission to restore users"
+            ]);
+        }
         $userId = $this->request->getPost('user_id');
 
         if (! $userId) {
@@ -206,6 +250,17 @@ class UserController extends BaseController
             ]);
         }
 
+        $users = auth()->getProvider(true);
+
+        $user = $users->withDeleted()->findById($userId);
+
+        if (! $user) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'User not found'
+            ]);
+        }
+        
         $users = new UserModel();
 
         $users->where('id', $userId)->set('deleted_at', null)->update();

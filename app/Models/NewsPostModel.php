@@ -81,7 +81,7 @@ class NewsPostModel extends Model
 
         /** ---------- TAGS ---------- */
         $post['tags'] = $db->table('news_post_tags npt')
-            ->select('t.id, t.name')
+            ->select('t.id, t.name')// name not id (err)
             ->join('tags t', 't.id = npt.tag_id')
             ->where('npt.news_post_id', $postId)
             ->get()
@@ -94,5 +94,27 @@ class NewsPostModel extends Model
             ->getRowArray();
 
         return $post;
+    }
+
+    public function readMore(int $currentPostId, int $limit = 4): array
+    {
+        return $this->select('
+            news_posts.id,
+            news_posts.headline,
+            news_posts.slug,
+            news_posts.author,
+            news_posts.post_date_time,
+            npt.thumbnail_url
+        ')
+            ->join(
+                'news_post_thumbnails npt',
+                'npt.news_post_id = news_posts.id',
+                'left'
+            )
+            ->where('news_posts.status', 1)
+            ->where('news_posts.id !=', $currentPostId)
+            ->orderBy('news_posts.post_date_time', 'DESC')
+            ->limit($limit)
+            ->findAll();
     }
 }

@@ -82,14 +82,16 @@ class FileUploader
             return ['status' => false, 'message' => 'File size exceeds limit'];
         }
 
-        $mime = $file->getMimeType();
+        $mime    = $file->getMimeType();
         $tmpPath = $file->getTempName();
 
         /* ---------- GIF: STORE AS-IS ---------- */
         if ($mime === 'image/gif') {
-            $name = pathinfo($file->getClientName(), PATHINFO_FILENAME);
-            $newName = $name . '_' . time() . '.gif';
-            $file->move($this->destination, $newName);
+            $newName = $this->generateSafeName('gif');
+
+            if (!$file->move($this->destination, $newName)) {
+                return ['status' => false, 'message' => 'Failed to save GIF'];
+            }
 
             return [
                 'status'    => true,
@@ -100,9 +102,7 @@ class FileUploader
         }
 
         /* ---------- IMAGE → WEBP ---------- */
-        $webpName = pathinfo($file->getClientName(), PATHINFO_FILENAME)
-            . '_' . time() . '.webp';
-
+        $webpName = $this->generateSafeName('webp');
         $webpPath = $this->destination . $webpName;
 
         if (!$this->convertToWebP($tmpPath, $webpPath, 85)) {
@@ -116,6 +116,7 @@ class FileUploader
             'type'      => 'webp'
         ];
     }
+
 
     /* ---------- IMAGE HELPERS ---------- */
 
@@ -181,5 +182,14 @@ class FileUploader
         unset($image);
 
         return $resized;
+    }
+    protected function generateSafeName(string $extension): string
+    {
+        return sprintf(
+            'img_%s_%s.%s',
+            date('Ymd_His'),
+            bin2hex(random_bytes(5)),
+            $extension
+        );
     }
 }

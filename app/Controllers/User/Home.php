@@ -13,17 +13,16 @@ class Home extends BaseController
 
         $postModel = new NewsPostModel();
         $catModel = new Categories();
-        $carousal = $postModel
-            ->select('news_posts.*, t.type as thumb_type, t.thumbnail_url')
+        $carousal = $postModel->select('news_posts.*, t.type as thumb_type, t.thumbnail_url')
             ->join(
                 'news_post_thumbnails t',
-                't.news_post_id = news_posts.id'
+                't.news_post_id = news_posts.id',
+                'left'
             )
             ->where('news_posts.status', 1)
-            ->where('t.thumbnail_url IS NOT NULL')
-            ->orderBy('news_posts.created_at', 'ASC')
-            ->limit(5)
-            ->findAll();
+            ->orderBy('news_posts.created_at', 'DESC')
+            ->findAll(10);
+            
         $categories = $catModel->randomCategory(3);
 
         $randomPosts = [];
@@ -64,9 +63,12 @@ class Home extends BaseController
         $data = [
             'pageTitle' => 'Home',
             'carousal' => $carousal,
-            'randomPost' => $randomPosts
+            'randomPosts' => $randomPosts
 
         ];
+        // echo "<pre>";
+        // print_r($randomPosts);
+        // die();
         return view('user/Home', array_merge($this->data, $data));
 
         // $user = auth()->user();

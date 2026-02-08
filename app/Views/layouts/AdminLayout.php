@@ -42,20 +42,6 @@
             text-align: center;
         }
 
-        #panding-loader {
-            position: fixed;
-            z-index: 50000;
-            background: rgba(255, 255, 255, 0.6);
-            left: 0;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            height: 100%;
-            width: 100%;
-            margin: 0 auto;
-            text-align: center;
-        }
-
         .loader-img {
             position: absolute;
             right: 0;
@@ -105,11 +91,7 @@
             <!-- partial -->
             <div class="main-panel">
                 <div class="content-wrapper">
-                    <div id="panding-loader" class="light-loader" style="display:none;">
-                        <img src="<?= base_url('assets/images/ripple.svg') ?>" class="loader-img" alt="Loader">
-                    </div>
                     <?= $this->renderSection('content') ?>
-
                 </div>
                 <!-- content-wrapper ends -->
                 <!-- partial:partials/_footer.html -->

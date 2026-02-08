@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/jquery-tags-input/jquery.tagsinput.min.css">
 <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/flatpickr/flatpickr.min.css">
 <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/glightbox/glightbox.min.css" />
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <?= $this->endSection() ?>
 <?= $this->section('content') ?>
@@ -33,21 +33,21 @@
                     </div>
                     <div class="form-group">
                         <label for="tags">Tags</label>
-
                         <?php
-                        $tags = array_map(fn($t) => $t['name'], $post['tags'] ?? []);
+                        $selectedTagIds = array_column($post['tags'] ?? [], 'id');
                         ?>
-
                         <select class="form-control"
                             name="tags[]"
                             id="tags"
                             multiple>
                             <?php foreach ($tags as $tag): ?>
-                                <option value="<?= esc($tag) ?>" selected>
-                                    <?= esc($tag) ?>
+                                <option value="<?= $tag['id'] ?>"
+                                    <?= in_array($tag['id'], $selectedTagIds, true) ? 'selected' : '' ?>>
+                                    <?= esc($tag['name']) ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
+
                     </div>
                 </div>
             </div>
@@ -58,9 +58,10 @@
                     <h4 class="card-title">Choose Categories<span class="text-danger">*</span></h4>
                     <div class="form-group">
                         <label>Categories<span class="text-danger">*</span></label>
-                        <?php $selectedCats = $post['categories'] ?? []; ?>
-                        <?php $selectedSubCats = $post['subcategories'] ?? []; ?>
-                        <?php $selectedCats = $post['category_ids'] ?? []; ?>
+                        <?php
+                        $selectedCats    = $post['category_ids'] ?? [];
+                        $selectedSubCats = $post['subcategory_ids'] ?? [];
+                        ?>
                         <select class="multiple-select w-100"
                             multiple
                             name="categories[]"
@@ -94,8 +95,8 @@
         <div class="col-12">
             <div class="card mt-3">
                 <div class="card-body">
-                    <h4 class="mb-2"><?= isset($update) ? 'Update' : 'Add' ?> Thumbnail</h4>
-
+                    <h4 class="mb-2">Thumbnail</h4>
+                    <input type="hidden" name="thumbnail_removed" id="thumbnail_removed" value="0">
                     <div class="form-group row">
                         <div class="col-sm-4">
                             <div class="form-check">
@@ -146,7 +147,6 @@
                             name="thumbnail_image"
                             data-default-file="<?= $post['thumbnail']['thumbnail_url'] ?? '' ?>"
                             accept="image/*">
-                        <input type="hidden" name="thumbnail_removed" id="thumbnail_removed" value="0">
                     </div>
                 </div>
             </div>
@@ -159,11 +159,11 @@
                         <textarea name="description" id="editor" class="form-control"><?= esc($post['description'] ?? '') ?></textarea>
                     </div>
                     <input type="hidden" name="status" id="post_status" value="<?= $post['status'] ?>">
-                        <button type="submit" class="btn btn-primary me-2" id="update">Update</button>
-                        <?php if ((int)$post['status'] === 0): ?>
-                            <button class="btn btn-success me-2" id="publish">Publish</button>
-                        <?php endif; ?>
-                        <button class="btn btn-primary me-2" id="preview">Preview</button>
+                    <button type="submit" class="btn btn-primary me-2" id="update">Update</button>
+                    <?php if ((int)$post['status'] === 0): ?>
+                        <button class="btn btn-success me-2" id="publish">Publish</button>
+                    <?php endif; ?>
+                    <button class="btn btn-primary me-2" id="preview">Preview</button>
                 </div>
             </div>
         </div>
@@ -176,9 +176,9 @@
 <script src="<?= base_url() ?>assets/vendors/select2/select2.min.js"></script>
 <script src="<?= base_url() ?>assets/vendors/dropify/dist/js/dropify.min.js"></script>
 <script src="<?= base_url() ?>assets/vendors/flatpickr/flatpickr.min.js"></script>
-<script src="<?= base_url() ?>assets/vendors/ckeditor/ckeditor.js""></script>
-<script src=" <?= base_url() ?>assets/vendors/glightbox/glightbox.min.js"></script>
-
+<script src="<?= base_url() ?>assets/vendors/ckeditor/ckeditor.js"></script>
+<script src="<?= base_url() ?>assets/vendors/glightbox/glightbox.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <?= $this->endSection() ?>
 

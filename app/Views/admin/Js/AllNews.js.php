@@ -14,84 +14,112 @@
             window.location.href = "<?= base_url('admin/news/update') ?>/" + id;
         });
 
-        // Toggle functions
+        /* --------------------------------
+         * STATUS TOGGLE (SweetAlert)
+         * -------------------------------- */
+        $('#news-listing').on('change', '.toggle-status', function() {
 
-        $('#news-listing').on('change', '.toggle-status', async function() {
             const checkbox = $(this);
-            const previousState = !checkbox.prop('checked');
-
             const id = checkbox.data('id');
-            const value = checkbox.is(':checked') ? 1 : 0;
+            const newValue = checkbox.is(':checked') ? 1 : 0;
+            const oldValue = newValue === 1 ? 0 : 1;
 
-            if (!confirm('Are you sure you want to update status?')) {
-                checkbox.prop('checked', previousState);
-                return;
-            }
+            // rollback helper
+            const rollback = () => checkbox.prop('checked', !!oldValue);
 
-            // Optional: disable checkbox while processing
-            checkbox.prop('disabled', true);
+            Swal.fire({
+                title: newValue ?
+                    'Publish this post?' :
+                    'Unpublish this post?',
+                html: newValue ?
+                    `<small>The post date will be updated to <b>current date & time</b>.</small>` :
+                    `<small>The post will be moved back to <b>draft</b>.</small>`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: newValue ? 'Yes, publish' : 'Yes, unpublish',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#1F3BB3',
+                cancelButtonColor: '#6c757d',
+                reverseButtons: true
+            }).then(async (result) => {
 
-            try {
-                const response = await fetch('<?= base_url('admin/news/update-status') ?>', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    body: JSON.stringify({
-                        id,
-                        value
-                    })
-                });
-
-                const data = await response.json();
-
-                if (!data.success) {
-                    checkbox.prop('checked', previousState); // rollback
-                    showDangerToast(data.message);
-                } else {
-                    showSuccessToast(data.message);
+                if (!result.isConfirmed) {
+                    rollback();
+                    return;
                 }
 
-            } catch (err) {
-                checkbox.prop('checked', previousState); // rollback
-                showDangerToast('Something went wrong, try again later');
-                console.error(err);
-            } finally {
-                checkbox.prop('disabled', false);
-            }
+                checkbox.prop('disabled', true);
+
+                try {
+                    const res = await fetch('<?= base_url('admin/news/update-status') ?>', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: JSON.stringify({
+                            id,
+                            value: newValue
+                        })
+                    });
+
+                    const data = await res.json();
+
+                    if (!data.success) {
+                        rollback();
+                        showDangerToast(data.message || 'Status update failed');
+                    } else {
+                        showSuccessToast(data.message);
+                    }
+
+                } catch (e) {
+                    rollback();
+                    showDangerToast('Something went wrong');
+                    console.error(e);
+                } finally {
+                    checkbox.prop('disabled', false);
+                }
+            });
         });
 
-
-
-        // Post delete function 
-
+        /* --------------------------------
+         * DELETE POST (SweetAlert)
+         * -------------------------------- */
         $(document).on('click', '.deleteBtn', function() {
+
             const id = $(this).data('id');
 
-            if (!confirm('Are you sure you want to delete this news post?')) {
-                return;
-            }
+            Swal.fire({
+                title: 'Delete this post?',
+                text: 'This action cannot be undone!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                reverseButtons: true
+            }).then((result) => {
 
-            $.ajax({
-                url: "<?= base_url('admin/news/delete') ?>/" + id,
-                type: "POST",
-                dataType: "json",
-                success: function(res) {
-                    if (res.success) {
-                        showSuccessToast(res.message);
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1000);
-                    } else {
-                        showDangerToast(res.message || 'Delete failed')
+                if (!result.isConfirmed) return;
+
+                $.ajax({
+                    url: "<?= base_url('admin/news/delete') ?>/" + id,
+                    type: "POST",
+                    dataType: "json",
+                    success(res) {
+                        if (res.success) {
+                            showSuccessToast(res.message);
+                            setTimeout(() => location.reload(), 800);
+                        } else {
+                            showDangerToast(res.message || 'Delete failed');
+                        }
+                    },
+                    error(err) {
+                        showDangerToast('Something went wrong');
+                        console.error('Delete error:', err);
                     }
-                },
-                error: function(err) {
-                    showDangerToast('Something went wrong');
-                    console.error('Delete post', err);
-
-                }
+                });
             });
         });
 

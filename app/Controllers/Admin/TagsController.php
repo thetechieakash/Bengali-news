@@ -3,25 +3,133 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
+use App\Helpers\Slug;
 use App\Models\TagModel;
 
 class TagsController extends BaseController
 {
-    public function search()
+    public function index()
     {
-        $q = trim($this->request->getGet('q'));
+        $model = new TagModel();
+        $tags = $model->orderBy('id', 'DESC')->findAll();
+        $data = [
+            'pageTitle' => 'Tags',
+            'tags' => $tags,
+        ];
+        return view('admin/Tags', $data);
+    }
+
+    public function createTag()
+    {
+        $tag = trim($this->request->getPost('tag'));
+
+        if (!$tag) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Tag name is required',
+            ]);
+        }
+
+        $slug = new Slug();
+        $tagSlug = $slug->slugify($tag);
 
         $model = new TagModel();
 
-        if ($q === '') {
-            return $this->response->setJSON([]);
+        // Correct duplicate check
+        $existingTag = $model->where('name', $tagSlug)->first();
+        if ($existingTag) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Tag already exists',
+            ]);
         }
 
-        $tags = $model
-            ->like('name', $q)
-            ->limit(10)
-            ->findAll();
+        $model->insert([
+            'name' => $tagSlug
+        ]);
 
-        return $this->response->setJSON($tags);
+        return $this->response->setJSON([
+            'success' => true,
+            'message' => 'Tag saved successfully',
+        ]);
+    }
+
+    public function updateTag()
+    {
+        $tagId = $this->request->getPost('id');
+        $tag   = trim($this->request->getPost('tag'));
+
+        if (!$tagId || !$tag) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Invalid request',
+            ]);
+        }
+
+        $slug = new Slug();
+        $tagSlug = $slug->slugify($tag);
+
+        $model = new TagModel();
+
+        $existingTag = $model->find($tagId);
+        if (!$existingTag) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Tag not found',
+            ]);
+        }
+
+        if ($existingTag['name'] === $tagSlug) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'No changes found',
+            ]);
+        }
+
+        // Prevent duplicate on update
+        if ($model->where('name', $tagSlug)->where('id !=', $tagId)->first()) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Tag already exists',
+            ]);
+        }
+
+        $model->update($tagId, [
+            'name' => $tagSlug
+        ]);
+
+        return $this->response->setJSON([
+            'success' => true,
+            'message' => 'Tag updated successfully',
+        ]);
+    }
+
+    public function deleteTag()
+    {
+        $tagId = $this->request->getPost('id');
+
+        if (!$tagId) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Invalid request',
+            ]);
+        }
+
+        $model = new TagModel();
+
+        $existingTag = $model->find($tagId);
+        if (!$existingTag) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Tag not found',
+            ]);
+        }
+
+        $model->delete($tagId);
+
+        return $this->response->setJSON([
+            'success' => true,
+            'message' => 'Tag deleted successfully',
+        ]);
     }
 }

@@ -1,5 +1,28 @@
 <script>
     $(document).ready(function() {
+
+        // Sweetalert2 
+        const swalConfirm = async ({
+            title = 'Are you sure?',
+            text = 'This action cannot be undone',
+            icon = 'warning',
+            confirmText = 'Yes, continue',
+            cancelText = 'Cancel'
+        } = {}) => {
+            const result = await Swal.fire({
+                title,
+                text,
+                icon,
+                showCancelButton: true,
+                confirmButtonText: confirmText,
+                cancelButtonText: cancelText,
+                reverseButtons: true,
+                focusCancel: true
+            });
+
+            return result.isConfirmed;
+        };
+
         // Open modal function 
         $(document).on('click', '.editBtn', function() {
 
@@ -15,7 +38,6 @@
         });
 
         // Toggle functions
-
         $('#sub-cat-listing').on('change', '.toggle-is-active', async function() {
             const checkbox = $(this);
             const previousState = !checkbox.prop('checked');
@@ -23,7 +45,11 @@
             const id = checkbox.data('id');
             const value = checkbox.prop('checked') ? 1 : 0;
 
-            if (!confirm('Are you sure you want to update?')) {
+            const confirmed = await swalConfirm({
+                text: 'Do you want to update active status?'
+            });
+
+            if (!confirmed) {
                 checkbox.prop('checked', previousState);
                 return;
             }
@@ -56,8 +82,6 @@
             }
         });
 
-
-
         $('#sub-cat-listing').on('change', '.toggle-status', async function() {
             const checkbox = $(this);
             const previousState = !checkbox.prop('checked');
@@ -65,7 +89,11 @@
             const id = checkbox.data('id');
             const value = checkbox.prop('checked') ? 1 : 0;
 
-            if (!confirm('Are you sure you want to update status?')) {
+            const confirmed = await swalConfirm({
+                text: 'Do you want to update status?'
+            });
+
+            if (!confirmed) {
                 checkbox.prop('checked', previousState);
                 return;
             }
@@ -101,18 +129,21 @@
             }
         });
 
-
-
         // Update functions 
 
         $(document).on('click', '.updateSubCatBtn', async function(e) {
+            e.preventDefault();
+
+            const confirmed = await swalConfirm({
+                text: 'Do you want to update this sub category?'
+            });
+
+            if (!confirmed) return;
+
             let subCatId = $('#sub_cat_id').val();
             let catId = $('#cat_id').val();
             let newCatName = $('#sub_cat_name').val();
-            if (!confirm('Are you sure you want to update sub category?')) {
-                e.preventDefault();
-                return;
-            }
+
             try {
                 const response = await fetch("<?= base_url('admin/sub-categories/update') ?>", {
                     method: 'POST',
@@ -143,12 +174,18 @@
         })
 
         // Sub category delete function 
-
         $(document).on('click', '.deletebtn', async function() {
             const subCatId = $(this).data('id');
             const catId = $(this).data('cat-id');
 
-            if (!confirm('Are you sure you want to delete this sub category?')) return;
+            const confirmed = await swalConfirm({
+                title: 'Delete Sub Category?',
+                text: 'This sub category will be permanently deleted!',
+                icon: 'error',
+                confirmText: 'Yes, delete it'
+            });
+
+            if (!confirmed) return;
 
             try {
                 const response = await fetch("<?= base_url('admin/sub-categories/delete') ?>", {
@@ -176,6 +213,5 @@
                 showDangerToast('Something went wrong, try again later');
             }
         });
-
     });
 </script>

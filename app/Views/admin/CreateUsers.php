@@ -24,6 +24,15 @@
                             <input type="email" class="form-control form-control-lg" name="email" placeholder="Email">
                         </div>
                         <div class="form-group">
+                            <select class="form-select form-select-lg" name="role" placeholder="Email" placeholder="Select role">
+                                <option selected>Select Role</option>
+                                <option value="superadmin">Super Admin</option>
+                                <option value="admin">Admin</option>
+                                <option value="author">Author</option>
+                                <option value="user">user</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
                             <input type="password" class="form-control form-control-lg" name="password" placeholder="Password">
                         </div>
                         <div class="mt-3 d-grid gap-2">
@@ -50,7 +59,7 @@
             const btn = $(this).find('button[type="submit"]').prop('disabled', true);
 
             $.ajax({
-                url: "<?= base_url('admin/users/create') ?>",
+                url: "<?= base_url('admin/user/create') ?>",
                 type: "POST",
                 data: formData,
                 processData: false,
@@ -75,7 +84,7 @@
                 error(e) {
                     showDangerToast('Something went wrong');
                     console.log("User create ajax error", e);
-                    
+
                 },
                 complete() {
                     btn.prop('disabled', false);

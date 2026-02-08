@@ -32,56 +32,6 @@
         });
 
         /* ----------------------------------------------------
-         * Tags select2
-         * -------------------------------------------------- */
-        ;
-        $('#tags').select2({
-            theme: 'bootstrap',
-            placeholder: 'Type to add tags',
-            multiple: true,
-            tags: true,
-            minimumInputLength: 1,
-            width: '100%',
-
-            ajax: {
-                url: "<?= base_url('admin/tags/search') ?>",
-                dataType: 'json',
-                delay: 300,
-                data(params) {
-                    return {
-                        q: params.term
-                    };
-                },
-                processResults(data) {
-                    return {
-                        results: data.map(tag => ({
-                            id: tag.name,
-                            text: tag.name
-                        }))
-                    };
-                }
-            },
-
-            createTag(params) {
-                const term = params.term.trim().toLowerCase();
-                if (!term) return null;
-
-                const exists = $('#tags option').filter(function() {
-                    return $(this).text().toLowerCase() === term;
-                }).length;
-
-                if (exists) return null;
-
-                return {
-                    id: term,
-                    text: term,
-                    newTag: true
-                };
-            }
-        });
-
-
-        /* ----------------------------------------------------
          * Flatpickr
          * -------------------------------------------------- */
         const fp = flatpickr('.datetimepicker', {
@@ -101,6 +51,11 @@
         /* ----------------------------------------------------
          * Select2
          * -------------------------------------------------- */
+        $('#tags').select2({
+            theme: 'bootstrap',
+            placeholder: 'Select tags',
+        });
+
         $('#categories').select2({
             theme: 'bootstrap',
             placeholder: 'Select categories',
@@ -118,17 +73,17 @@
 
         // preload existing subcategories into cache
         if (preloadedSubCats.length) {
+            let subCats = [];
+
             preloadedSubCats.forEach(sub => {
                 subCategoryCache[sub.cat_id] ??= [];
                 subCategoryCache[sub.cat_id].push(sub);
+                subCats.push(sub);
             });
 
-            // enable & preselect
-            $('#subcategories')
-                .prop('disabled', false)
-                .val(selectedSubCatIds)
-                .trigger('change');
+            renderSubCategories(subCats);
         }
+
 
         function resetSubCategories() {
             $('#subcategories')
@@ -141,11 +96,37 @@
 
             const selectedCats = $(this).val() || [];
 
+            /* ---------------------------------------
+             * Remove invalid subcategories immediately
+             * ------------------------------------- */
+            const validSubIds = [];
+
+            selectedCats.forEach(catId => {
+                if (subCategoryCache[catId]) {
+                    subCategoryCache[catId].forEach(sub => {
+                        validSubIds.push(String(sub.id));
+                    });
+                }
+            });
+
+            const currentSelected = $('#subcategories').val() || [];
+            const filtered = currentSelected.filter(id =>
+                validSubIds.includes(String(id))
+            );
+
+            $('#subcategories').val(filtered).trigger('change');
+
+            /* ---------------------------------------
+             * No category selected → reset
+             * ------------------------------------- */
             if (!selectedCats.length) {
                 resetSubCategories();
                 return;
             }
 
+            /* ---------------------------------------
+             * Loading state
+             * ------------------------------------- */
             $('#subcategories')
                 .html('<option>Loading...</option>')
                 .prop('disabled', true)
@@ -153,6 +134,9 @@
 
             let subCats = [];
 
+            /* ---------------------------------------
+             * Load cached subcategories first
+             * ------------------------------------- */
             selectedCats.forEach(id => {
                 if (subCategoryCache[id]) {
                     subCats = subCats.concat(subCategoryCache[id]);
@@ -161,14 +145,21 @@
 
             const missing = selectedCats.filter(id => !subCategoryCache[id]);
 
+            /* ---------------------------------------
+             * All cached → render immediately
+             * ------------------------------------- */
             if (!missing.length) {
                 renderSubCategories(subCats);
                 return;
             }
 
+            /* ---------------------------------------
+             * Fetch missing subcategories
+             * ------------------------------------- */
             $.post("<?= base_url('admin/sub-categories/by-categories') ?>", {
                 category_ids: missing
             }).done(function(res) {
+
                 res.forEach(sub => {
                     subCategoryCache[sub.cat_id] ??= [];
                     subCategoryCache[sub.cat_id].push(sub);
@@ -181,11 +172,13 @@
                 });
 
                 renderSubCategories(subCats);
+
             }).fail(function() {
                 showDangerToast('Failed to load sub categories');
                 resetSubCategories();
             });
         });
+
 
         function renderSubCategories(subCats) {
             const subSelect = $('#subcategories');
@@ -219,50 +212,6 @@
         $('#thumbnail_image').on('dropify.afterClear', function() {
             document.getElementById('thumbnail_removed').value = '1';
         });
-
-
-        // $(document).on('click', '#update', function(e) {
-        //     e.preventDefault();
-        //     const btn = $(this).prop('disabled', true);
-
-        //     const editorData = CKEDITOR.instances.editor.getData();
-        //     if (!editorData.replace(/<[^>]*>/g, '').trim()) {
-        //         showDangerToast('Description is required');
-        //         btn.prop('disabled', false);
-        //         return;
-        //     }
-
-        //     // Sync CKEditor → textarea
-        //     for (let i in CKEDITOR.instances) {
-        //         CKEDITOR.instances[i].updateElement();
-        //     }
-        //     loader.fadeIn(150);
-        //     $.ajax({
-        //         url: "<?= base_url('admin/news/update/' . ($post['id'] ?? '')) ?>",
-        //         type: "POST",
-        //         data: new FormData(document.getElementById('newsForm')),
-        //         processData: false,
-        //         contentType: false,
-        //         success(res) {
-        //             if (res.success) {
-        //                 showSuccessToast(res.message);
-        //                 setTimeout(() => location.href = res.redirect, 1000);
-        //             } else {
-        //                 showDangerToast(res.message);
-        //             }
-        //             btn.prop('disabled', false);
-        //         },
-        //         error(err) {
-        //             showDangerToast('Server error. Please try again.');
-        //             console.error('Post Delete server error', err);
-        //         },
-
-        //         complete() {
-        //             loader.fadeOut(150);
-        //             btn.prop('disabled', false);
-        //         }
-        //     });
-        // });
 
         function submitPost(status) {
             $('#post_status').val(status);
@@ -314,7 +263,29 @@
 
         $(document).on('click', '#publish', function(e) {
             e.preventDefault();
-            submitPost(1); // SAVE + PUBLISH
+
+            Swal.fire({
+                title: 'Publish this post?',
+                theme: 'bootstrap-4',
+                html: `
+                        <h6 class="mb-0">
+                            The <strong>post date will be updated</strong><br>
+                            to the <strong>current date & time</strong>.
+                        </h6>
+                    `,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, publish',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#1F3BB3',
+                cancelButtonColor: '#73777a',
+                reverseButtons: true,
+                focusCancel: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    submitPost(1); // SAVE + PUBLISH
+                }
+            });
         });
 
     });

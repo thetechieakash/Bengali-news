@@ -33,7 +33,13 @@
                     </div>
                     <div class="form-group">
                         <label for="tags">Tags</label>
-                        <select class="form-control" id="tags" name="tags[]" multiple="multiple"></select>
+                        <select class="form-control" id="tags" name="tags[]" multiple="multiple">
+                            <?php foreach ($tags as $tag): ?>
+                                <option value="<?= $tag['id'] ?>">
+                                    <?= esc($tag['name']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -66,6 +72,8 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="col-12 mt-3">
             <div class="card mt-3">
                 <div class="card-body">
                     <h4 class="mb-2">Add Thumbnail</h4>
@@ -146,7 +154,7 @@
 <script src="<?= base_url() ?>assets/vendors/flatpickr/flatpickr.min.js"></script>
 <script src="<?= base_url() ?>assets/vendors/quill/quill.min.js"></script>
 <script src="<?= base_url() ?>assets/vendors/glightbox/glightbox.min.js"></script>
-<script src="<?= base_url() ?>assets/vendors/ckeditor/ckeditor.js""></script>
+<script src="<?= base_url() ?>assets/vendors/ckeditor/ckeditor.js"></script>
 
 
 <?= $this->endSection() ?>

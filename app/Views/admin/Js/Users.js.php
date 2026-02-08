@@ -3,11 +3,34 @@
         // Data table config
         $('#users-listing').DataTable();
 
+        // Sweetalert2 
+        const swalConfirm = async ({
+            title = 'Are you sure?',
+            text = 'This action cannot be undone',
+            icon = 'warning',
+            confirmText = 'Yes, continue',
+            cancelText = 'Cancel'
+        } = {}) => {
+            const result = await Swal.fire({
+                title,
+                text,
+                icon,
+                showCancelButton: true,
+                confirmButtonText: confirmText,
+                cancelButtonText: cancelText,
+                reverseButtons: true,
+                focusCancel: true
+            });
+
+            return result.isConfirmed;
+        };
+
         // asign values
         $(document).on('click', '.editBtn', function() {
             let id = $(this).data('id');
             let username = $(this).data('username');
             let email = $(this).data('email');
+            $('#role').val($(this).data('role'));
 
             $('#user_id').val(id);
             $('#username').val(username);
@@ -24,9 +47,11 @@
                 showDangerToast("Invalid user");
                 return
             }
-            if (!confirm('Are you sure you want to update user?')) {
-                return;
-            }
+            const confirmed = await swalConfirm({
+                text: 'Do you want to update this user?'
+            });
+
+            if (!confirmed) return;
             const formData = new FormData(form)
             $.ajax({
                 url: "<?= base_url('admin/user/update') ?>",
@@ -62,10 +87,17 @@
             });
         })
 
-        $('#users-listing').on('click', '.deletebtn', function() {
+        $('#users-listing').on('click', '.deletebtn', async function() {
             let id = $(this).data('id');
 
-            if (!confirm('Are you sure you want to delete?')) return;
+            const confirmed = await swalConfirm({
+                title: 'Delete User?',
+                text: 'This user will be permanently deleted!',
+                icon: 'error',
+                confirmText: 'Yes, delete'
+            });
+
+            if (!confirmed) return;
 
             $.ajax({
                 url: "<?= base_url('admin/user/delete') ?>",
@@ -89,14 +121,18 @@
             });
         });
 
-        $('#users-listing').on('click', '.authorizationBtn', function() {
+        $('#users-listing').on('click', '.restorebtn', async function() {
             let id = $(this).data('id');
-            location.href = `<?= base_url('admin/user/authorization/') ?>${id}`
 
-        });
-        $('#users-listing').on('click', '.restorebtn', function() {
-            let id = $(this).data('id');
-            if (!confirm('Are you sure you want restore this user?')) return;
+            const confirmed = await swalConfirm({
+                title: 'Restore User?',
+                text: 'This user account will be restored',
+                icon: 'info',
+                confirmText: 'Yes, restore'
+            });
+
+            if (!confirmed) return;
+
             $.post("<?= base_url('admin/user/restore') ?>", {
                 user_id: id,
                 <?= csrf_token() ?>: "<?= csrf_hash() ?>"
@@ -109,6 +145,6 @@
                 }
             });
         });
-
+        
     });
 </script>

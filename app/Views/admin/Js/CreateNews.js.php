@@ -5,9 +5,6 @@
             height: '400px',
         });
 
-        // Loader 
-        const loader = $('#panding-loader');
-
         // GLightbox init 
         const lightbox = GLightbox();
 
@@ -31,62 +28,6 @@
         });
 
         /* ----------------------------------------------------
-         * Tags input
-         * -------------------------------------------------- */
-        // $('#tags').tagsInput({
-        //     width: '100%',
-        //     height: '75%',
-        //     defaultText: 'Add tag',
-        //     removeWithBackspace: true,
-        //     maxChars: 20
-        // });
-
-
-        $('#tags').select2({
-            theme: 'bootstrap',
-            placeholder: 'Type to add tags',
-            minimumInputLength: 2,
-            tags: true, // allow creation
-            selectOnClose: true, // KEY FIX
-            closeOnSelect: true,
-            ajax: {
-                url: "<?= base_url('admin/tags/search') ?>",
-                dataType: 'json',
-                delay: 250,
-                data(params) {
-                    return {
-                        q: params.term
-                    };
-                },
-                processResults(data) {
-                    return {
-                        results: data.map(tag => ({
-                            id: tag.id,
-                            text: tag.name
-                        }))
-                    };
-                }
-            },
-            createTag(params) {
-                const term = params.term.trim().toLowerCase();
-                if (!term) return null;
-
-                const exists = $('#tags option').filter(function() {
-                    return $(this).text().toLowerCase() === term;
-                }).length;
-
-                if (exists) return null;
-
-                return {
-                    id: term,
-                    text: term,
-                    newTag: true
-                };
-            }
-        });
-
-
-        /* ----------------------------------------------------
          * Flatpickr
          * -------------------------------------------------- */
         const fp = flatpickr('.datetimepicker', {
@@ -105,6 +46,11 @@
         /* ----------------------------------------------------
          * Select2
          * -------------------------------------------------- */
+        $('#tags').select2({
+            theme: 'bootstrap',
+            placeholder: 'Select tags',
+        });
+
         $('#categories').select2({
             theme: 'bootstrap',
             placeholder: 'Select categories',
@@ -202,35 +148,6 @@
         const dropifyInstance = $('#thumbnail_image').dropify().data('dropify');
 
         /* ----------------------------------------------------
-         * Reset form
-         * -------------------------------------------------- */
-        function resetNewsForm() {
-
-            document.getElementById('newsForm').reset();
-
-            CKEDITOR.instances.editor.setData('');
-
-            $('#tags').val(null).trigger('change');
-
-            $('#categories').val(null).trigger('change');
-            resetSubCategories();
-
-            Object.keys(subCategoryCache).forEach(k => delete subCategoryCache[k]);
-
-            fp.clear();
-
-            if (dropifyInstance) {
-                dropifyInstance.resetPreview();
-                dropifyInstance.clearElement();
-            }
-
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        }
-
-        /* ----------------------------------------------------
          * Submit handler
          * -------------------------------------------------- */
 
@@ -265,8 +182,7 @@
             for (let i in CKEDITOR.instances) {
                 CKEDITOR.instances[i].updateElement();
             }
-            loader.fadeIn(150);
-
+            $('#global-loader').fadeIn(500);
             $.ajax({
                 url: "<?= base_url('admin/news/create') ?>",
                 type: "POST",
@@ -280,16 +196,14 @@
                     } else {
                         showDangerToast(res.message);
                     }
-                    submitBtn.prop('disabled', false);
                 },
                 error(err) {
                     showDangerToast('Something went wrong');
-                    console.error('Post Create server error', err);
-                    submitBtn.prop('disabled', false);
+                    console.error(err);
                 },
                 complete() {
-                    loader.fadeOut(150);
-                    btn.prop('disabled', false);
+                    $('#global-loader').fadeOut(500);
+                    submitBtn.prop('disabled', false);
                 }
             });
         });
