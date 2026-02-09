@@ -5,14 +5,17 @@
 <?= $this->section('cssPlugins') ?>
 <?= $this->endSection() ?>
 <?= $this->section('content') ?>
+<?php
 
+use App\Helpers\StringShort;
+?>
 <!-- Page Breadcrumb Start -->
 <div class="page-title">
     <div class="container">
         <div class="row">
             <div class="col-md-12">
                 <ul class="breadcrumb">
-                    <li><a href="<?= base_url() ?>">Home</a></li>
+                    <li><a href="<?= base_url() ?>">হোম</a></li>
                     <li><?= esc($category['cat']) ?></li>
                 </ul>
             </div>
@@ -38,145 +41,76 @@
                             <?php endforeach; ?>
                         </ul>
                     <?php endif; ?>
-                    <div class="utf_post_block_style post-list clearfix">
-                        <div class="row">
-                            <div class="col-lg-5 col-md-6">
-                                <div class="utf_post_thumb thumb-float-style"> <a href="#"> <img class="img-fluid" src="<?= base_url() ?>assets/images/news/tech/robot5.jpg" alt="" /> </a> <a class="utf_post_cat" href="#">Traveling</a> </div>
-                            </div>
-                            <div class="col-lg-7 col-md-6">
-                                <div class="utf_post_content">
-                                    <h2 class="utf_post_title title-large"> <a href="#">Robots in hospitals can be quite handy to navigate around the hospital</a> </h2>
-                                    <div class="utf_post_meta"> <span class="utf_post_author"><i class="fa fa-user"></i> <a href="#">John Wick</a></span> <span class="utf_post_date"><i class="fa fa-clock-o"></i> 25 Jan, 2022</span> <span class="post-comment pull-right"><i class="fa fa-comments-o"></i> <a href="#" class="comments-link"><span>03</span></a></span> </div>
-                                    <p>Lorem Ipsum is simply dummy text of the printing type setting industry. Lorem Ipsum has been the industry's standard dummy text ever galley of type...</p>
+                    <?php if (!empty($posts)): ?>
+                        <?php foreach ($posts as $post): ?>
+                            <div class="utf_post_block_style post-list clearfix">
+                                <div class="row">
+                                    <div class="col-lg-5 col-md-6">
+                                        <div class="utf_post_thumb thumb-float-style">
+                                            <a href="#">
+                                                <img class="img-fluid" src="<?= $post['thumbnail_url'] ?? base_url('assets/images/news/placeholder.png')  ?>" alt="" />
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-7 col-md-6">
+                                        <div class="utf_post_content">
+                                            <h2 class="utf_post_title title-large">
+                                                <a href="<?= base_url('news/' . $post['slug']) ?>"><?= StringShort::truncate($post['headline']) ?></a>
+                                            </h2>
+                                            <div class="utf_post_meta">
+                                                <span class="utf_post_author"><?= esc($post['author']) ?></span>
+                                                <span class="utf_post_date">
+                                                    <?php $formattedPostDate = (new DateTime($post['post_date_time']))->format('d M, Y'); ?>
+                                                    <?= $formattedPostDate ?>
+                                                </span>
+                                            </div>
+                                            <p><?= $post['short_description'] ?></p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="utf_post_block_style post-list clearfix">
-                        <div class="row">
-                            <div class="col-lg-5 col-md-6">
-                                <div class="utf_post_thumb thumb-float-style"> <a href="#"> <img class="img-fluid" src="<?= base_url() ?>assets/images/news/tech/game2.jpg" alt="" /> </a> <a class="utf_post_cat" href="#">Games</a> </div>
-                            </div>
-                            <div class="col-lg-7 col-md-6">
-                                <div class="utf_post_content">
-                                    <h2 class="utf_post_title title-large"> <a href="#">Lindie game plonks players in front of huge starship command center</a> </h2>
-                                    <div class="utf_post_meta"> <span class="utf_post_author"><i class="fa fa-user"></i> <a href="#">John Wick</a></span> <span class="utf_post_date"><i class="fa fa-clock-o"></i> 25 Jan, 2022</span> <span class="post-comment pull-right"><i class="fa fa-comments-o"></i> <a href="#" class="comments-link"><span>03</span></a></span> </div>
-                                    <p>Lorem Ipsum is simply dummy text of the printing type setting industry. Lorem Ipsum has been the industry's standard dummy text ever galley of type...</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="utf_post_block_style post-list clearfix">
-                        <div class="row">
-                            <div class="col-lg-5 col-md-6">
-                                <div class="utf_post_thumb thumb-float-style"> <a href="#"> <img class="img-fluid" src="<?= base_url() ?>assets/images/news/tech/robot3.jpg" alt="" /> </a> <a class="utf_post_cat" href="#">Traveling</a> </div>
-                            </div>
-                            <div class="col-lg-7 col-md-6">
-                                <div class="utf_post_content">
-                                    <h2 class="utf_post_title title-large"> <a href="#">Zhang social media pop also known when smart innocent...</a> </h2>
-                                    <div class="utf_post_meta"> <span class="utf_post_author"><i class="fa fa-user"></i> <a href="#">John Wick</a></span> <span class="utf_post_date"><i class="fa fa-clock-o"></i> 25 Jan, 2022</span> <span class="post-comment pull-right"><i class="fa fa-comments-o"></i> <a href="#" class="comments-link"><span>03</span></a></span> </div>
-                                    <p>Lorem Ipsum is simply dummy text of the printing type setting industry. Lorem Ipsum has been the industry's standard dummy text ever galley of type...</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="utf_post_block_style post-list clearfix">
-                        <div class="row">
-                            <div class="col-lg-5 col-md-6">
-                                <div class="utf_post_thumb thumb-float-style"> <a href="#"> <img class="img-fluid" src="<?= base_url() ?>assets/images/news/tech/gadget2.jpg" alt="" /> </a> <a class="utf_post_cat" href="#">Lifestyle</a> </div>
-                            </div>
-                            <div class="col-lg-7 col-md-6">
-                                <div class="utf_post_content">
-                                    <h2 class="utf_post_title title-large"> <a href="#">Samsung Gear S3 review: A whimper, when smartwatches need a bang</a> </h2>
-                                    <div class="utf_post_meta"> <span class="utf_post_author"><i class="fa fa-user"></i> <a href="#">John Wick</a></span> <span class="utf_post_date"><i class="fa fa-clock-o"></i> 25 Jan, 2022</span> <span class="post-comment pull-right"><i class="fa fa-comments-o"></i> <a href="#" class="comments-link"><span>03</span></a></span> </div>
-                                    <p>Lorem Ipsum is simply dummy text of the printing type setting industry. Lorem Ipsum has been the industry's standard dummy text ever galley of type...</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="utf_post_block_style post-list clearfix">
-                        <div class="row">
-                            <div class="col-lg-5 col-md-6">
-                                <div class="utf_post_thumb thumb-float-style"> <a href="#"> <img class="img-fluid" src="<?= base_url() ?>assets/images/news/tech/game1.jpg" alt="" /> </a> <a class="utf_post_cat" href="#">Games</a> </div>
-                            </div>
-                            <div class="col-lg-7 col-md-6">
-                                <div class="utf_post_content">
-                                    <h2 class="utf_post_title title-large"> <a href="#">Historical heroes and robot dinosaurs: New games on our radar in April</a> </h2>
-                                    <div class="utf_post_meta"> <span class="utf_post_author"><i class="fa fa-user"></i> <a href="#">John Wick</a></span> <span class="utf_post_date"><i class="fa fa-clock-o"></i> 25 Jan, 2022</span> <span class="post-comment pull-right"><i class="fa fa-comments-o"></i> <a href="#" class="comments-link"><span>03</span></a></span> </div>
-                                    <p>Lorem Ipsum is simply dummy text of the printing type setting industry. Lorem Ipsum has been the industry's standard dummy text ever galley of type...</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                    <?php endif; ?>
                 </div>
-
-                <div class="paging">
-                    <ul class="pagination">
-                        <li class="active"><a href="#">1</a></li>
-                        <li><a href="#">2</a></li>
-                        <li><a href="#">3</a></li>
-                        <li><a href="#">4</a></li>
-                        <li><a href="#">»</a></li>
-                    </ul>
-                </div>
+                <?= $pager->links() ?>
             </div>
-
             <div class="col-lg-4 col-md-12">
                 <div class="sidebar utf_sidebar_right">
                     <div class="widget text-center"> <img class="banner img-fluid" src="<?= base_url() ?>assets/images/banner-ads/ad-sidebar.png" alt="" /> </div>
-
-
                     <div class="widget color-primary">
-                        <h3 class="utf_block_title"><span>Popular News</span></h3>
+                        <h3 class="utf_block_title"><span>বিখ্যাত সংবাদ</span></h3>
+                        <!-- <div class="utf_post_overaly_style clearfix">
+                            <div class="utf_post_thumb"> <a href="#"> <img class="img-fluid" src="<?= base_url() ?>assets/images/news/lifestyle/health4.jpg" alt="" /> </a> </div>
+                            <div class="utf_post_content"> <a class="utf_post_cat" href="#">Health</a>
+                                <h2 class="utf_post_title"> <a href="#">Smart packs parking sensor tech and beeps when col…</a> </h2>
+                                <div class="utf_post_meta"> <span class="utf_post_author"> John Wick</span> <span class="utf_post_date">25 Jan, 2022</span> </div>
+                            </div>
+                        </div> -->
+
                         <div class="utf_list_post_block">
                             <ul class="utf_list_post">
-                                <li class="clearfix">
-                                    <div class="utf_post_block_style post-float clearfix">
-                                        <div class="utf_post_thumb"> <a href="#"> <img class="img-fluid" src="<?= base_url() ?>assets/images/news/tech/gadget3.jpg" alt="" /> </a> <a class="utf_post_cat" href="#">Lifestyle</a> </div>
-                                        <div class="utf_post_content">
-                                            <h2 class="utf_post_title title-small"> <a href="#">Zhang social media pop also known when smart innocent...</a> </h2>
-                                            <div class="utf_post_meta"> <span class="utf_post_author"><i class="fa fa-user"></i> <a href="#">John Wick</a></span> <span class="utf_post_date"><i class="fa fa-clock-o"></i> 25 Jan, 2022</span> </div>
+                                <?php foreach ($popularNews as $news): ?>
+                                    <li class="clearfix">
+                                        <div class="utf_post_block_style post-float clearfix">
+                                            <div class="utf_post_thumb">
+                                                <img class="img-fluid" src="<?= $news['thumbnail_url'] ?? $defaultThumb ?>" alt="" />
+                                            </div>
+                                            <div class="utf_post_content">
+                                                <h2 class="utf_post_title title-small">
+                                                    <a href="<?= base_url('news/' . $news['slug']) ?>"><?= StringShort::truncate($news['headline'], 30)  ?></a>
+                                                </h2>
+                                                <div class="utf_post_meta">
+                                                    <span class="utf_post_author"><?= esc($news['author']) ?></span>
+                                                    <span class="utf_post_date"><?= date('d M, Y', strtotime($news['post_date_time'])) ?></span>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </li>
-
-                                <li class="clearfix">
-                                    <div class="utf_post_block_style post-float clearfix">
-                                        <div class="utf_post_thumb"> <a href="#"> <img class="img-fluid" src="<?= base_url() ?>assets/images/news/lifestyle/travel5.jpg" alt="" /> </a> <a class="utf_post_cat" href="#">Travel</a> </div>
-                                        <div class="utf_post_content">
-                                            <h2 class="utf_post_title title-small"> <a href="#">Zhang social media pop also known when smart innocent...</a> </h2>
-                                            <div class="utf_post_meta"> <span class="utf_post_author"><i class="fa fa-user"></i> <a href="#">John Wick</a></span> <span class="utf_post_date"><i class="fa fa-clock-o"></i> 25 Jan, 2022</span> </div>
-                                        </div>
-                                    </div>
-                                </li>
-
-                                <li class="clearfix">
-                                    <div class="utf_post_block_style post-float clearfix">
-                                        <div class="utf_post_thumb"> <a href="#"> <img class="img-fluid" src="<?= base_url() ?>assets/images/news/tech/robot5.jpg" alt="" /> </a> <a class="utf_post_cat" href="#">Traveling</a> </div>
-                                        <div class="utf_post_content">
-                                            <h2 class="utf_post_title title-small"> <a href="#">Zhang social media pop also known when smart innocent...</a> </h2>
-                                            <div class="utf_post_meta"> <span class="utf_post_author"><i class="fa fa-user"></i> <a href="#">John Wick</a></span> <span class="utf_post_date"><i class="fa fa-clock-o"></i> 25 Jan, 2022</span> </div>
-                                        </div>
-                                    </div>
-                                </li>
-
-                                <li class="clearfix">
-                                    <div class="utf_post_block_style post-float clearfix">
-                                        <div class="utf_post_thumb"> <a href="#"> <img class="img-fluid" src="<?= base_url() ?>assets/images/news/lifestyle/food1.jpg" alt="" /> </a> <a class="utf_post_cat" href="#">Food</a> </div>
-                                        <div class="utf_post_content">
-                                            <h2 class="utf_post_title title-small"> <a href="#">Zhang social media pop also known when smart innocent...</a> </h2>
-                                            <div class="utf_post_meta"> <span class="utf_post_author"><i class="fa fa-user"></i> <a href="#">John Wick</a></span> <span class="utf_post_date"><i class="fa fa-clock-o"></i> 25 Jan, 2022</span> </div>
-                                        </div>
-                                    </div>
-                                </li>
+                                    </li>
+                                <?php endforeach; ?>
                             </ul>
                         </div>
                     </div>
-
                     <div class="widget text-center"> <img class="banner img-fluid" src="<?= base_url() ?>assets/images/banner-ads/ad-sidebar.png" alt="" /> </div>
                 </div>
             </div>

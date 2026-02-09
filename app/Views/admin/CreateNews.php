@@ -29,7 +29,7 @@
                     </div>
                     <div class="form-group">
                         <label for="shortdesc">Short Description</label>
-                        <textarea class="form-control" id="shortdesc" name="shortdescription" rows="4"></textarea>
+                        <textarea class="form-control" id="shortdesc" name="shortdescription" rows="4" style="min-height: 10rem;"></textarea>
                     </div>
                     <div class="form-group">
                         <label for="tags">Tags</label>

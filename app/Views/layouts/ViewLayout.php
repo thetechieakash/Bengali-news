@@ -28,6 +28,13 @@
 </head>
 
 <body>
+    <?php
+    use App\Helpers\StringShort;
+    use App\Models\NewsPostModel;
+
+    $postModel = new NewsPostModel();
+    $tickers = $postModel->headlineTicker();
+    ?>
     <!-- Start Pre Loader -->
     <div id="global-loader" class="light-loader">
         <img src="<?= base_url('assets/images/ripple.svg') ?>" class="loader-img" alt="Loader">
@@ -46,16 +53,6 @@
                                 <div class="home-tab">
                                     <!-- News ticker  -->
                                     <div class="mx-auto px-md-3" style="max-width: 1100px;">
-                                        <?php $carousels = [
-                                            'চন্দ্রকোনায় কনভয়ে হামলা! সিবিআই তদন্তের দাবিতে হাই কোর্টে শুভেন্দু',
-                                            'বাংলাদেশে ফের মৌলবাদীদের হাতে খুন হিন্দু যুবক',
-                                            'তপসিয়ায় চাকা ফেটে বাস দুর্ঘটনা, আহত অন্তত ১৬',
-                                            'উত্তুরে হাওয়ার দাপট! মকর সংক্রান্তিতে কাঁপবে তিলোত্তমা',
-                                            'ভারতের উপর ফের ২৫ শতাংশ শুল্ক চাপাল আমেরিকা',
-                                            'সাতসকালে ব্যাহত মেট্রো পরিষেবা',
-                                            'এসআইআর শুনানিতে ডাক লক্ষ্মীরতন শুক্লকে',
-                                            'ইরানে গ্রেপ্তার ভারতীয়রা? মুখ খুলল প্রশাসন'
-                                        ]; ?>
                                         <div class="container my-2 px-0">
                                             <div class="breaking-wrapper d-flex align-items-center shadow-lg">
                                                 <!-- LEFT LABEL -->
@@ -64,10 +61,10 @@
                                                 </div>
                                                 <!-- TICKER -->
                                                 <div class="breaking-ticker owl-carousel ticker ps-0">
-                                                    <?php foreach ($carousels as $carousel): ?>
+                                                    <?php foreach ($tickers as $ticker): ?>
                                                         <div class="ticker-item">
                                                             <i class="fa fa-circle"></i>
-                                                            <a href="#"><?= esc($carousel) ?></a>
+                                                            <a href="<?= base_url('news/' . $ticker['slug']) ?>"><?= StringShort::truncate($ticker['headline'],50)  ?></a>
                                                         </div>
                                                     <?php endforeach; ?>
                                                 </div>

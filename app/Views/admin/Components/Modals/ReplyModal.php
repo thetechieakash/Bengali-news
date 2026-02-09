@@ -14,3 +14,15 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="viewModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="modaltitle"></h5>
+            </div>
+            <div class="modal-body">
+                <textarea class="form-control" id="reply" rows="4" style="min-height: 10rem;"></textarea>
+            </div>
+        </div>
+    </div>
+</div>

@@ -160,36 +160,46 @@ class CreatePostController extends BaseController
             /* -----------------------------
             * 9. THUMBNAIL
             * ----------------------------- */
+            $thumbUrl        = null;
+            $finalThumbType  = null; // separate variable
+
             if ($thumbType === 'image') {
                 $file = $this->request->getFile('thumbnail_image');
 
-                if (!$file || !$file->isValid()) {
-                    throw new \Exception('Invalid thumbnail image');
+                // image selected AND file uploaded
+                if ($file && $file->isValid() && !$file->hasMoved()) {
+
+                    $folder = date('m_y');
+                    $path   = ROOTPATH . "public/uploads/posts/thumbnails/$folder";
+
+                    if (!is_dir($path)) {
+                        mkdir($path, 0775, true);
+                    }
+
+                    $upload = (new FileUploader($path))->upload($file);
+
+                    if (!$upload['status']) {
+                        throw new \Exception($upload['message']);
+                    }
+
+                    $finalThumbType = 'image';
+                    $thumbUrl = base_url("uploads/posts/thumbnails/$folder/" . $upload['file_name']);
                 }
+            } elseif ($thumbType === 'link' && $thumbLink !== '') {
 
-                $folder = date('m_y');
-                $path   = ROOTPATH . "public/uploads/posts/thumbnails/$folder";
-
-                if (!is_dir($path)) {
-                    mkdir($path, 0775, true);
-                }
-
-                $upload = (new FileUploader($path))->upload($file);
-
-                if (!$upload['status']) {
-                    throw new \Exception($upload['message']);
-                }
-
-                $thumbUrl = base_url("uploads/posts/thumbnails/$folder/" . $upload['file_name']);
-            } else {
+                $finalThumbType = 'link';
                 $thumbUrl = $thumbLink;
             }
 
-            (new NewsPostThumbnailModel())->insert([
-                'news_post_id'  => $postId,
-                'type'          => $thumbType,
-                'thumbnail_url' => $thumbUrl
-            ]);
+            /* insert thumbnail ONLY if exists */
+            if ($thumbUrl) {
+                (new NewsPostThumbnailModel())->insert([
+                    'news_post_id'  => $postId,
+                    'type'          => $finalThumbType,
+                    'thumbnail_url' => $thumbUrl
+                ]);
+            }
+
 
             /* -----------------------------
             * 10. COMMIT

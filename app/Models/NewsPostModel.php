@@ -81,7 +81,7 @@ class NewsPostModel extends Model
 
         /** ---------- TAGS ---------- */
         $post['tags'] = $db->table('news_post_tags npt')
-            ->select('t.id, t.name')// name not id (err)
+            ->select('t.id, t.name') // name not id (err)
             ->join('tags t', 't.id = npt.tag_id')
             ->where('npt.news_post_id', $postId)
             ->get()
@@ -113,6 +113,122 @@ class NewsPostModel extends Model
             )
             ->where('news_posts.status', 1)
             ->where('news_posts.id !=', $currentPostId)
+            ->orderBy('news_posts.post_date_time', 'DESC')
+            ->limit($limit)
+            ->findAll();
+    }
+
+    public function getPostsByCategoryAndSubCategory(int $categoryId, int $subCategoryId, int $perPage = 10)
+    {
+        return $this->where('category_id', $categoryId)
+            ->where('sub_category_id', $subCategoryId)
+            ->where('status', 1) // published only
+            ->orderBy('published_at', 'DESC')
+            ->paginate($perPage);
+    }
+
+    public function popularNews(int $limit)
+    {
+        $popularNews = $this
+            ->select('
+        news_posts.id,
+        news_posts.headline,
+        news_posts.slug,
+        news_posts.author,
+        news_posts.post_date_time,
+        news_posts.short_description,
+        npt.thumbnail_url
+    ')
+            ->join(
+                'news_post_thumbnails npt',
+                'npt.news_post_id = news_posts.id',
+                'left'
+            )
+            ->where('news_posts.status', 1)
+            ->orderBy('news_posts.post_date_time', 'DESC')
+            ->orderBy('RAND()')
+            ->limit($limit)
+            ->findAll();
+        return $popularNews;
+    }
+    public function postDuration(int $fromDays, int $toDays, int $limit = 5): array
+    {
+        $fromDate = date('Y-m-d 00:00:00', strtotime("-{$fromDays} days"));
+        $toDate   = date('Y-m-d 23:59:59', strtotime("-{$toDays} days"));
+
+        return $this
+            ->select('
+            news_posts.id,
+            news_posts.headline,
+            news_posts.slug,
+            news_posts.short_description,
+            news_posts.author,
+            news_posts.post_date_time,
+            npt.thumbnail_url
+        ')
+            ->join(
+                'news_post_thumbnails npt',
+                'npt.news_post_id = news_posts.id',
+                'left'
+            )
+            ->where('news_posts.status', 1)
+            ->where('news_posts.post_date_time >=', $fromDate)
+            ->where('news_posts.post_date_time <=', $toDate)
+            ->orderBy('news_posts.post_date_time', 'DESC')
+            ->limit($limit)
+            ->findAll();
+    }
+
+    public function headlineTicker()
+    {
+        return $this
+            ->select('headline, slug')
+            ->where('status', 1)
+            ->orderBy('RAND()')
+            ->findAll(10);
+    }
+
+    public function relatedPosts(
+        int $postId,
+        array $categoryIds = [],
+        array $subCategoryIds = [],
+        int $limit = 6
+    ): array {
+
+        $builder = $this->select('
+        news_posts.id,
+        news_posts.headline,
+        news_posts.slug,
+        news_posts.post_date_time,
+        npt.thumbnail_url
+    ')
+            ->join(
+                'news_post_thumbnails npt',
+                'npt.news_post_id = news_posts.id',
+                'left'
+            )
+            ->where('news_posts.status', 1)
+            ->where('news_posts.id !=', $postId);
+
+        // ---------- Sub Category (Highest Priority)
+        if (!empty($subCategoryIds)) {
+            $builder->join(
+                'news_post_sub_categories npsc',
+                'npsc.news_post_id = news_posts.id'
+            )->whereIn('npsc.sub_category_id', $subCategoryIds);
+        }
+
+        // ---------- Category (Fallback)
+        if (!empty($categoryIds)) {
+            $builder->join(
+                'news_post_categories npc',
+                'npc.news_post_id = news_posts.id',
+                'left'
+            )->orWhereIn('npc.category_id', $categoryIds);
+        }
+
+        return $builder
+            ->groupBy('news_posts.id')
             ->orderBy('news_posts.post_date_time', 'DESC')
             ->limit($limit)
             ->findAll();

@@ -21,7 +21,8 @@ function formattedPostDate($date)
         <div class="row">
             <div class="col-md-12">
                 <ul class="breadcrumb">
-                    <li><a href="<?= base_url() ?>">Home</a></li>
+                    <li><a href="<?= base_url() ?>">হোম</a></li>
+                    <li>খবর</li>
                     <li><?= esc($post['headline']) ?></li>
                 </ul>
             </div>
@@ -43,8 +44,7 @@ function formattedPostDate($date)
                         <h1 class="utf_post_title"><?= esc($post['headline']) ?></h1>
                         <div class="utf_post_meta">
                             <span class="utf_post_author"><?= esc($post['author']) ?></span>
-                            <?php
-                            $formattedPostDate = (new DateTime($post['post_date_time '] ?? $post['created_at']))->format('d M, Y'); ?>
+                            <?php $formattedPostDate = (new DateTime($post['post_date_time '] ?? $post['created_at']))->format('d M, Y'); ?>
                             <span class="utf_post_date"><?= $formattedPostDate ?></span>
                             <!-- <span class="post-hits">
                                 <i class="fa fa-eye"></i> 21
@@ -78,7 +78,7 @@ function formattedPostDate($date)
                             <div class="post-tags">
                                 <span>Tags:</span>
                                 <?php foreach ($post['tags'] as $tag): ?>
-                                    <a href="#"># <?= $tag['name'] ?></a>
+                                    <a href="<?= base_url('tag/' . $tag['name']) ?>"># <?= $tag['name'] ?></a>
                                 <?php endforeach ?>
                             </div>
                         </div>
@@ -102,7 +102,7 @@ function formattedPostDate($date)
                     </div>
                 </div>
 
-                <nav class="post-navigation clearfix">
+                <!-- <nav class="post-navigation clearfix">
                     <div class="post-previous">
                         <a href="#"> <span><i class="fa fa-angle-left"></i>Previous Post</span>
                             <h3>Zhang social media pop also known when smart innocent...</h3>
@@ -113,65 +113,29 @@ function formattedPostDate($date)
                             <h3>Zhang social media pop also known when smart innocent...</h3>
                         </a>
                     </div>
-                </nav>
+                </nav> -->
 
-                <div class="related-posts block">
-                    <h3 class="utf_block_title"><span>Related Posts</span></h3>
+                <div class="related-posts block color-primary">
+                    <h3 class="utf_block_title"><span>সম্পর্কিত লিংক</span></h3>
                     <div id="utf_latest_news_slide" class="owl-carousel owl-theme utf_latest_news_slide">
-                        <div class="item">
-                            <div class="utf_post_block_style clearfix">
-                                <div class="utf_post_thumb"> <a href="#"><img class="img-fluid" src="<?= base_url() ?>assets/images/news/lifestyle/travel5.jpg" alt="" /></a> </div>
-                                <a class="utf_post_cat" href="#">Health</a>
-                                <div class="utf_post_content">
-                                    <h2 class="utf_post_title title-medium"> <a href="#">Zhang social media pop also innocent...</a> </h2>
-                                    <div class="utf_post_meta"> <span class="utf_post_date"> 25 Jan, 2022</span> </div>
+                        <?php foreach ($relatedPosts as $post): ?>
+                            <div class="item">
+                                <div class="utf_post_block_style clearfix">
+                                    <div class="utf_post_thumb">
+                                        <img class="img-fluid" src="<?= $post['thumbnail_url'] ?? base_url('assets/images/news/placeholder.png')  ?>" alt="" />
+                                    </div>
+                                    <div class="utf_post_content">
+                                        <h2 class="utf_post_title title-medium">
+                                            <a href="<?= base_url('news/' . $post['slug']) ?>"><?= StringShort::truncate($post['headline'], 25) ?></a>
+                                        </h2>
+                                        <div class="utf_post_meta"> <span class="utf_post_date">
+                                                <?php $formattedPostDate = (new DateTime($post['post_date_time']))->format('d M, Y'); ?>
+                                                <?= $formattedPostDate ?></span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="item">
-                            <div class="utf_post_block_style clearfix">
-                                <div class="utf_post_thumb"> <a href="#"><img class="img-fluid" src="<?= base_url() ?>assets/images/news/lifestyle/health5.jpg" alt="" /></a> </div>
-                                <a class="utf_post_cat" href="#">Health</a>
-                                <div class="utf_post_content">
-                                    <h2 class="utf_post_title title-medium"> <a href="#">Zhang social media pop also innocent...</a> </h2>
-                                    <div class="utf_post_meta"> <span class="utf_post_date"> 25 Jan, 2022</span> </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="item">
-                            <div class="utf_post_block_style clearfix">
-                                <div class="utf_post_thumb"> <a href="#"><img class="img-fluid" src="<?= base_url() ?>assets/images/news/lifestyle/travel3.jpg" alt="" /></a> </div>
-                                <a class="utf_post_cat" href="#">Travel</a>
-                                <div class="utf_post_content">
-                                    <h2 class="utf_post_title title-medium"> <a href="#">Zhang social media pop also innocent...</a> </h2>
-                                    <div class="utf_post_meta"> <span class="utf_post_date"> 25 Jan, 2022</span> </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="item">
-                            <div class="utf_post_block_style clearfix">
-                                <div class="utf_post_thumb"> <a href="#"><img class="img-fluid" src="<?= base_url() ?>assets/images/news/lifestyle/travel4.jpg" alt="" /></a> </div>
-                                <a class="utf_post_cat" href="#">Travel</a>
-                                <div class="utf_post_content">
-                                    <h2 class="utf_post_title title-medium"> <a href="#">Zhang social media pop also innocent...</a> </h2>
-                                    <div class="utf_post_meta"> <span class="utf_post_date"> 25 Jan, 2022</span> </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="item">
-                            <div class="utf_post_block_style clearfix">
-                                <div class="utf_post_thumb"> <a href="#"><img class="img-fluid" src="<?= base_url() ?>assets/images/news/lifestyle/travel5.jpg" alt="" /></a> </div>
-                                <a class="utf_post_cat" href="#">Health</a>
-                                <div class="utf_post_content">
-                                    <h2 class="utf_post_title title-medium"> <a href="#">Zhang social media pop also innocent...</a> </h2>
-                                    <div class="utf_post_meta"> <span class="utf_post_date"> 25 Jan, 2022</span> </div>
-                                </div>
-                            </div>
-                        </div>
+                        <?php endforeach; ?>
                     </div>
                 </div>
                 <!-- Post comment start -->
@@ -303,17 +267,11 @@ function formattedPostDate($date)
                     <div class="widget color-primary widget-tags">
                         <h3 class="utf_block_title"><span>Popular Tags</span></h3>
                         <ul class="unstyled clearfix">
-                            <li><a href="#">Business</a></li>
-                            <li><a href="#">Corporate</a></li>
-                            <li><a href="#">Services</a></li>
-                            <li><a href="#">Customer</a></li>
-                            <li><a href="#">Money</a></li>
-                            <li><a href="#">Health</a></li>
-                            <li><a href="#">Lifestyles</a></li>
-                            <li><a href="#">Traveling</a></li>
-                            <li><a href="#">Partners</a></li>
-                            <li><a href="#">Wordpress</a></li>
-                            <li><a href="#">Customer</a></li>
+                            <?php foreach ($popularTags as $tags): ?>
+                                <li>
+                                    <a href="<?= base_url('tag/' . $tags['name']) ?>"><?= esc($tags['name']) ?></a>
+                                </li>
+                            <?php endforeach; ?>
                         </ul>
                     </div>
 

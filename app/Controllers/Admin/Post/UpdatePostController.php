@@ -216,7 +216,8 @@ class UpdatePostController extends BaseController
             /**
              * CASE 2: User selected LINK
              */
-            elseif ($thumbType === 'link' && $thumbLink === '' && !$oldThumb  && $thumbRemoved !== 1) {
+            elseif ($thumbType === 'link' && !empty($thumbLink) && $thumbRemoved !== 1) {
+
                 // delete old image if switching type
                 if ($oldThumb && $oldThumb['type'] === 'image') {
                     $path = ROOTPATH . 'public/' . parse_url($oldThumb['thumbnail_url'], PHP_URL_PATH);
@@ -226,7 +227,7 @@ class UpdatePostController extends BaseController
                 }
 
                 $newThumbType = 'link';
-                $newThumbUrl  = $thumbLink;
+                $newThumbUrl  = trim($thumbLink);
             }
 
             /**
@@ -287,7 +288,7 @@ class UpdatePostController extends BaseController
             return $this->response->setJSON([
                 'success' => true,
                 'message' => 'Post updated successfully',
-                'redirect' => base_url('admin/all-news')
+                'redirect' => base_url('admin/news')
             ]);
         } catch (\Throwable $e) {
             $db->transRollback();

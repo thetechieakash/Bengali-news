@@ -16,8 +16,8 @@ use App\Helpers\StringShort;
             <div class="col-md-12">
                 <ul class="breadcrumb">
                     <li><a href="<?= base_url() ?>">হোম</a></li>
-                    <li><a href="<?= base_url("category/{$category['slug']}") ?>"><?= esc($category['cat']) ?></a></li>
-                    <li><?= esc($subCategory['sub_cat_name']) ?></li>
+                    <li>ট্যাগ</li>
+                    <li><?= esc($tag['name']) ?></li>
                 </ul>
             </div>
         </div>
@@ -30,7 +30,18 @@ use App\Helpers\StringShort;
         <div class="row">
             <div class="col-lg-8 col-md-12">
                 <div class="block category-listing category-style2 color-primary">
-                    <h3 class="utf_block_title"><span>News</span></h3>
+                    <h3 class="utf_block_title"><span><?= esc($tag['name']) ?></span></h3>
+                    <?php if (!empty($subCategory)): ?>
+                        <ul class="subCategory unstyled">
+                            <?php foreach ($subCategory as $subCat): ?>
+                                <li>
+                                    <a href="<?= base_url("category/{$category['slug']}/sub-category/{$subCat['sub_cat_slug']}") ?>">
+                                        <?= esc($subCat['sub_cat_name']) ?>
+                                    </a>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php endif; ?>
                     <?php if (!empty($posts)): ?>
                         <?php foreach ($posts as $post): ?>
                             <div class="utf_post_block_style post-list clearfix">
@@ -65,7 +76,6 @@ use App\Helpers\StringShort;
                 </div>
                 <?= $pager->links() ?>
             </div>
-
             <div class="col-lg-4 col-md-12">
                 <div class="sidebar utf_sidebar_right">
                     <div class="widget text-center"> <img class="banner img-fluid" src="<?= base_url() ?>assets/images/banner-ads/ad-sidebar.png" alt="" /> </div>
@@ -78,6 +88,7 @@ use App\Helpers\StringShort;
                                 <div class="utf_post_meta"> <span class="utf_post_author"> John Wick</span> <span class="utf_post_date">25 Jan, 2022</span> </div>
                             </div>
                         </div> -->
+
                         <div class="utf_list_post_block">
                             <ul class="utf_list_post">
                                 <?php foreach ($popularNews as $news): ?>
