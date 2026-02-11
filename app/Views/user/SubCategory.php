@@ -6,8 +6,8 @@
 <?= $this->endSection() ?>
 <?= $this->section('content') ?>
 <?php
-
 use App\Helpers\StringShort;
+$defaultThumb = base_url('assets/images/news/placeholder.png');
 ?>
 <!-- Page Breadcrumb Start -->
 <div class="page-title">
@@ -25,7 +25,7 @@ use App\Helpers\StringShort;
 </div>
 <!-- Page Breadcrumb end -->
 
-<section class="utf_block_wrapper">
+<section class="utf_block_wrapper py-3">
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-md-12">
@@ -38,7 +38,7 @@ use App\Helpers\StringShort;
                                     <div class="col-lg-5 col-md-6">
                                         <div class="utf_post_thumb thumb-float-style">
                                             <a href="#">
-                                                <img class="img-fluid" src="<?= $post['thumbnail_url'] ?? base_url('assets/images/news/placeholder.png')  ?>" alt="" />
+                                                <img class="img-fluid" src="<?= $post['thumbnail_url'] ?? $defaultThumb  ?>" alt="" />
                                             </a>
                                         </div>
                                     </div>

@@ -6,12 +6,9 @@
 <?= $this->endSection() ?>
 <?= $this->section('content') ?>
 <?php
-
 use App\Helpers\StringShort;
-
 $defaultThumb = base_url('assets/images/news/placeholder.png');
 ?>
-
 <section class="utf_featured_post_area mt-5 pt-4">
     <div class="container">
         <div class="row">
@@ -28,7 +25,7 @@ $defaultThumb = base_url('assets/images/news/placeholder.png');
                                         <span class="utf_post_author"><?= $items['author'] ?></span>
                                         <?php
                                         $date = new DateTime($items['created_at']);
-                                        $formattedDate =  $date->format('d,M Y H:i'); ?>
+                                        $formattedDate =  $date->format('d,M Y'); ?>
                                         <span class="utf_post_date"><?= $formattedDate ?></span>
                                     </div>
                                 </div>
@@ -227,7 +224,6 @@ $defaultThumb = base_url('assets/images/news/placeholder.png');
                             <div class="utf_post_thumb">
                                 <img class="img-fluid" src="<?= $news['thumbnail_url'] ?? $defaultThumb ?>" alt="" />
                             </div>
-                            <a class="utf_post_cat" href="#">Video</a>
                             <div class="utf_post_content">
                                 <h2 class="utf_post_title">
                                     <a href="<?= base_url('news/' . $news['slug']) ?>"><?= StringShort::truncate($news['headline'], 40)  ?></a>

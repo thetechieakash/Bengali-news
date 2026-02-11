@@ -1,17 +1,55 @@
 <?php
-$uri = uri_string();
+$uri = urldecode(uri_string());
 
-$activeNavCats = [];
-$megaMenuCats  = [];
+$mainNav = [];
+$megaMenu = [];
 
 foreach ($navbarCategories as $cat) {
+
+    $activeSubs   = [];
+    $inactiveSubs = [];
+
+    if (!empty($cat['subs'])) {
+        foreach ($cat['subs'] as $sub) {
+            if ((int)$sub['is_active'] === 1) {
+                $activeSubs[] = $sub;
+            } else {
+                $inactiveSubs[] = $sub;
+            }
+        }
+    }
+
+    /*
+    CASE 1:
+    Category active
+    */
     if ((int)$cat['is_active'] === 1) {
-        $activeNavCats[] = $cat;
-    } else {
-        $megaMenuCats[] = $cat;
+
+        // If has active subs → show in main nav
+        if (!empty($activeSubs)) {
+            $cat['subs'] = $activeSubs;
+            $mainNav[] = $cat;
+        } else {
+            // If no active subs → show category only in main nav
+            $cat['subs'] = [];
+            $mainNav[] = $cat;
+        }
+
+        // Inactive subs go to mega menu
+        if (!empty($inactiveSubs)) {
+            $cat['subs'] = $inactiveSubs;
+            $megaMenu[] = $cat;
+        }
+    }
+    /*
+    CASE 2:
+    Category inactive → everything goes to mega
+    */ else {
+        $megaMenu[] = $cat;
     }
 }
 ?>
+
 <div class="horizontal-menu">
     <nav class="navbar top-navbar bg-transparent col-lg-12 col-12 p-0 py-3">
         <div class="container position-relative justify-content-center">
@@ -43,7 +81,7 @@ foreach ($navbarCategories as $cat) {
                         <span class="menu-title">হোম</span>
                     </a>
                 </li>
-                <?php foreach ($activeNavCats as $cat): ?>
+                <?php foreach ($mainNav as $cat): ?>
                     <?php if (!empty($cat['subs'])): ?>
                         <li class="nav-item <?= str_contains($uri, $cat['slug']) ? 'active' : '' ?>">
                             <a href="<?= base_url('category/' . $cat['slug']) ?>" class="nav-link">
@@ -54,14 +92,12 @@ foreach ($navbarCategories as $cat) {
                             <div class="submenu cs">
                                 <ul class="submenu-item">
                                     <?php foreach ($cat['subs'] as $sub): ?>
-                                        <?php if ((int)$sub['is_active'] === 1): ?>
-                                            <li class="nav-item">
-                                                <a class="nav-link"
-                                                    href="<?= base_url('category/' . $cat['slug'] . '/sub-category/' . $sub['sub_cat_slug']) ?>">
-                                                    <?= esc($sub['sub_cat_name']) ?>
-                                                </a>
-                                            </li>
-                                        <?php endif ?>
+                                        <li class="nav-item">
+                                            <a class="nav-link"
+                                                href="<?= base_url('category/' . $cat['slug'] . '/sub-category/' . $sub['sub_cat_slug']) ?>">
+                                                <?= esc($sub['sub_cat_name']) ?>
+                                            </a>
+                                        </li>
                                     <?php endforeach ?>
                                 </ul>
                             </div>
@@ -74,8 +110,7 @@ foreach ($navbarCategories as $cat) {
                         </li>
                     <?php endif ?>
                 <?php endforeach ?>
-
-                <?php if (!empty($megaMenuCats)): ?>
+                <?php if (!empty($megaMenu)): ?>
                     <li class="nav-item mega-menu">
                         <a href="#" class="nav-link">
                             <span class="menu-title">এছাড়াও</span>
@@ -85,10 +120,11 @@ foreach ($navbarCategories as $cat) {
                         <div class="submenu sub-menu-grid">
                             <div class="sub-menu-grid-layout">
                                 <ul>
-                                    <?php foreach ($megaMenuCats as $cat): ?>
+                                    <?php foreach ($megaMenu as $cat): ?>
                                         <li class="nav-item fw-bold">
-                                            <a class="nav-link" href="<?= base_url('category/' . $cat['slug']) ?>">
-                                                <span class="menu-title"><?= esc($cat['name']) ?></span>
+                                            <a class="nav-link"
+                                                href="<?= base_url('category/' . $cat['slug']) ?>">
+                                                <?= esc($cat['name']) ?>
                                             </a>
                                         </li>
 
@@ -108,7 +144,9 @@ foreach ($navbarCategories as $cat) {
                         </div>
                     </li>
                 <?php endif ?>
-
+                <form action="<?= base_url('search') ?>" class="my-2 m-md-auto " method="get">
+                    <input type="text" class="form-control border-1" autocomplete="off" name="q" placeholder="Search news..." required>
+                </form>
             </ul>
         </div>
     </nav>

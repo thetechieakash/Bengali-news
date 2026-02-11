@@ -1,4 +1,4 @@
-<?= $this->extend('layouts\AdminLayout.php') ?>
+<?= $this->extend('layouts/AdminLayout.php') ?>
 
 <?= $this->section('pageTitle') ?>
 <?= esc($pageTitle); ?>

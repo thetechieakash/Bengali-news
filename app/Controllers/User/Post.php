@@ -23,7 +23,7 @@ class Post extends BaseController
         $readMorePosts = $newsModel->readMore($post['id'], 6);
         $comments = $commentModel->getCommentsWithAdminReply($post['id']);
         $data = [
-            'pageTitle' => 'Post',
+            'pageTitle' => $post['headline'],
             'post' => $post,
             'readMorePosts' => $readMorePosts,
             'comments' => $comments,

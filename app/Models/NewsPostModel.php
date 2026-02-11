@@ -233,4 +233,43 @@ class NewsPostModel extends Model
             ->limit($limit)
             ->findAll();
     }
+    public function fuzzySearch(string $keyword, int $perPage = 5)
+    {
+        $keywords = array_filter(explode(' ', trim($keyword)));
+
+        $builder = $this->select('
+            news_posts.id,
+            news_posts.headline,
+            news_posts.slug,
+            news_posts.short_description,
+            news_posts.author,
+            news_posts.post_date_time,
+            npt.thumbnail_url
+        ')
+            ->join('news_post_thumbnails npt', 'npt.news_post_id = news_posts.id', 'left')
+            ->join('news_post_categories npc', 'npc.news_post_id = news_posts.id', 'left')
+            ->join('categories c', 'c.id = npc.category_id', 'left')
+            ->join('news_post_sub_categories npsc', 'npsc.news_post_id = news_posts.id', 'left')
+            ->join('sub_categories sc', 'sc.id = npsc.sub_category_id', 'left')
+            ->join('news_post_tags nptag', 'nptag.news_post_id = news_posts.id', 'left')
+            ->join('tags t', 't.id = nptag.tag_id', 'left')
+            ->where('news_posts.status', 1);
+
+        $builder->groupStart();
+
+        foreach ($keywords as $word) {
+            $builder->orLike('news_posts.headline', $word);
+            $builder->orLike('news_posts.description', $word);
+            $builder->orLike('c.slug', $word);
+            $builder->orLike('sc.sub_cat_name', $word);
+            $builder->orLike('t.name', $word);
+        }
+
+        $builder->groupEnd();
+
+        $builder->groupBy('news_posts.id')
+            ->orderBy('news_posts.post_date_time', 'DESC');
+
+        return $this->paginate($perPage);
+    }
 }

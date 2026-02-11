@@ -6,44 +6,20 @@
 <?= $this->endSection() ?>
 <?= $this->section('content') ?>
 <?php
+
 use App\Helpers\StringShort;
+
 $defaultThumb = base_url('assets/images/news/placeholder.png');
-
 ?>
-<!-- Page Breadcrumb Start -->
-<div class="page-title">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <ul class="breadcrumb">
-                    <li><a href="<?= base_url() ?>">হোম</a></li>
-                    <li><?= esc($category['cat']) ?></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Page Breadcrumb end -->
-
-<section class="utf_block_wrapper py-3">
+<section class="utf_block_wrapper py-3 mt-3">
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-md-12">
                 <div class="block category-listing category-style2 color-primary">
-                    <h3 class="utf_block_title"><span><?= esc($category['cat']) ?></span></h3>
-                    <?php if (!empty($subCategory)): ?>
-                        <ul class="subCategory unstyled">
-                            <?php foreach ($subCategory as $subCat): ?>
-                                <li>
-                                    <a href="<?= base_url("category/{$category['slug']}/sub-category/{$subCat['sub_cat_slug']}") ?>">
-                                        <?= esc($subCat['sub_cat_name']) ?>
-                                    </a>
-                                </li>
-                            <?php endforeach; ?>
-                        </ul>
-                    <?php endif; ?>
-                    <?php if (!empty($posts)): ?>
-                        <?php foreach ($posts as $post): ?>
+                    <h3>Search result for : "<?= esc($keyword) ?>"</h3>
+                    <h3 class="utf_block_title"></h3>
+                    <?php if (!empty($results)): ?>
+                        <?php foreach ($results as $post): ?>
                             <div class="utf_post_block_style post-list clearfix">
                                 <div class="row">
                                     <div class="col-lg-5 col-md-6">
@@ -72,6 +48,11 @@ $defaultThumb = base_url('assets/images/news/placeholder.png');
                             </div>
                         <?php endforeach; ?>
                     <?php else: ?>
+                        <div class="card ">
+                            <div class="card-body bg-info mx-auto">
+                                Sorry! can not found any news releated to "<?= esc($keyword) ?>"!
+                            </div>
+                        </div>
                     <?php endif; ?>
                 </div>
                 <?= $pager->links() ?>
@@ -81,14 +62,6 @@ $defaultThumb = base_url('assets/images/news/placeholder.png');
                     <div class="widget text-center"> <img class="banner img-fluid" src="<?= base_url() ?>assets/images/banner-ads/ad-sidebar.png" alt="" /> </div>
                     <div class="widget color-primary">
                         <h3 class="utf_block_title"><span>বিখ্যাত সংবাদ</span></h3>
-                        <!-- <div class="utf_post_overaly_style clearfix">
-                            <div class="utf_post_thumb"> <a href="#"> <img class="img-fluid" src="<?= base_url() ?>assets/images/news/lifestyle/health4.jpg" alt="" /> </a> </div>
-                            <div class="utf_post_content"> <a class="utf_post_cat" href="#">Health</a>
-                                <h2 class="utf_post_title"> <a href="#">Smart packs parking sensor tech and beeps when col…</a> </h2>
-                                <div class="utf_post_meta"> <span class="utf_post_author"> John Wick</span> <span class="utf_post_date">25 Jan, 2022</span> </div>
-                            </div>
-                        </div> -->
-
                         <div class="utf_list_post_block">
                             <ul class="utf_list_post">
                                 <?php foreach ($popularNews as $news): ?>

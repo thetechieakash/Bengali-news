@@ -284,6 +284,13 @@ h4,
     border-radius: 30px;
 }
 
+.single-post p {
+    font-size: 16px;
+    line-height: 26px;
+    font-weight: 500;
+    color: #6c6c6c;
+}
+
 .entry-content img {
     width: 100%;
     max-width: 100%;

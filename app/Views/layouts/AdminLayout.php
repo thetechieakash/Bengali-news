@@ -124,8 +124,6 @@
     <script src="<?= base_url() ?>assets/vendors/jquery-toast-plugin/jquery.toast.min.js"></script>
     <script src="<?= base_url() ?>assets/customs/js/custom.toast.js"></script>
     <?= $this->renderSection('jsLib') ?>
-    <!-- <script src="<?= base_url() ?>assets/js/dashboard.js"></script> -->
-    <!-- <script src="<?= base_url() ?>assets/js/Chart.roundedBarCharts.js"></script> -->
     <!-- End custom js for this page-->
     <script>
         /* Loading Js*/

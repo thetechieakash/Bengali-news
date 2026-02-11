@@ -11,6 +11,7 @@ $routes->get('category/(:segment)', 'User\Category::index/$1');
 $routes->get('category/(:segment)/sub-category/(:segment)', 'User\SubCategory::index/$1/$2');
 $routes->post('comment', 'User\PostComment::store');
 $routes->get('tag/(:segment)', 'User\Tag::index/$1');
+$routes->get('search','User\Search::index');
 
 
 service('auth')->routes($routes);

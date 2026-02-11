@@ -6,7 +6,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Bangla Khobor || <?= $this->renderSection('pageTitle') ?></title>
+    <title><?= $this->renderSection('pageTitle') ?> || Bangla Khobor </title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/css/vendor.bundle.base.css">
@@ -23,12 +23,13 @@
     <link rel="stylesheet" href="<?= base_url() ?>assets/css/horizontal-layout-light/style.css">
     <!-- endinject -->
     <link rel="shortcut icon" href="<?= base_url() ?>assets/images/bangla-logo-mini.svg" />
-    <link rel="stylesheet" href="<?= base_url() ?>assets/customs/css/style.css">
-    <link rel="stylesheet" href="<?= base_url() ?>assets/customs/css/custom.css">
+    <link rel="stylesheet" href="<?= base_url() ?>assets/customs/css/style.css?v=3.5">
+    <link rel="stylesheet" href="<?= base_url() ?>assets/customs/css/custom.css?v=3.5">
 </head>
 
 <body>
     <?php
+
     use App\Helpers\StringShort;
     use App\Models\NewsPostModel;
 
@@ -64,7 +65,7 @@
                                                     <?php foreach ($tickers as $ticker): ?>
                                                         <div class="ticker-item">
                                                             <i class="fa fa-circle"></i>
-                                                            <a href="<?= base_url('news/' . $ticker['slug']) ?>"><?= StringShort::truncate($ticker['headline'],50)  ?></a>
+                                                            <a href="<?= base_url('news/' . $ticker['slug']) ?>"><?= StringShort::truncate($ticker['headline'], 50)  ?></a>
                                                         </div>
                                                     <?php endforeach; ?>
                                                 </div>
@@ -121,7 +122,7 @@
         /* Loading Js*/
         $(window).on('load', function() {
             setTimeout(function() {
-                $('#global-loader').delay(500).fadeOut(500);
+                $('#global-loader').delay(250).fadeOut(250);
             }, 800);
         });
         $(document).ready(function() {

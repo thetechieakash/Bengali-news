@@ -288,7 +288,7 @@ class UpdatePostController extends BaseController
             return $this->response->setJSON([
                 'success' => true,
                 'message' => 'Post updated successfully',
-                'redirect' => base_url('admin/news')
+                'redirect' => base_url('admin/all-news')
             ]);
         } catch (\Throwable $e) {
             $db->transRollback();
