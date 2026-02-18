@@ -25,7 +25,7 @@ class Home extends BaseController
             'randomPosts'        => $this->getRandomCategoryPosts(3, 4),
             'getPostAndCategory' => $this->getPostAndCategory(3),
             'popularNews'        => $this->postModel->popularNews(7),
-            'postDuration'       => $this->postModel->postDuration(3, 1),
+            'postDuration'       => $this->postModel->postDuration(1,30),
         ];
 
         return view('user/Home', array_merge($this->data, $data));
@@ -37,7 +37,7 @@ class Home extends BaseController
     private function getCarouselPosts(int $limit = 10): array
     {
         return $this->postModel
-            ->select('news_posts.*, t.type as thumb_type, t.thumbnail_url')
+            ->select('news_posts.*, t.type, t.thumbnail_url')
             ->join(
                 'news_post_thumbnails t',
                 't.news_post_id = news_posts.id',
@@ -115,7 +115,8 @@ class Home extends BaseController
                 news_posts.author,
                 news_posts.post_date_time,
                 news_posts.short_description,
-                npt.thumbnail_url
+                npt.type,
+                npt.thumbnail_url,
             ')
             ->join(
                 'news_post_categories npc',

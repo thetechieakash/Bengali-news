@@ -23,8 +23,8 @@
     <link rel="stylesheet" href="<?= base_url() ?>assets/css/horizontal-layout-light/style.css">
     <!-- endinject -->
     <link rel="shortcut icon" href="<?= base_url() ?>assets/images/bangla-logo-mini.svg" />
-    <link rel="stylesheet" href="<?= base_url() ?>assets/customs/css/style.css?v=3.5">
-    <link rel="stylesheet" href="<?= base_url() ?>assets/customs/css/custom.css?v=3.5">
+    <link rel="stylesheet" href="<?= base_url() ?>assets/customs/css/style.css?v=5.1">
+    <link rel="stylesheet" href="<?= base_url() ?>assets/customs/css/custom.css?v=5.1">
 </head>
 
 <body>
@@ -121,9 +121,7 @@
     <script>
         /* Loading Js*/
         $(window).on('load', function() {
-            setTimeout(function() {
-                $('#global-loader').delay(250).fadeOut(250);
-            }, 800);
+            $('#global-loader').fadeOut();
         });
         $(document).ready(function() {
             $('[data-toggle="horizontal-menu-toggle-new"]').on("click", function() {

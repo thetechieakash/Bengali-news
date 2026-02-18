@@ -42,7 +42,7 @@ class PostComment extends BaseController
             if (!$this->validate($rules)) {
                 return $this->response->setJSON([
                     'success' => false,
-                    'message' => $this->validator->getErrors(),
+                    'errors' => $this->validator->getErrors(),
                 ]);
             }
 
@@ -98,7 +98,7 @@ class PostComment extends BaseController
         } catch (\Throwable $e) {
             return $this->response->setJSON([
                 'success' => false,
-                'message' => $e->getMessage(),
+                'errors' => $e->getMessage(),
             ]);
         }
     }

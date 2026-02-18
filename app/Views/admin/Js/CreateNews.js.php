@@ -7,25 +7,165 @@
 
         // GLightbox init 
         const lightbox = GLightbox();
+        // sub author 
+        $('#subauthor').select2({
+            theme: 'bootstrap',
+            templateResult: formatAuthor,
+            templateSelection: formatAuthor,
+            allowClear: true,
+            placeholder: "Select Sub Author",
+            escapeMarkup: function(markup) {
+                return markup;
+            }
+        });
+
+        function formatAuthor(option) {
+            if (!option.id) return option.text;
+
+            let img = $(option.element).data('image');
+
+            return `
+        <div style="display:flex; align-items:center;">
+            <img src="${img}" 
+                 style="width:35px;height:35px;border-radius:50%;margin-right:10px;object-fit:cover;">
+            <div>
+                ${option.text}
+            </div>
+        </div>
+    `;
+        }
 
         /* ----------------------------------------------------
          * Thumbnail toggle
          * -------------------------------------------------- */
+        let mediaPage = 1;
+        let mediaLoading = false;
+        let mediaHasMore = true;
+
+        function loadMediaImages() {
+
+            if (mediaLoading || !mediaHasMore) return;
+
+            mediaLoading = true;
+
+            $('#media-container').append('<div class="text-center loading-media">Loading...</div>');
+
+            $.get("<?= base_url('admin/api/get-media') ?>?page=" + mediaPage, function(res) {
+
+                $('.loading-media').remove();
+
+                console.log(res);
+                if (!res.data.length) {
+                    mediaHasMore = false;
+                    $('#media-container').html('no image found')
+                    return;
+                }
+
+                let html = '<div class="row">';
+
+                res.data.forEach(function(item) {
+
+                    html += `
+                        <div class="col-3 col-md-2 mb-3">
+                            <div class="position-relative media-wrapper" style="cursor:pointer;">
+                                <img src="<?= base_url() ?>/${item.file_path}"
+                                    class="img-fluid rounded media-item"
+                                    data-src="<?= base_url() ?>/${item.file_path}"
+                                    style="height:120px;object-fit:cover;">
+
+                                <div class="media-check position-absolute top-0 end-0 m-1 d-none">
+                                    <div class="bg-success rounded-circle d-flex align-items-center justify-content-center"
+                                        style="width:22px;height:22px;">
+                                        <i class="fa fa-check text-white" style="font-size:12px;"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        `;
+
+                });
+
+                html += '</div>';
+
+                $('#media-container').append(html);
+
+                mediaPage++;
+                mediaLoading = false;
+
+                if (!res.next_page) {
+                    mediaHasMore = false;
+                }
+            });
+        }
+
         function toggleThumbnailInput(type) {
             if (type === 'link') {
                 $('#thumbnail-link-wrapper').show();
                 $('#thumbnail-upload-wrapper').hide();
-            } else {
-                $('#thumbnail-link-wrapper').hide();
+                $('#thumbnail-media-wrapper').hide();
+            } else if (type === 'image') {
                 $('#thumbnail-upload-wrapper').show();
+                $('#thumbnail-link-wrapper').hide();
+                $('#thumbnail-media-wrapper').hide();
+            } else if (type === 'media') {
+
+                $('#thumbnail-media-wrapper').show();
+                $('#thumbnail-link-wrapper').hide();
+                $('#thumbnail-upload-wrapper').hide();
+
+                if ($('#media-container').children().length === 0) {
+                    loadMediaImages();
+                }
             }
         }
+        $('#media-container').on('scroll', function() {
+
+            const scrollTop = $(this).scrollTop();
+            const scrollHeight = this.scrollHeight;
+            const height = $(this).innerHeight();
+
+            if (scrollTop + height >= scrollHeight - 50) {
+                loadMediaImages();
+            }
+        });
 
         toggleThumbnailInput($('input[name="thumbnail_type"]:checked').val());
 
         $('.thumb-type').on('change', function() {
             toggleThumbnailInput(this.value);
         });
+
+
+        let selectedMedia = '';
+
+        $(document).on('click', '.media-wrapper', function() {
+
+            const img = $(this).find('.media-item');
+            const check = $(this).find('.media-check');
+            const src = img.data('src');
+
+            if ($(this).hasClass('selected')) {
+
+                $(this).removeClass('selected');
+                check.addClass('d-none');
+
+                $('#selected_media').val('');
+                selectedMedia = '';
+
+            } else {
+
+                $('.media-wrapper').removeClass('selected');
+                $('.media-check').addClass('d-none');
+
+                $(this).addClass('selected');
+                check.removeClass('d-none');
+
+                selectedMedia = src;
+                $('#selected_media').val(src);
+            }
+        });
+
+
 
         /* ----------------------------------------------------
          * Flatpickr
@@ -182,7 +322,6 @@
             for (let i in CKEDITOR.instances) {
                 CKEDITOR.instances[i].updateElement();
             }
-            $('#global-loader').fadeIn(500);
             $.ajax({
                 url: "<?= base_url('admin/news/create') ?>",
                 type: "POST",
@@ -202,7 +341,6 @@
                     console.error(err);
                 },
                 complete() {
-                    $('#global-loader').fadeOut(500);
                     submitBtn.prop('disabled', false);
                 }
             });

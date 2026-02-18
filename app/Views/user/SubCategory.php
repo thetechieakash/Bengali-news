@@ -6,7 +6,10 @@
 <?= $this->endSection() ?>
 <?= $this->section('content') ?>
 <?php
+
 use App\Helpers\StringShort;
+use App\Helpers\ThumbHelper;
+
 $defaultThumb = base_url('assets/images/news/placeholder.png');
 ?>
 <!-- Page Breadcrumb Start -->
@@ -38,7 +41,7 @@ $defaultThumb = base_url('assets/images/news/placeholder.png');
                                     <div class="col-lg-5 col-md-6">
                                         <div class="utf_post_thumb thumb-float-style">
                                             <a href="#">
-                                                <img class="img-fluid" src="<?= $post['thumbnail_url'] ?? $defaultThumb  ?>" alt="" />
+                                                <img class="img-fluid" src="<?= ThumbHelper::getThumbUrl($post['thumbnail_url'], $post['type']) ?>" alt="<?= $post['headline'] ?>" />
                                             </a>
                                         </div>
                                     </div>
@@ -63,7 +66,7 @@ $defaultThumb = base_url('assets/images/news/placeholder.png');
                     <?php else: ?>
                     <?php endif; ?>
                 </div>
-                <?= $pager->links() ?>
+                <?= $pager->links('default', 'custom'); ?>
             </div>
 
             <div class="col-lg-4 col-md-12">
@@ -71,20 +74,13 @@ $defaultThumb = base_url('assets/images/news/placeholder.png');
                     <div class="widget text-center"> <img class="banner img-fluid" src="<?= base_url() ?>assets/images/banner-ads/ad-sidebar.png" alt="" /> </div>
                     <div class="widget color-primary">
                         <h3 class="utf_block_title"><span>বিখ্যাত সংবাদ</span></h3>
-                        <!-- <div class="utf_post_overaly_style clearfix">
-                            <div class="utf_post_thumb"> <a href="#"> <img class="img-fluid" src="<?= base_url() ?>assets/images/news/lifestyle/health4.jpg" alt="" /> </a> </div>
-                            <div class="utf_post_content"> <a class="utf_post_cat" href="#">Health</a>
-                                <h2 class="utf_post_title"> <a href="#">Smart packs parking sensor tech and beeps when col…</a> </h2>
-                                <div class="utf_post_meta"> <span class="utf_post_author"> John Wick</span> <span class="utf_post_date">25 Jan, 2022</span> </div>
-                            </div>
-                        </div> -->
                         <div class="utf_list_post_block">
                             <ul class="utf_list_post">
                                 <?php foreach ($popularNews as $news): ?>
                                     <li class="clearfix">
                                         <div class="utf_post_block_style post-float clearfix">
                                             <div class="utf_post_thumb">
-                                                <img class="img-fluid" src="<?= $news['thumbnail_url'] ?? $defaultThumb ?>" alt="" />
+                                                <img class="img-fluid" src="<?= ThumbHelper::getThumbUrl($news['thumbnail_url'], $news['type']) ?>" alt="$news['headline']" />
                                             </div>
                                             <div class="utf_post_content">
                                                 <h2 class="utf_post_title title-small">

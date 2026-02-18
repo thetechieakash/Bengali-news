@@ -11,7 +11,7 @@ $routes->get('category/(:segment)', 'User\Category::index/$1');
 $routes->get('category/(:segment)/sub-category/(:segment)', 'User\SubCategory::index/$1/$2');
 $routes->post('comment', 'User\PostComment::store');
 $routes->get('tag/(:segment)', 'User\Tag::index/$1');
-$routes->get('search','User\Search::index');
+$routes->get('search', 'User\Search::index');
 
 
 service('auth')->routes($routes);
@@ -44,7 +44,8 @@ $routes->group('admin', ['filter' => 'group:superadmin,admin,author'], function 
         $routes->post('sub-categories/by-categories', 'Admin\SubCatagoriesController::getByCategories');
 
         // Comments
-        $routes->get('all-comments', 'Admin\CommentsController::index');
+        $routes->get('approved-comments', 'Admin\CommentsController::approved');
+        $routes->get('pending-comments', 'Admin\CommentsController::pending');
         $routes->post('comments/approve', 'Admin\CommentsController::approve');
         $routes->post('comments/reply', 'Admin\CommentsController::store');
         $routes->post('comments/unpublish', 'Admin\CommentsController::unpublish');
@@ -54,6 +55,16 @@ $routes->group('admin', ['filter' => 'group:superadmin,admin,author'], function 
         $routes->post('tag/create', 'Admin\TagsController::createTag');
         $routes->post('tag/update', 'Admin\TagsController::updateTag');
         $routes->post('tag/delete', 'Admin\TagsController::deleteTag');
+
+        $routes->get('media', 'Admin\MediaController::index');
+        $routes->post('upload-media', 'Admin\MediaController::upload');
+        $routes->delete('delete-media/(:num)', 'Admin\MediaController::delete/$1');
+
+        $routes->get('author', 'Admin\SubAuthorController::index');
+        $routes->get('author-get/(:num)', 'Admin\SubAuthorController::getAuthor/$1');
+        $routes->post('author-create', 'Admin\SubAuthorController::store');
+        $routes->post('author-update/(:num)', 'Admin\SubAuthorController::update/$1');
+        $routes->post('author-delete/(:num)', 'Admin\SubAuthorController::delete/$1');
     });
 
     /*
@@ -62,8 +73,9 @@ $routes->group('admin', ['filter' => 'group:superadmin,admin,author'], function 
     |--------------------------------------------------------------------------
     */
     $routes->group('', ['filter' => 'group:author,admin,superadmin'], function ($routes) {
-        $routes->get('news', 'Admin\Post\ViewsController::news');
         $routes->get('all-news', 'Admin\Post\ViewsController::index');
+        $routes->get('create-news', 'Admin\Post\ViewsController::news');
+        $routes->get('news-preview', 'Admin\Post\ViewsController::index');
         $routes->post('news/create', 'Admin\Post\CreatePostController::createPost');
         $routes->get('news/update/(:num)', 'Admin\Post\ViewsController::updateNews/$1');
         $routes->post('news/update/(:num)', 'Admin\Post\UpdatePostController::updatePost/$1');
@@ -83,6 +95,12 @@ $routes->group('admin', ['filter' => 'group:superadmin,admin,author'], function 
         $routes->post('user/update', 'Admin\UserController::updateUser');
         $routes->post('user/delete', 'Admin\UserController::deleteUser');
         $routes->post('user/restore', 'Admin\UserController::restoreUser');
+    });
+
+    $routes->group('api', function ($routes) {
+        $routes->get('get-comment', 'Admin\CommentsController::getPostComment');
+        $routes->get('get-reply', 'Admin\CommentsController::getReply');
+        $routes->get('get-media', 'Admin\MediaController::getMedia');
     });
 });
 

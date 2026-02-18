@@ -20,6 +20,7 @@
                             <tr>
                                 <th>SL #</th>
                                 <th>Post</th>
+                                <th>Comments</th>
                                 <th>Post Date</th>
                                 <th>Status</th>
                                 <th>Actions</th>
@@ -29,12 +30,48 @@
                             <?php $sl = 0; ?>
                             <?php foreach ($news as $post): ?>
                                 <?php $sl++; ?>
-                                <tr>
+                                <tr id="post-row-<?= $post['id'] ?>">
                                     <td><?= $sl ?>.</td>
-                                    <td><a href=""><?= mb_strimwidth($post['headline'], 0, 50, "...") ?></a> </td>
+                                    <td>
+                                        <a href="<?= $post['status'] == 1 ? base_url('news/' . $post['slug'])  : base_url('admin/news-preview/' . $post['slug']) ?>"
+                                            target="_blank" title="Post name">
+                                            <?= mb_strimwidth($post['headline'], 0, 30, "...") ?>
+                                        </a>
+                                        <div class="mt-2">
+                                            <span class="badge badge-outline-primary rounded" title="Total Views"><?= $post['views'] ?> <i class="fa fa-eye"></i></span>
+                                            <span class="badge badge-outline-primary rounded" title="Total Comments"><?= $post['total_comments'] ?> <i class="fa fa-comment-o"></i></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <?php if ($post['approved_comments'] > 0): ?>
+                                            <a href="javascript:void(0)"
+                                                class="approved-comments"
+                                                data-id="<?= $post['id'] ?>">
+                                                <span class="badge badge-success">
+                                                    Approved (<?= $post['approved_comments'] ?>)
+                                                </span>
+                                            </a>
+                                        <?php endif; ?>
+
+                                        <?php if ($post['pending_comments'] > 0): ?>
+                                            <a href="javascript:void(0)"
+                                                class="pending-comments"
+                                                data-id="<?= $post['id'] ?>">
+                                                <span class="badge badge-warning">
+                                                    Pending (<?= $post['pending_comments'] ?>)
+                                                </span>
+                                            </a>
+                                        <?php endif; ?>
+
+                                        <?php if ($post['approved_comments'] == 0 && $post['pending_comments'] == 0): ?>
+                                            <span class="badge badge-outline-danger">
+                                                No Comments
+                                            </span>
+                                        <?php endif; ?>
+                                    </td>
+
                                     <?php $formattedDate = (new DateTime($post['updated_at']))->format('d M, Y h:i A'); ?>
                                     <td><?= $formattedDate ?></td>
-
                                     <td>
                                         <div class="d-flex align-items-center gap-2">
                                             <label class="toggle-switch mb-0">
@@ -69,6 +106,7 @@
     </div>
 </div>
 <!-- Page modals start  -->
+<?= $this->include('admin/Components/Modals/CommentModal.php'); ?>
 <!-- Page modals ends  -->
 
 <?= $this->endSection() ?>

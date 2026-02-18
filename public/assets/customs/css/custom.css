@@ -21,7 +21,27 @@ h5,
 h6 {
     font-family: 'NotoSerifBengali', 'Arial', 'Nunito', 'Helvetica', sans-serif !important;
 }
+/* scrollbar  */
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+}
 
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    /* transition: 100ms; */
+    background: #777;
+}
 .nav.navbar-nav li a {
     font-size: 16px !important;
     font-weight: 400 !important;
@@ -285,10 +305,11 @@ h4,
 }
 
 .single-post p {
-    font-size: 16px;
+    font-size: 20x;
     line-height: 26px;
     font-weight: 500;
-    color: #6c6c6c;
+    color: #000000;
+    text-align: justify;
 }
 
 .entry-content img {
@@ -358,5 +379,12 @@ h4,
 
     .ticker-item {
         font-size: 14px;
+    }
+
+    .single-post p {
+        font-size: 24px;
+        line-height: 30px;
+        font-weight: 500;
+        color: #000000;
     }
 }

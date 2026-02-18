@@ -54,6 +54,7 @@ class Category extends BaseController
                 news_posts.author,
                 news_posts.post_date_time,
                 news_posts.short_description,
+                npt.type,
                 npt.thumbnail_url
             ')
             ->join(

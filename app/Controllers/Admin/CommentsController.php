@@ -8,15 +8,29 @@ use App\Models\NewsPostCommentModel;
 
 class CommentsController extends BaseController
 {
-    public function index()
+    public function approved()
     {
+        $highlightId = $this->request->getGet('highlight');
         $commentsModel = new NewsPostCommentModel();
-        $comments = $commentsModel->getCommentsWithAdminReply();
+        $comments = $commentsModel->getCommentsWithAdminReply(active: true);
         $data = [
             'pageTitle' => 'Comments',
             'comments' => $comments,
+            'highlightId' => $highlightId
         ];
-        return view('admin/Comments', $data);
+        return view('admin/ApprovedComments', $data);
+    }
+    public function pending()
+    {
+        $highlightId = $this->request->getGet('highlight');
+        $commentsModel = new NewsPostCommentModel();
+        $comments = $commentsModel->getCommentsWithAdminReply(active: false);
+        $data = [
+            'pageTitle' => 'Comments',
+            'comments' => $comments,
+            'highlightId' => $highlightId
+        ];
+        return view('admin/PendingComments', $data);
     }
 
     public function store()
@@ -92,7 +106,6 @@ class CommentsController extends BaseController
         }
     }
 
-
     public function approve()
     {
         if (!$this->request->isAJAX()) {
@@ -155,7 +168,33 @@ class CommentsController extends BaseController
             'message' => 'Comment deleted'
         ]);
     }
+    public function getPostComment()
+    {
+        $newsId = $this->request->getGet('id');
+        $type   = $this->request->getGet('type');
 
+        if (!$newsId || !$type) {
+            return $this->response->setJSON([
+                'status' => false,
+                'message' => 'Invalid request'
+            ]);
+        }
+
+        $commentModel = new NewsPostCommentModel();
+
+        $status = ($type === 'approve') ? 1 : 0;
+
+        $comments = $commentModel
+            ->where('news_post_id', $newsId)
+            ->where(['status' => $status, 'parent_id' => null])
+            ->orderBy('created_at', 'ASC')
+            ->findAll();
+
+        return $this->response->setJSON([
+            'status' => true,
+            'comments' => $comments
+        ]);
+    }
     private function jsonFail($msg)
     {
         return $this->response->setJSON(['success' => false, 'message' => $msg]);

@@ -60,7 +60,7 @@
                 </form>
             </div>
         </div>
-        <div class="d-flex justify-content-between pt-4 my-4 border-top">
+        <div class="d-md-flex justify-content-between pt-4 my-4 border-top">
             <p>© <?= date('Y') ?> <a class="navbar-brand brand-logo" href="<?= base_url() ?>">খবর বাংলা </a>|| All rights reserved.</p>
             <p>Made by <a href="https://github.com/thetechieakash" target="_blank">'Akash'</a></p>
         </div>

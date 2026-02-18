@@ -36,20 +36,20 @@
         </div>
     </div>
     <div class="col-6 col-sm-3 col-lg-2 grid-margin stretch-card">
-        <div class="card card-rounded">
+        <a class="card card-rounded text-decoration-none" href="<?= base_url('admin/approved-comments') ?>">
             <div class="card-body">
                 <h2><?= $totalComments ?> ms</h2>
                 <p>Total Comments</p>
             </div>
-        </div>
+        </a>
     </div>
     <div class="col-6 col-sm-3 col-lg-2 grid-margin stretch-card">
-        <div class="card card-rounded">
+        <a class="card card-rounded text-decoration-none" href="<?= base_url('admin/pending-comments') ?>">
             <div class="card-body">
                 <h2><?= $pendingComments ?></h2>
                 <p>Pending Comments</p>
             </div>
-        </div>
+        </a>
     </div>
 
     <div class="col-6 col-sm-3 col-lg-2 grid-margin stretch-card">

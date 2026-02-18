@@ -10,7 +10,6 @@ class NewsPostCommentModel extends Model
     protected $primaryKey = 'id';
 
     protected $useTimestamps = true;
-    protected $useSoftDeletes = true;
 
     protected $allowedFields = [
         'news_post_id',
@@ -23,7 +22,6 @@ class NewsPostCommentModel extends Model
         'recaptcha_score',
         'ip_address',
         'user_agent',
-        'deleted_at'
     ];
 
     protected $validationRules = [
@@ -85,7 +83,7 @@ class NewsPostCommentModel extends Model
             ->orderBy('created_at', 'ASC')
             ->findAll();
     }
-    public function getCommentsWithAdminReply(?int $postId = null): array
+    public function getCommentsWithAdminReply(?int $postId = null, ?bool $active = true): array
     {
         $builder = $this->where('parent_id', null);
 
@@ -94,6 +92,7 @@ class NewsPostCommentModel extends Model
         }
 
         $comments = $builder
+            ->where('status', $active)
             ->orderBy('created_at', 'DESC')
             ->findAll();
 

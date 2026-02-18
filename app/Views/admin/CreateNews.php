@@ -28,6 +28,23 @@
                         <input type="text" class="form-control" id="headline" name="headline" placeholder="Headline" value="" autocomplete="off" required>
                     </div>
                     <div class="form-group">
+                        <label for="slug">Slug</label>
+                        <input type="text" class="form-control" id="slug" name="slug" placeholder="Slug" value="" autocomplete="off" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="subauthor">Aub Author</label>
+                        <select class="form-control" id="subauthor" name="subauthor">
+                            <option value=""></option> 
+                            <?php foreach ($subAuthor as $author): ?>
+                                <option
+                                    value="<?= $author['id'] ?>"
+                                    data-image="<?= !empty($author['profile_image']) ? base_url($author['profile_image']) : 'https://placehold.co/50x50' ?>">
+                                    <?= esc($author['name']) ?> (<?= esc($author['email']) ?>)
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label for="shortdesc">Short Description</label>
                         <textarea class="form-control" id="shortdesc" name="shortdescription" rows="4" style="min-height: 10rem;"></textarea>
                     </div>
@@ -104,6 +121,18 @@
                                 </label>
                             </div>
                         </div>
+                        <div class="col-sm-4">
+                            <div class="form-check">
+                                <label class="form-check-label">
+                                    <input type="radio"
+                                        class="form-check-input thumb-type"
+                                        name="thumbnail_type"
+                                        id="thumb_media"
+                                        value="media">
+                                    Media
+                                </label>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- LINK INPUT -->
@@ -127,9 +156,16 @@
                             name="thumbnail_image"
                             accept="image/*">
                     </div>
+                    <!-- Choose Media -->
+                    <div id="thumbnail-media-wrapper">
+                        <h4>Choose media</h4>
+                        <div id="media-container" style="max-height: 500px;overflow-y: auto; overflow-x: hidden;">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+        <input type="hidden" name="selected_media" id="selected_media">
         <div class="col-12">
             <div class="card mt-3">
                 <div class="card-body">

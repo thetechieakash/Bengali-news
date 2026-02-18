@@ -6,6 +6,7 @@ use App\Controllers\BaseController;
 use App\Models\TagModel;
 use App\Models\NewsPostModel;
 use App\Models\NewsPostCommentModel;
+use App\Models\PostViewModel;
 use CodeIgniter\Exceptions\PageNotFoundException;
 
 
@@ -16,10 +17,38 @@ class Post extends BaseController
         $newsModel = new NewsPostModel();
         $commentModel = new NewsPostCommentModel();
         $tagModel = new TagModel();
+        $viewModel     = new PostViewModel();
+
         $post = $newsModel->getActivePostForUser($identifier);
         if (!$post) {
             throw PageNotFoundException::forPageNotFound();
         }
+
+        $ip = $this->request->getIPAddress();
+        $oneHourAgo = date('Y-m-d H:i:s', strtotime('-1 hour'));
+        $alreadyViewed = $viewModel
+            ->where('post_id', $post['id'])
+            ->where('ip_address', $ip)
+            ->where('viewed_at >=', $oneHourAgo)
+            ->countAllResults();
+
+        if ($alreadyViewed == 0) {
+
+            // Increase main views counter safely
+            $newsModel->where('id', $post['id'])
+                ->set('views', 'views+1', false)
+                ->update();
+
+            // Store view log
+            $viewModel->insert([
+                'post_id'    => $post['id'],
+                'ip_address' => $ip,
+            ]);
+
+            // Update local post array so frontend shows updated value immediately
+            $post['views']++;
+        }
+        
         $readMorePosts = $newsModel->readMore($post['id'], 6);
         $comments = $commentModel->getCommentsWithAdminReply($post['id']);
         $data = [

@@ -27,6 +27,11 @@ class CreateNewsPostsTable extends Migration
                 'type'       => 'VARCHAR',
                 'constraint' => 150,
             ],
+            'sub_author_id' => [
+                'type' => 'INT',
+                'unsigned' => true,
+                'null' => true,
+            ],
             'post_date_time' => [
                 'type' => 'DATETIME',
                 'null' => true,
@@ -37,6 +42,13 @@ class CreateNewsPostsTable extends Migration
             ],
             'description' => [
                 'type' => 'LONGTEXT',
+            ],
+            'views' => [
+                'type'       => 'INT',
+                'constraint' => 11,
+                'unsigned'   => true,
+                'default'    => 0,
+                'null'       => false,
             ],
             'status' => [
                 'type'       => 'TINYINT',

@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="<?= base_url() ?>assets/css/vertical-layout-light/style.css">
     <!-- endinject -->
     <link rel="shortcut icon" href="<?= base_url() ?>assets/images/bangla-logo-mini.svg" />
-    <link rel="stylesheet" href="<?= base_url('assets/customs/css/admincustom.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/customs/css/admincustom.css') ?>?v=5.1">
     <style>
         #global-loader {
             position: fixed;
@@ -128,9 +128,12 @@
     <script>
         /* Loading Js*/
         $(window).on('load', function() {
-            setTimeout(function() {
-                $('#global-loader').delay(500).fadeOut(500);
-            }, 800);
+            $('#global-loader').fadeOut();
+        });
+
+        $('#datepicker-popup').datepicker({
+            defaultViewDate: true,
+            format: 'dd/mm/yyyy'
         });
     </script>
     <?= $this->renderSection('script') ?>

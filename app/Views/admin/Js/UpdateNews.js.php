@@ -7,29 +7,233 @@
             height: '400px',
         });
 
-        // Loader 
-        const loader = $('#panding-loader');
-
         // GLightbox init 
         const lightbox = GLightbox();
+
+        // sub author 
+        $('#subauthor').select2({
+            templateResult: formatAuthor,
+            templateSelection: formatAuthor,
+            allowClear: true,
+            placeholder: "Select Sub Author",
+            escapeMarkup: function(markup) {
+                return markup;
+            }
+        });
+
+        function formatAuthor(option) {
+            if (!option.id) return option.text;
+
+            let img = $(option.element).data('image');
+
+            return `
+        <div style="display:flex; align-items:center;">
+            <img src="${img}" 
+                 style="width:35px;height:35px;border-radius:50%;margin-right:10px;object-fit:cover;">
+            <div>
+                ${option.text}
+            </div>
+        </div>
+    `;
+        }
+
         /* ----------------------------------------------------
          * Thumbnail toggle
          * -------------------------------------------------- */
+        let mediaPage = 1;
+        let mediaLoading = false;
+        let mediaHasMore = true;
+
+        function initLazyLoading() {
+
+            const images = document.querySelectorAll('.lazy-media');
+
+            const observer = new IntersectionObserver((entries, observer) => {
+
+                entries.forEach(entry => {
+
+                    if (entry.isIntersecting) {
+
+                        const img = entry.target;
+                        img.src = img.dataset.src;
+                        img.classList.remove('lazy-media');
+
+                        observer.unobserve(img);
+                    }
+
+                });
+
+            }, {
+                rootMargin: '100px'
+            });
+
+            images.forEach(img => observer.observe(img));
+        }
+
+        function loadMediaImages() {
+
+            if (mediaLoading || !mediaHasMore) return;
+
+            mediaLoading = true;
+
+            if (mediaPage === 1) {
+                $('#media-container').html('<div class="text-center p-2">Loading...</div>');
+            } else {
+                $('#media-container').append('<div class="text-center loading-media">Loading...</div>');
+            }
+
+            $.get("<?= base_url('admin/api/get-media') ?>?page=" + mediaPage, function(res) {
+
+                $('.loading-media').remove();
+
+                const images = res.data || [];
+                const selectedPath = $('#selected_media').val();
+
+                if (mediaPage === 1 && selectedPath) {
+
+                    const selectedIndex = images.findIndex(img => img.file_path === selectedPath);
+
+                    if (selectedIndex !== -1) {
+                        const selectedItem = images.splice(selectedIndex, 1)[0];
+                        images.unshift(selectedItem);
+                    }
+                }
+                if (!images.length && mediaPage === 1) {
+                    $('#media-container').html('<p>No media found</p>');
+                    mediaHasMore = false;
+                    return;
+                }
+
+                let html = mediaPage === 1 ? '<div class="row" id="media-grid">' : '';
+
+                images.forEach(function(image) {
+
+                    const fullSrc = "<?= base_url() ?>" + image.file_path;
+
+                    html += `
+                <div class="col-3 col-md-2 mb-3">
+                    <div class="position-relative media-wrapper" style="cursor:pointer;">
+                        
+                        <img src="https://placehold.co/300x200?text=Loading..."
+                                data-src="${fullSrc}"
+                                data-path="${image.file_path}"
+                                class="img-fluid rounded lazy-media"
+                                style="height:100px;object-fit:cover;">
+
+                        <div class="media-check position-absolute top-0 end-0 m-1 d-none">
+                            <div class="bg-success rounded-circle d-flex align-items-center justify-content-center"
+                                    style="width:22px;height:22px;">
+                                <i class="fa fa-check text-white" style="font-size:12px;"></i>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `;
+                });
+
+                if (mediaPage === 1) {
+                    html += '</div>';
+                    $('#media-container').html(html);
+                } else {
+                    $('#media-grid').append(html);
+                }
+
+                initLazyLoading();
+
+                mediaPage++;
+                mediaLoading = false;
+
+                if (!res.next_page) {
+                    mediaHasMore = false;
+                }
+
+                applyPreselectedMedia();
+            });
+        }
+
+        $('#media-container').on('scroll', function() {
+
+            let container = $(this)[0];
+
+            if (container.scrollTop + container.clientHeight >= container.scrollHeight - 50) {
+
+                loadMediaImages();
+            }
+        });
+
         function toggleThumbnailInput(type) {
             if (type === 'link') {
                 $('#thumbnail-link-wrapper').show();
                 $('#thumbnail-upload-wrapper').hide();
-            } else {
+                $('#thumbnail-media-wrapper').hide();
+            } else if (type === 'image') {
                 $('#thumbnail-link-wrapper').hide();
                 $('#thumbnail-upload-wrapper').show();
+                $('#thumbnail-media-wrapper').hide();
+            } else if (type === 'media') {
+                $('#thumbnail-link-wrapper').hide();
+                $('#thumbnail-upload-wrapper').hide();
+                $('#thumbnail-media-wrapper').show();
+                loadMediaImages();
             }
         }
+
 
         toggleThumbnailInput($('input[name="thumbnail_type"]:checked').val());
 
         $('.thumb-type').on('change', function() {
+            $('#thumbnail_removed').val('0');
             toggleThumbnailInput(this.value);
         });
+
+        let selectedMedia = '';
+
+        $(document).on('click', '.media-wrapper', function() {
+
+            const img = $(this).find('img');
+            const check = $(this).find('.media-check');
+            const path = img.data('path');
+
+            if ($(this).hasClass('selected')) {
+
+                $(this).removeClass('selected');
+                check.addClass('d-none');
+
+                $('#selected_media').val('');
+                selectedMedia = '';
+
+            } else {
+
+                $('.media-wrapper').removeClass('selected');
+                $('.media-check').addClass('d-none');
+
+                $(this).addClass('selected');
+                check.removeClass('d-none');
+
+                selectedMedia = path;
+                $('#selected_media').val(path);
+            }
+        });
+
+        function applyPreselectedMedia() {
+
+            const preselected = $('#selected_media').val();
+
+            if (!preselected) return;
+
+            $('.media-wrapper').each(function() {
+
+                const img = $(this).find('img');
+
+                if (img.data('path') === preselected) {
+
+                    $(this).addClass('selected');
+                    $(this).find('.media-check').removeClass('d-none');
+                }
+            });
+        }
+
 
         /* ----------------------------------------------------
          * Flatpickr
@@ -230,7 +434,6 @@
                 CKEDITOR.instances[i].updateElement();
             }
 
-            loader.fadeIn(150);
 
             $.ajax({
                 url: "<?= base_url('admin/news/update/' . $post['id']) ?>",
@@ -250,7 +453,6 @@
                     showDangerToast('Server error');
                 },
                 complete() {
-                    loader.fadeOut(150);
                     btn.prop('disabled', false);
                 }
             });
@@ -287,6 +489,8 @@
                 }
             });
         });
-
+        $(document).on('click', '#preview', function(e) {
+            e.preventDefault()
+        });
     });
 </script>

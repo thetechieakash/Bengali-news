@@ -117,7 +117,7 @@ class CategoriesController extends BaseController
         ]);
     }
 
-    public function updateActive()
+    public function updateActive($defaultActiveCount = 10)
     {
         $data  = $this->request->getJSON(true);
         $id    = $data['id'] ?? null;
@@ -152,12 +152,12 @@ class CategoriesController extends BaseController
                         ->where('is_active', 1)
                         ->countAllResults();
 
-                    if ($activeCount >= 10) {
+                    if ($activeCount >= $defaultActiveCount) {
                         $db->transRollback();
 
                         return $this->response->setJSON([
                             'success' => false,
-                            'message' => 'Only 10 categories can be active in the navbar. Please disable another category first.'
+                            'message' => "Only {$defaultActiveCount} categories can be active in the navbar. Please disable another category first."
                         ]);
                     }
                 }

@@ -8,8 +8,8 @@
 <?php
 
 use App\Helpers\StringShort;
+use App\Helpers\ThumbHelper;
 
-$defaultThumb = base_url('assets/images/news/placeholder.png');
 ?>
 <section class="utf_block_wrapper py-3 mt-3">
     <div class="container">
@@ -25,7 +25,7 @@ $defaultThumb = base_url('assets/images/news/placeholder.png');
                                     <div class="col-lg-5 col-md-6">
                                         <div class="utf_post_thumb thumb-float-style">
                                             <a href="#">
-                                                <img class="img-fluid" src="<?= $post['thumbnail_url'] ?? $defaultThumb  ?>" alt="" />
+                                                <img class="img-fluid" src="<?= ThumbHelper::getThumbUrl($post['thumbnail_url'], $post['type']) ?>" alt="<?= $post['headline'] ?>" />
                                             </a>
                                         </div>
                                     </div>
@@ -55,7 +55,7 @@ $defaultThumb = base_url('assets/images/news/placeholder.png');
                         </div>
                     <?php endif; ?>
                 </div>
-                <?= $pager->links() ?>
+                <?= $pager->links('default', 'custom') ?>
             </div>
             <div class="col-lg-4 col-md-12">
                 <div class="sidebar utf_sidebar_right">
@@ -68,7 +68,7 @@ $defaultThumb = base_url('assets/images/news/placeholder.png');
                                     <li class="clearfix">
                                         <div class="utf_post_block_style post-float clearfix">
                                             <div class="utf_post_thumb">
-                                                <img class="img-fluid" src="<?= $news['thumbnail_url'] ?? $defaultThumb ?>" alt="" />
+                                                <img class="img-fluid" src="<?= ThumbHelper::getThumbUrl($news['thumbnail_url'], $news['type']) ?>" alt="<?= $news['headline'] ?>" />
                                             </div>
                                             <div class="utf_post_content">
                                                 <h2 class="utf_post_title title-small">

@@ -25,7 +25,24 @@
                     <h4 class="card-title">Update post</h4>
                     <div class="form-group">
                         <label for="headline">Headline</label>
-                        <input type="text" class="form-control" id="headline" name="headline" placeholder="Headline" value="<?= esc($post['headline'] ?? '') ?>" required>
+                        <input type="text" class="form-control" id="headline" name="headline" placeholder="Headline" value="<?= esc($post['headline']) ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="slug">Slug</label>
+                        <input type="text" class="form-control" id="slug" name="slug" placeholder="Slug" value="<?= esc($post['slug']) ?>" autocomplete="off" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="subauthor">Aub Author</label>
+                        <select class="form-control" id="subauthor" name="subauthor">
+                            <option value=""></option>
+                            <?php foreach ($subAuthor as $author): ?>
+                                <option
+                                    value="<?= $author['id'] ?>"
+                                    data-image="<?= !empty($author['profile_image']) ? base_url($author['profile_image']) : 'https://placehold.co/50x50' ?>" <?= $post['sub_author_id'] == $author['id'] ? 'selected' : '' ?>>
+                                    <?= esc($author['name']) ?> (<?= esc($author['email']) ?>)
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="shortdesc">Short Description</label>
@@ -98,6 +115,10 @@
                     <h4 class="mb-2">Thumbnail</h4>
                     <input type="hidden" name="thumbnail_removed" id="thumbnail_removed" value="0">
                     <div class="form-group row">
+                        <?php
+                        $thumbType = $post['thumbnail']['type'] ?? 'image';
+                        ?>
+
                         <div class="col-sm-4">
                             <div class="form-check">
                                 <label class="form-check-label">
@@ -105,7 +126,7 @@
                                         class="form-check-input thumb-type"
                                         name="thumbnail_type"
                                         id="thumb_link"
-                                        value="link">
+                                        value="link" <?= $thumbType === 'link' ? 'checked' : '' ?>>
                                     Link
                                 </label>
                             </div>
@@ -119,8 +140,21 @@
                                         name="thumbnail_type"
                                         id="thumb_image"
                                         value="image"
-                                        checked>
+                                        <?= $thumbType === 'image' ? 'checked' : '' ?>>
                                     Image
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-check">
+                                <label class="form-check-label">
+                                    <input type="radio"
+                                        class="form-check-input thumb-type"
+                                        name="thumbnail_type"
+                                        id="thumb_media"
+                                        value="media"
+                                        <?= $thumbType === 'media' ? 'checked' : '' ?>>
+                                    Media
                                 </label>
                             </div>
                         </div>
@@ -134,7 +168,7 @@
                                 class="form-control"
                                 id="thumbnail_link"
                                 name="thumbnail_link"
-                                placeholder="https://example.com/image.jpg" value="">
+                                placeholder="https://example.com/image.jpg" value="<?= $thumbType === 'link' ? esc($post['thumbnail']['thumbnail_url'] ?? '') : '' ?>">
                         </div>
                     </div>
 
@@ -148,9 +182,17 @@
                             data-default-file="<?= $post['thumbnail']['thumbnail_url'] ?? '' ?>"
                             accept="image/*">
                     </div>
+                    <div id="thumbnail-media-wrapper">
+                        <h4>Choose media</h4>
+                        <div id="media-container" style="max-height: 500px;overflow-y: auto; overflow-x: hidden;">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+        <input type="hidden" name="selected_media" id="selected_media"
+            value="<?= $thumbType === 'media' ? esc($post['thumbnail']['thumbnail_url'] ?? '') : '' ?>">
+
         <div class="col-12">
             <div class="card mt-3">
                 <div class="card-body">

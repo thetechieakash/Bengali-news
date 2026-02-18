@@ -20,7 +20,7 @@ class CreateNewsPostThumbnailsTable extends Migration
             ],
             'type' => [
                 'type'       => 'ENUM',
-                'constraint' => ['link', 'image'],
+                'constraint' => ['link', 'image', 'media'],
             ],
             'thumbnail_url' => [
                 'type' => 'TEXT',

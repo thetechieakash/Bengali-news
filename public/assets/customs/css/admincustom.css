@@ -1,3 +1,25 @@
+/* scrollbar  */
+/* width */
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    /* transition: 100ms; */
+    background: #777;
+}
+
 .toggle-switch {
     position: relative;
     width: 30px;
@@ -82,4 +104,18 @@ table tbody tr td {
 .swal2-modal .swal2-success-ring {
     margin-top: 42px;
     margin-bottom: 42px;
+}
+
+.media-wrapper.selected img {
+    opacity: 0.8;
+    transform: scale(0.98);
+    transition: 0.2s ease;
+}
+
+.delete-media div {
+    transition: 0.2s ease;
+}
+
+.delete-media:hover div {
+    transform: scale(1.1);
 }

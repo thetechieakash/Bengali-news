@@ -20,9 +20,11 @@ class NewsPostModel extends Model
         'headline',
         'slug',
         'author',
+        'sub_author_id',
         'post_date_time',
         'short_description',
         'description',
+        'views',
         'status',
     ];
 
@@ -93,6 +95,12 @@ class NewsPostModel extends Model
             ->get()
             ->getRowArray();
 
+        /** ---------- THUMBNAIL ---------- */
+        $post['sub_author'] = $db->table('sub_authors')
+            ->where('id', $post['sub_author_id'])
+            ->get()
+            ->getRowArray();
+
         return $post;
     }
 
@@ -104,6 +112,7 @@ class NewsPostModel extends Model
             news_posts.slug,
             news_posts.author,
             news_posts.post_date_time,
+            npt.type,
             npt.thumbnail_url
         ')
             ->join(
@@ -137,6 +146,7 @@ class NewsPostModel extends Model
         news_posts.author,
         news_posts.post_date_time,
         news_posts.short_description,
+        npt.type,
         npt.thumbnail_url
     ')
             ->join(
@@ -153,8 +163,8 @@ class NewsPostModel extends Model
     }
     public function postDuration(int $fromDays, int $toDays, int $limit = 5): array
     {
-        $fromDate = date('Y-m-d 00:00:00', strtotime("-{$fromDays} days"));
-        $toDate   = date('Y-m-d 23:59:59', strtotime("-{$toDays} days"));
+        $startDate = date('Y-m-d 00:00:00', strtotime("-{$toDays} days"));
+        $endDate   = date('Y-m-d 23:59:59', strtotime("-{$fromDays} days"));
 
         return $this
             ->select('
@@ -164,6 +174,7 @@ class NewsPostModel extends Model
             news_posts.short_description,
             news_posts.author,
             news_posts.post_date_time,
+            npt.type,
             npt.thumbnail_url
         ')
             ->join(
@@ -172,12 +183,13 @@ class NewsPostModel extends Model
                 'left'
             )
             ->where('news_posts.status', 1)
-            ->where('news_posts.post_date_time >=', $fromDate)
-            ->where('news_posts.post_date_time <=', $toDate)
+            ->where('news_posts.post_date_time >=', $startDate)
+            ->where('news_posts.post_date_time <=', $endDate)
             ->orderBy('news_posts.post_date_time', 'DESC')
             ->limit($limit)
             ->findAll();
     }
+
 
     public function headlineTicker()
     {
@@ -200,6 +212,7 @@ class NewsPostModel extends Model
         news_posts.headline,
         news_posts.slug,
         news_posts.post_date_time,
+        npt.type,
         npt.thumbnail_url
     ')
             ->join(
@@ -244,6 +257,7 @@ class NewsPostModel extends Model
             news_posts.short_description,
             news_posts.author,
             news_posts.post_date_time,
+            npt.type,
             npt.thumbnail_url
         ')
             ->join('news_post_thumbnails npt', 'npt.news_post_id = news_posts.id', 'left')

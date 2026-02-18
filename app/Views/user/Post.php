@@ -3,18 +3,20 @@
 <?= esc($pageTitle); ?>
 <?= $this->endSection() ?>
 <?= $this->section('cssPlugins') ?>
+<link rel="stylesheet" href="<?= base_url() ?>assets/vendors/jquery-toast-plugin/jquery.toast.min.css">
 <?= $this->endSection() ?>
 <?= $this->section('content') ?>
 <?php
 
 use App\Helpers\StringShort;
+use App\Helpers\ThumbHelper;
+
 
 function formattedPostDate($date)
 {
     $formatted = new Datetime($date);
     return $formatted->format('d M, Y');
 }
-$defaultThumb = base_url('assets/images/news/placeholder.png');
 ?>
 <!-- Page Title Start -->
 <div class="page-title">
@@ -48,32 +50,63 @@ $defaultThumb = base_url('assets/images/news/placeholder.png');
                         <div class="utf_post_meta">
                             <span class="utf_post_author"><?= esc($post['author']) ?></span>
                             <span class="utf_post_date"><?= formattedPostDate($post['post_date_time']) ?></span>
-                            <!-- <span class="post-hits">
-                                <i class="fa fa-eye"></i> 21
-                            </span> -->
-                            <span class="post-comment">
-                                <i class="fa fa-comments-o"></i>
-                                <a href="<?= !empty($comments) ? '#comments' : 'javascript:void(0)' ?>" class="comments-link">
-                                    <span><?= sprintf("%02d", count($comments)) ?></span>
-                                </a>
+                            <span class="post-hits">
+                                <i class="fa fa-eye"></i> <?= sprintf("%02d", $post['views']) ?>
                             </span>
+                            <?php if (count($comments) > 0): ?>
+                                <span class="post-comment">
+                                    <i class="fa fa-comments-o"></i>
+                                    <a href="<?= !empty($comments) ? '#comments' : 'javascript:void(0)' ?>" class="comments-link">
+                                        <span><?= sprintf("%02d", count($comments)) ?></span>
+                                    </a>
+                                </span>
+                            <?php endif; ?>
                         </div>
                     </div>
 
                     <div class="utf_post_content-area">
                         <div class="post-media post-featured-image">
                             <?php
-                            $thumb = $post['thumbnail']['thumbnail_url'] ?? $defaultThumb;
+                            $thumbUrl = ThumbHelper::getThumbUrl(
+                                $post['thumbnail']['thumbnail_url'] ?? null,
+                                $post['thumbnail']['type'] ?? null
+                            );
                             ?>
-                            <a href="<?= esc($thumb) ?>" class="glightbox">
-                                <img src="<?= esc($thumb) ?>" class="img-fluid" alt="">
+                            <a href="<?= esc($thumbUrl) ?>" class="glightbox">
+                                <img src="<?= esc($thumbUrl) ?>" class="img-fluid" alt="<?= $post['headline'] ?>">
                             </a>
-
                         </div>
+                        <?php if (!empty($post['sub_author'])): ?>
+                            <div class="d-flex align-items-center p-3 mb-3 shadow-sm">
+
+                                <!-- Profile Image -->
+                                <div class="me-3">
+                                    <img src="<?= base_url($post['sub_author']['profile_image']) ?>"
+                                        alt="Author Image"
+                                        class="rounded-circle"
+                                        style="width:60px; height:60px; object-fit:cover;">
+                                </div>
+                                <div>
+                                    <h6 class="mb-0 fw-bold">
+                                        <?= esc($post['sub_author']['name']); ?>
+                                    </h6>
+                                    <small class="text-muted">
+                                        <?= esc($post['sub_author']['email']); ?>
+                                    </small>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (isset($post['short_description'])): ?>
+                            <div class="fst-italic p-3 px-5 mb-3 border rounded bg-light">
+                                <i class="fa fa-quote-left pe-2"></i>
+                                <?= $post['short_description'] ?>
+                                <i class="fa fa-quote-right ps-2"></i>
+                            </div>
+                        <?php endif; ?>
                         <div class="entry-content">
                             <?= $post['description'] ?>
                         </div>
-
                         <?php if (count($post['tags']) > 0): ?>
                             <div class="tags-area clearfix">
                                 <div class="post-tags">
@@ -84,8 +117,6 @@ $defaultThumb = base_url('assets/images/news/placeholder.png');
                                 </div>
                             </div>
                         <?php endif; ?>
-
-
                         <div class="share-items clearfix">
                             <ul class="post-social-icons unstyled">
                                 <?php $postUrl   = current_url(); ?>
@@ -104,37 +135,40 @@ $defaultThumb = base_url('assets/images/news/placeholder.png');
                         </div>
                     </div>
                 </div>
-
-                <!-- <nav class="post-navigation clearfix">
-                    <div class="post-previous">
-                        <a href="#"> <span><i class="fa fa-angle-left"></i>Previous Post</span>
-                            <h3>Zhang social media pop also known when smart innocent...</h3>
-                        </a>
-                    </div>
-                    <div class="post-next">
-                        <a href="#"> <span>Next Post <i class="fa fa-angle-right"></i></span>
-                            <h3>Zhang social media pop also known when smart innocent...</h3>
-                        </a>
-                    </div>
-                </nav> -->
-
                 <div class="related-posts block color-primary">
                     <h3 class="utf_block_title"><span>সম্পর্কিত লিংক</span></h3>
                     <div id="utf_latest_news_slide" class="owl-carousel owl-theme utf_latest_news_slide">
-                        <?php foreach ($relatedPosts as $post): ?>
+                        <?php foreach ($relatedPosts as $related): ?>
+                            <?php
+                            // Get safe thumbnail URL
+                            $relUrl = ThumbHelper::getThumbUrl(
+                                $related['thumbnail_url'] ?? null,
+                                $related['type'] ?? 'image' // default type
+                            );
+
+                            // Format post date
+                            $formattedPostDate = isset($related['post_date_time'])
+                                ? (new DateTime($related['post_date_time']))->format('d M, Y')
+                                : '';
+                            ?>
                             <div class="item">
                                 <div class="utf_post_block_style clearfix">
                                     <div class="utf_post_thumb">
-                                        <img class="img-fluid" src="<?= $post['thumbnail_url'] ?? $defaultThumb  ?>" alt="" />
+                                        <a href="<?= esc($relUrl) ?>" class="glightbox">
+                                            <img class="img-fluid" src="<?= esc($relUrl) ?>" alt="<?= esc($related['headline']) ?>" />
+                                        </a>
                                     </div>
                                     <div class="utf_post_content">
                                         <h2 class="utf_post_title title-medium">
-                                            <a href="<?= base_url('news/' . $post['slug']) ?>"><?= StringShort::truncate($post['headline'], 25) ?></a>
+                                            <a href="<?= base_url('news/' . $related['slug']) ?>">
+                                                <?= StringShort::truncate($related['headline'], 25) ?>
+                                            </a>
                                         </h2>
-                                        <div class="utf_post_meta"> <span class="utf_post_date">
-                                                <?php $formattedPostDate = (new DateTime($post['post_date_time']))->format('d M, Y'); ?>
-                                                <?= $formattedPostDate ?></span>
-                                        </div>
+                                        <?php if ($formattedPostDate): ?>
+                                            <div class="utf_post_meta">
+                                                <span class="utf_post_date"><?= esc($formattedPostDate) ?></span>
+                                            </div>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>
@@ -194,7 +228,7 @@ $defaultThumb = base_url('assets/images/news/placeholder.png');
                     <form method="post" action="<?= base_url('comment') ?>" id="comment">
                         <h3 class="title-normal">কমেন্ট করুন</h3>
                         <?= csrf_field() ?>
-                        <input type="hidden" name="postid" value="<?= esc($post['id']) ?>">
+                        <input type="hidden" name="postid" id="postid" value="<?= esc($post['id']) ?>">
                         <input type="hidden" name="g-recaptcha-response" id="recaptcha_token">
                         <div class="row">
                             <div class="col-md-6">
@@ -223,14 +257,6 @@ $defaultThumb = base_url('assets/images/news/placeholder.png');
 
                         </div>
                     </form>
-                    <div id="success-card" style="display:none;">
-                        <div class="card">
-                            <div class="card-body text-center">
-                                <div class="alert alert-success" id="success-alert" style="display:none;"></div>
-                                <div class="alert alert-danger" id="danger-alert" style="display:none;"></div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 <!-- Comments form end -->
             </div>
@@ -245,19 +271,37 @@ $defaultThumb = base_url('assets/images/news/placeholder.png');
                         </h3>
                         <div class="utf_list_post_block">
                             <ul class="utf_list_post">
-                                <?php foreach ($readMorePosts as $post) : ?>
+                                <?php foreach ($readMorePosts as $readMore): ?>
+                                    <?php
+                                    // Safe thumbnail URL
+                                    $thumbUrl = \App\Helpers\ThumbHelper::getThumbUrl(
+                                        $readMore['thumbnail_url'] ?? null,
+                                        $readMore['type'] ?? 'image' // default type
+                                    );
+
+                                    // Format post date safely
+                                    $postDate = isset($readMore['post_date_time'])
+                                        ? (new DateTime($readMore['post_date_time']))->format('d M, Y')
+                                        : '';
+                                    ?>
                                     <li class="clearfix">
                                         <div class="utf_post_block_style post-float clearfix">
                                             <div class="utf_post_thumb">
-                                                <img class="img-fluid" src="<?= $post['thumbnail_url'] ?? $defaultThumb ?>" alt="" />
+                                                <a href="<?= base_url('news/' . $readMore['slug']) ?>" class="glightbox">
+                                                    <img class="img-fluid" src="<?= esc($thumbUrl) ?>" alt="<?= esc($readMore['headline']) ?>" />
+                                                </a>
                                             </div>
                                             <div class="utf_post_content">
                                                 <h2 class="utf_post_title title-small">
-                                                    <a href="<?= base_url('news/' . $post['slug']) ?>"><?= StringShort::truncate($post['headline'], 30) ?></a>
+                                                    <a href="<?= base_url('news/' . $readMore['slug']) ?>">
+                                                        <?= StringShort::truncate($readMore['headline'], 30) ?>
+                                                    </a>
                                                 </h2>
                                                 <div class="utf_post_meta">
-                                                    <span class="utf_post_author"><?= $post['author'] ?></span>
-                                                    <span class="utf_post_date"><?= formattedPostDate($post['post_date_time']) ?></span>
+                                                    <span class="utf_post_author"><?= esc($readMore['author']) ?></span>
+                                                    <?php if ($postDate): ?>
+                                                        <span class="utf_post_date"><?= esc($postDate) ?></span>
+                                                    <?php endif; ?>
                                                 </div>
                                             </div>
                                         </div>
@@ -292,9 +336,11 @@ $defaultThumb = base_url('assets/images/news/placeholder.png');
 
 <?= $this->endSection() ?>
 <?= $this->section('jsPlugins') ?>
-<script src="https://www.google.com/recaptcha/api.js?render=<?= $recapcha_key ?>"></script>
+<script src="<?= base_url() ?>assets/vendors/jquery-toast-plugin/jquery.toast.min.js"></script>
+<script src="<?= base_url() ?>assets/customs/js/custom.toast.js"></script>
 <?= $this->endSection() ?>
 <?= $this->section('customjs') ?>
+<script src="https://www.google.com/recaptcha/api.js?render=<?= $recapcha_key ?>"></script>
 <script>
     $(document).on('click', '#commentSubmit', function(e) {
         e.preventDefault();
@@ -319,28 +365,16 @@ $defaultThumb = base_url('assets/images/news/placeholder.png');
                         success: function(res) {
                             if (res.success) {
                                 $('#comment')[0].reset();
-                                // fade form out
-                                $('#comment').fadeOut(200, function() {
-                                    // show card smoothly
-                                    $('#success-card').fadeIn(200);
-
-                                    $('#success-alert')
-                                        .html(res.message)
-                                        .fadeIn(200);
-                                });
+                                showSuccessToast(res.message);
                             } else {
-                                $('#success-card').fadeIn(200);
-                                $('#danger-alert')
-                                    .html(res.message)
-                                    .fadeIn(200);
+                                Object.values(res.errors).forEach(msg => {
+                                    showWarningToast(msg);
+                                })
                             }
                         },
                         error: function(err) {
+                            showWarningToast('Something went wrong. Try again.');
                             console.error('Comment submit ajax error', err)
-                            $('#success-card').fadeIn(200);
-                            $('#danger-alert')
-                                .html('Something went wrong. Try again.')
-                                .fadeIn(200);
                         },
                         complete: function() {
                             $('#commentSubmit').prop('disabled', false).text('Post Comment');

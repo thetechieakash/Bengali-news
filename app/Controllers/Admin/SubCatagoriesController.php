@@ -128,7 +128,7 @@ class SubCatagoriesController extends BaseController
         ]);
     }
 
-    public function updateActive()
+    public function updateActive($defaultActiveCount = 5)
     {
         $data  = $this->request->getJSON(true);
         $id    = $data['id'] ?? null;
@@ -171,7 +171,7 @@ class SubCatagoriesController extends BaseController
             }
 
             /* ---- LIMIT CHECK (MAX 5 ACTIVE PER CATEGORY) ---- */
-            if ((int) $sub['is_active'] === 0) {
+            if ((int) $sub['is_active'] === $defaultActiveCount) {
 
                 $activeCount = $subModel
                     ->where('cat_id', $sub['cat_id'])
@@ -181,7 +181,7 @@ class SubCatagoriesController extends BaseController
                 if ($activeCount >= 5) {
                     return $this->response->setJSON([
                         'success' => false,
-                        'message' => 'Only 5 subcategories can be active under a category. Disable another subcategory first.'
+                        'message' => "Only {$defaultActiveCount} subcategories can be active under a category. Disable another subcategory first."
                     ]);
                 }
             }

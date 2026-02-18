@@ -3,16 +3,15 @@
 namespace App\Controllers\Admin\Post;
 
 use App\Controllers\BaseController;
+use App\Models\{
+    NewsPostModel,
+    NewsPostCategoryModel,
+    NewsPostSubCategoryModel,
+    NewsPostTagModel,
+    NewsPostThumbnailModel,
+    MediaModel
+};
 use App\Helpers\Slug;
-use App\Helpers\FileUploader;
-use App\Models\Categories;
-use App\Models\SubCategories;
-use App\Models\NewsPostModel;
-use App\Models\NewsPostCategoryModel;
-use App\Models\NewsPostSubCategoryModel;
-use App\Models\TagModel;
-use App\Models\NewsPostTagModel;
-use App\Models\NewsPostThumbnailModel;
 use CodeIgniter\I18n\Time;
 
 class UpdatePostController extends BaseController
@@ -23,294 +22,205 @@ class UpdatePostController extends BaseController
         $db->transBegin();
 
         try {
-            $postModel = new NewsPostModel();
-            $post = $postModel->find($id);
 
-            if (!$post) {
-                throw new \Exception('Post not found');
-            }
+            $post = $this->getPostOrFail($id);
+            $data = $this->normalizeInput($post);
 
-            $request = $this->request->getPost();
+            $this->validatePost($data);
 
-            /* -----------------------------
-             * 1. NORMALIZE INPUT
-             * ----------------------------- */
-            $headline   = trim($request['headline'] ?? '');
-            $shortDesc  = trim($request['shortdescription'] ?? '');
-            $desc       = trim($request['description'] ?? '');
-            $categories = array_values(array_unique(array_map('intval', (array) ($request['categories'] ?? []))));
-            $subCats = array_values(array_unique(array_map('intval', (array) ($request['subcategories'] ?? []))));
-            $thumbType = $request['thumbnail_type'] ?? 'link';
-            $thumbLink = trim($request['thumbnail_link'] ?? '');
-            $newStatus = isset($request['status']) ? (int) $request['status'] : 0;
+            $slug = (new Slug())->slugify($data['slug']);
+            $this->assertUniqueSlug($slug, $id);
 
-            if ($post['status'] == 1 && $newStatus == 0) {
-                $newStatus = 1;
-            }
-            
-            $tags = array_values(array_unique(array_map(
-                'intval',
-                (array) ($request['tags'] ?? [])
-            )));
+            $data = $this->applyStatusRules($post, $data);
 
-
-            /* -----------------------------
-             * 2. VALIDATION
-             * ----------------------------- */
-            if ($headline === '' || $desc === '') {
-                throw new \Exception('Headline and description are required');
-            }
-
-            if (empty($categories)) {
-                throw new \Exception('At least one category is required');
-            }
-
-            if (!in_array($thumbType, ['link', 'image'], true)) {
-                throw new \Exception('Invalid thumbnail type');
-            }
-
-            if (
-                $thumbType === 'link' &&
-                $thumbLink &&
-                !filter_var($thumbLink, FILTER_VALIDATE_URL)
-            ) {
-                throw new \Exception('Invalid thumbnail URL');
-            }
-
-            /* -----------------------------
-             * 3. VALIDATE CATEGORIES
-             * ----------------------------- */
-            $catCount = (new Categories())
-                ->whereIn('id', $categories)
-                ->where('status', 1)
-                ->countAllResults();
-
-            if ($catCount !== count($categories)) {
-                throw new \Exception('Invalid category selected');
-            }
-
-            if ($subCats) {
-                $subCount = (new SubCategories())
-                    ->whereIn('id', $subCats)
-                    ->whereIn('cat_id', $categories)
-                    ->countAllResults();
-
-                if ($subCount !== count($subCats)) {
-                    throw new \Exception('Invalid subcategory selected');
-                }
-            }
-            /* -----------------------------
-             *  VALIDATE TAGS
-             * ----------------------------- */
-            if ($tags) {
-                $tagCount = (new TagModel())
-                    ->whereIn('id', $tags)
-                    ->countAllResults();
-                if ($tagCount !== count($tags)) {
-                    throw new \Exception('Invalid tag selected');
-                }
-            }
-
-            /* -----------------------------
-             * 4. SLUG (STRICT UNIQUE)
-             * ----------------------------- */
-            $slug = $post['slug'];
-            if ($post['headline'] !== $headline) {
-                $slug = (new Slug())->slugify($headline);
-                $this->assertUniqueSlug($slug, $id);
-            }
-
-            /* -----------------------------
-             * 5. STATUS + DATE RULES
-             * ----------------------------- */
-            $postDate = $post['post_date_time'];
-
-            // Draft → Publish (first time)
-            if ($post['status'] == 0 && $newStatus == 1 && !$postDate) {
-                $postDate = Time::now()->toDateTimeString();
-            }
-
-            // Unpublish → Publish again (frontend confirms)
-            if ($post['status'] == 0 && $newStatus == 1 && $postDate) {
-                $postDate = Time::now()->toDateTimeString();
-            }
-
-            /* -----------------------------
-             * 6. UPDATE POST
-             * ----------------------------- */
-            $postModel->update($id, [
-                'headline'          => $headline,
+            (new NewsPostModel())->update($id, [
+                'headline'          => $data['headline'],
                 'slug'              => $slug,
-                'short_description' => $shortDesc,
-                'description'       => $desc,
-                'status'            => $newStatus,
-                'post_date_time'    => $postDate,
+                'sub_author_id'      => $data['subauthor'] ?: null,
+                'short_description' => $data['shortDesc'],
+                'description'       => $data['description'],
+                'status'            => $data['status'],
+                'post_date_time'    => $data['post_date_time'],
             ]);
 
-            /* -----------------------------
-             * 7. SYNC CATEGORIES
-             * ----------------------------- */
-            $catPivot = new NewsPostCategoryModel();
-            $catPivot->where('news_post_id', $id)->delete();
+            $this->syncPivot(new NewsPostCategoryModel(), $id, 'category_id', $data['categories']);
+            $this->syncPivot(new NewsPostSubCategoryModel(), $id, 'sub_category_id', $data['subcategories']);
+            $this->syncPivot(new NewsPostTagModel(), $id, 'tag_id', $data['tags']);
 
-            if ($categories) {
-                $catPivot->insertBatch(array_map(fn($catId) => [
-                    'news_post_id' => $id,
-                    'category_id'  => $catId
-                ], $categories));
-            }
+            $this->handleThumbnail($id, $data);
 
-            /* -----------------------------
-             * 8. SYNC SUB-CATEGORIES
-             * ----------------------------- */
-            $subPivot = new NewsPostSubCategoryModel();
-            $subPivot->where('news_post_id', $id)->delete();
-
-            if ($subCats) {
-                $subPivot->insertBatch(array_map(fn($subId) => [
-                    'news_post_id'    => $id,
-                    'sub_category_id' => $subId
-                ], $subCats));
-            }
-
-            /* -----------------------------
-             * 9. SYNC TAGS
-             * ----------------------------- */
-            $postTagModel = new NewsPostTagModel();
-            $postTagModel->where('news_post_id', $id)->delete();
-
-            if ($tags) {
-                $postTagModel->insertBatch(array_map(fn($tagId) => [
-                    'news_post_id' => $id,
-                    'tag_id'       => $tagId
-                ], $tags));
-            }
-
-
-            /* -----------------------------
-            * 10. THUMBNAIL (SMART UPDATE)
-            * ----------------------------- */
-            $thumbModel = new NewsPostThumbnailModel();
-            $oldThumb   = $thumbModel->where('news_post_id', $id)->first();
-
-            $thumbRemoved = (int) ($request['thumbnail_removed'] ?? 0);
-
-            // DEFAULT: keep old thumbnail
-            $newThumbType = $oldThumb['type'] ?? null;
-            $newThumbUrl  = $oldThumb['thumbnail_url'] ?? null;
-
-            /**
-             * CASE 1: User removed thumbnail explicitly
-             */
-            if ($thumbRemoved === 1) {
-                if ($oldThumb && $oldThumb['type'] === 'image') {
-                    $path = ROOTPATH . 'public/' . parse_url($oldThumb['thumbnail_url'], PHP_URL_PATH);
-                    if (is_file($path)) {
-                        unlink($path);
-                    }
-                }
-                $newThumbType = null;
-                $newThumbUrl  = null;
-            }
-
-            /**
-             * CASE 2: User selected LINK
-             */
-            elseif ($thumbType === 'link' && !empty($thumbLink) && $thumbRemoved !== 1) {
-
-                // delete old image if switching type
-                if ($oldThumb && $oldThumb['type'] === 'image') {
-                    $path = ROOTPATH . 'public/' . parse_url($oldThumb['thumbnail_url'], PHP_URL_PATH);
-                    if (is_file($path)) {
-                        unlink($path);
-                    }
-                }
-
-                $newThumbType = 'link';
-                $newThumbUrl  = trim($thumbLink);
-            }
-
-            /**
-             * CASE 3: User uploaded IMAGE
-             */
-            elseif ($thumbType === 'image') {
-                $file = $this->request->getFile('thumbnail_image');
-
-                if ($file && $file->isValid()) {
-                    $allowed = ['image/jpeg', 'image/png', 'image/webp'];
-                    if (!in_array($file->getMimeType(), $allowed, true)) {
-                        throw new \Exception('Invalid image type');
-                    }
-
-                    // delete old image
-                    if ($oldThumb && $oldThumb['type'] === 'image') {
-                        $path = ROOTPATH . 'public/' . parse_url($oldThumb['thumbnail_url'], PHP_URL_PATH);
-                        if (is_file($path)) {
-                            unlink($path);
-                        }
-                    }
-
-                    $folder = date('m_y');
-                    $path   = ROOTPATH . "public/uploads/posts/thumbnails/$folder";
-                    if (!is_dir($path)) {
-                        mkdir($path, 0775, true);
-                    }
-
-                    $upload = (new FileUploader($path))->upload($file);
-                    if (!$upload['status']) {
-                        throw new \Exception($upload['message']);
-                    }
-
-                    $newThumbType = 'image';
-                    $newThumbUrl  = base_url("uploads/posts/thumbnails/$folder/" . $upload['file_name']);
-                }
-            }
-
-            /**
-             * FINAL SAVE
-             */
-            $thumbModel->where('news_post_id', $id)->delete();
-
-            if ($newThumbType && $newThumbUrl) {
-                $thumbModel->insert([
-                    'news_post_id'  => $id,
-                    'type'          => $newThumbType,
-                    'thumbnail_url' => $newThumbUrl
-                ]);
-            }
-
-
-            /* -----------------------------
-             * 11. COMMIT
-             * ----------------------------- */
             $db->transCommit();
 
-            return $this->response->setJSON([
-                'success' => true,
-                'message' => 'Post updated successfully',
-                'redirect' => base_url('admin/all-news')
-            ]);
+            return $this->successResponse();
         } catch (\Throwable $e) {
-            $db->transRollback();
 
-            return $this->response->setJSON([
-                'success' => false,
-                'message' => $e->getMessage()
+            $db->transRollback();
+            return $this->failResponse($e->getMessage());
+        }
+    }
+
+    private function getPostOrFail(int $id)
+    {
+        $post = (new NewsPostModel())->find($id);
+        if (!$post) throw new \Exception('Post not found.');
+        return $post;
+    }
+
+    private function normalizeInput(array $post): array
+    {
+        $req = $this->request->getPost();
+
+        return [
+            'headline'      => trim($req['headline'] ?? ''),
+            'slug'          => trim($req['slug'] ?? $post['slug']),
+            'subauthor'     => intval($req['subauthor'] ?? 0),
+            'shortDesc'     => trim($req['shortdescription'] ?? ''),
+            'description'   => trim($req['description'] ?? ''),
+            'categories'    => array_unique(array_map('intval', (array)($req['categories'] ?? []))),
+            'subcategories' => array_unique(array_map('intval', (array)($req['subcategories'] ?? []))),
+            'tags'          => array_unique(array_map('intval', (array)($req['tags'] ?? []))),
+            'thumbType'     => $req['thumbnail_type'] ?? 'link',
+            'thumbLink'     => trim($req['thumbnail_link'] ?? ''),
+            'selectedMedia' => trim($req['selected_media'] ?? ''),
+            'thumbRemoved'  => (int)($req['thumbnail_removed'] ?? 0),
+            'status'        => isset($req['status']) ? (int)$req['status'] : (int)$post['status'],
+        ];
+    }
+
+    private function applyStatusRules(array $post, array $data): array
+    {
+        $oldStatus = (int)$post['status'];
+        $newStatus = (int)$data['status'];
+
+        if ($oldStatus === 0 && $newStatus === 1) {
+            $data['post_date_time'] = Time::now()->toDateTimeString();
+        } else {
+            $data['post_date_time'] = $post['post_date_time'];
+        }
+
+        if ($oldStatus === 1 && $newStatus === 0) {
+            $data['status'] = 1;
+        }
+
+        return $data;
+    }
+
+    private function syncPivot($model, int $postId, string $field, array $values): void
+    {
+        $model->where('news_post_id', $postId)->delete();
+
+        if (!$values) return;
+
+        $model->insertBatch(array_map(fn($val) => [
+            'news_post_id' => $postId,
+            $field         => $val
+        ], $values));
+    }
+
+    private function handleThumbnail(int $postId, array $data): void
+    {
+        $model = new NewsPostThumbnailModel();
+        $model->where('news_post_id', $postId)->delete();
+
+        if ($data['thumbRemoved']) return;
+
+        $type = null;
+        $url  = null;
+
+        if ($data['thumbType'] === 'image') {
+            $url  = $this->uploadImage();
+            $type = $url ? 'image' : null;
+        }
+
+        if ($data['thumbType'] === 'link' && $data['thumbLink']) {
+            $type = 'link';
+            $url  = $data['thumbLink'];
+        }
+
+        if ($data['thumbType'] === 'media' && $data['selectedMedia']) {
+            $type = 'media';
+            $url  = $data['selectedMedia'];
+        }
+
+        if ($type && $url) {
+            $model->insert([
+                'news_post_id'  => $postId,
+                'type'          => $type,
+                'thumbnail_url' => $url
             ]);
         }
     }
 
-    private function assertUniqueSlug(string $slug, ?int $ignoreId = null): void
+    private function uploadImage(): ?string
     {
-        $model = new NewsPostModel();
+        $file = $this->request->getFile('thumbnail_image');
 
-        $query = $model->where('slug', $slug);
-        if ($ignoreId) {
-            $query->where('id !=', $ignoreId);
+        if (!$file || !$file->isValid() || $file->hasMoved()) {
+            return null;
         }
 
-        if ($query->first()) {
-            throw new \Exception('Slug already exists');
+        if (!str_starts_with($file->getMimeType(), 'image/')) {
+            throw new \Exception('Invalid image type.');
         }
+
+        $folder = date('m_y');
+        $path   = FCPATH . "uploads/posts/thumbnails/$folder/";
+
+        if (!is_dir($path)) mkdir($path, 0775, true);
+
+        $newName = $file->getRandomName();
+        $file->move($path, $newName);
+
+        $relativePath = "uploads/posts/thumbnails/$folder/$newName";
+
+        (new MediaModel())->insert([
+            'file_name' => $newName,
+            'file_path' => $relativePath,
+            'file_type' => 'image',
+            'folder'    => $folder,
+            'file_size' => $file->getSize()
+        ]);
+
+        return $relativePath;
+    }
+
+    private function validatePost(array $data): void
+    {
+        if (!$data['headline'] || !$data['description']) {
+            throw new \Exception('Headline and description required.');
+        }
+
+        if (empty($data['categories'])) {
+            throw new \Exception('At least one category required.');
+        }
+    }
+
+    private function assertUniqueSlug(string $slug, int $ignoreId): void
+    {
+        $exists = (new NewsPostModel())
+            ->where('slug', $slug)
+            ->where('id !=', $ignoreId)
+            ->first();
+
+        if ($exists) {
+            throw new \Exception('Slug already exists.');
+        }
+    }
+
+    private function successResponse()
+    {
+        return $this->response->setJSON([
+            'success' => true,
+            'message' => 'Post updated successfully',
+            'redirect' => base_url('admin/all-news')
+        ]);
+    }
+
+    private function failResponse(string $message)
+    {
+        return $this->response->setJSON([
+            'success' => false,
+            'message' => $message
+        ]);
     }
 }

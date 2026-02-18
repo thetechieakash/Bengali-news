@@ -6,6 +6,35 @@
          * ------------------------------- */
         const table = $('#comments-listing').DataTable();
 
+        const highlightId = "<?= $highlightId ?? '' ?>";
+        if (highlightId) {
+
+            const rowNode = table.rows().nodes().to$().filter('#comment-row-' + highlightId);
+
+            if (rowNode.length) {
+
+                const rowIndex = table.row(rowNode).index();
+                const pageIndex = Math.floor(rowIndex / table.page.len());
+
+                // Go to correct page
+                table.page(pageIndex).draw(false);
+
+                // Wait for redraw
+                setTimeout(function() {
+
+                    const row = $('#comment-row-' + highlightId);
+
+                    row.addClass('table-warning');
+                    row.fadeOut(200).fadeIn(200).fadeOut(200).fadeIn(200);
+
+                    row[0].scrollIntoView({
+                        behavior: "smooth",
+                        block: "center"
+                    });
+
+                }, 300);
+            }
+        }
         /* -------------------------------
          * Reusable comment action handler
          * ------------------------------- */
@@ -156,6 +185,11 @@
             $('#modaltitle').html('Comment');
             $('#reply').val($(this).data('text')).prop('disabled', true);
             $('#viewModal').modal('show');
+        })
+        $(document).on('click', '.viewpost', function(e) {
+            e.preventDefault();
+            const id = $(this).data('id');
+            window.location.href = "<?= base_url('admin/all-news') ?>?highlight=" + id;
         })
         /* -------------------------------
          * OPEN REPLY MODAL
