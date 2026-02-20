@@ -2,6 +2,35 @@
 <?= $this->section('pageTitle') ?>
 <?= esc($pageTitle); ?>
 <?= $this->endSection() ?>
+<?= $this->section('HomeMeta') ?>
+    <meta name="description" content="Latest news from Purulia, West Bengal and India. Breaking news, politics, education, local updates and more.">
+    <meta name="keywords" content="Purulia news, West Bengal news, local news, Purulia Mirror">
+    <meta name="author" content="Purulia Mirror">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="<?= base_url(); ?>">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Puruliamirror">
+    <meta property="og:description" content="Latest news from Purulia, West Bengal and India. Breaking news, politics, education, local updates and more.">
+    <meta property="og:image" content="<?= base_url('assets/images/bengali-logo.svg'); ?>">
+    <meta property="og:url" content="<?= base_url(); ?>">
+    <meta property="og:site_name" content="Purulia Mirror">
+
+    <meta name="twitter:card" content="Latest news from Purulia, West Bengal and India. Breaking news, politics, education, local updates and more.">
+    <meta name="twitter:title" content="Purulia Mirror | Home">
+    <meta name="twitter:description" content="Latest news from Purulia, West Bengal and India. Breaking news, politics, education, local updates and more.">
+    <meta name="twitter:image" content="<?= base_url('assets/images/bengali-logo.svg'); ?>">
+
+    <meta name="news_keywords" content="Purulia, West Bengal, Local News">
+    <meta property="article:published_time" content="2026-02-19T10:00:00+05:30">
+    <meta property="article:modified_time" content="2026-02-19T10:00:00+05:30">
+    <meta property="article:author" content="Purulia Mirror">
+
+    <meta name="geo.region" content="IN-WB">
+    <meta name="geo.placename" content="Purulia">
+    <meta name="geo.position" content="23.33;86.36">
+    <meta name="ICBM" content="23.33, 86.36">
+<?= $this->endSection() ?>
 <?= $this->section('cssPlugins') ?>
 <?= $this->endSection() ?>
 <?= $this->section('content') ?>
@@ -32,7 +61,7 @@ use App\Helpers\ThumbHelper;
                                         </a>
                                     </h2>
                                     <div class="utf_post_meta">
-                                        <span class="utf_post_author"><?= esc($items['author']) ?></span>
+                                        <span class="utf_post_author">Puruliamirror Desk</span>
                                         <span class="utf_post_date"><?= date('d M, Y', strtotime($items['created_at'])) ?></span>
                                     </div>
                                 </div>
@@ -97,7 +126,7 @@ use App\Helpers\ThumbHelper;
 
                                 <div class="utf_post_meta">
                                     <span class="utf_post_author">
-                                        <?= esc($featured['author']) ?>
+                                        Puruliamirror Desk
                                     </span>
                                     <span class="utf_post_date">
                                         <?= date('d M, Y', strtotime($featured['post_date_time'])) ?>
@@ -131,7 +160,7 @@ use App\Helpers\ThumbHelper;
 
                                                     <div class="utf_post_meta">
                                                         <span class="utf_post_author">
-                                                            <?= esc($listPost['author']) ?>
+                                                            Puruliamirror Desk
                                                         </span>
                                                         <span class="utf_post_date">
                                                             <?= date('d M, Y', strtotime($listPost['post_date_time'])) ?>
@@ -184,7 +213,7 @@ use App\Helpers\ThumbHelper;
                                     <a href="<?= base_url('news/' . $rpc['slug']) ?>"><?= StringShort::truncate($rpc['headline']) ?></a>
                                 </h2>
                                 <div class="utf_post_meta">
-                                    <span class="utf_post_author"><?= esc($rpc['author']) ?></span>
+                                    <span class="utf_post_author">Puruliamirror Desk</span>
                                     <span class="utf_post_date"><?= date('d M, Y', strtotime($rpc['post_date_time'])) ?></span>
                                 </div>
                             </div>

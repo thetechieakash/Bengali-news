@@ -62,7 +62,7 @@
         </div>
         <div class="d-md-flex justify-content-between pt-4 my-4 border-top">
             <p>© <?= date('Y') ?> <a class="navbar-brand brand-logo" href="<?= base_url() ?>">খবর বাংলা </a>|| All rights reserved.</p>
-            <p>Made by <a href="https://github.com/thetechieakash" target="_blank">'Akash'</a></p>
+            <p>Developed By <a href="https://wmsn.in" target="_blank">Web Marketing Solutions Network</a></p>
         </div>
     </footer>
 </div>

@@ -13,7 +13,7 @@
             templateResult: formatAuthor,
             templateSelection: formatAuthor,
             allowClear: true,
-            placeholder: "Select Sub Author",
+            placeholder: "Select Guest Author",
             escapeMarkup: function(markup) {
                 return markup;
             }
@@ -66,11 +66,11 @@
                 res.data.forEach(function(item) {
 
                     html += `
-                        <div class="col-3 col-md-2 mb-3">
+                        <div class="col-md-3 col-6 mb-3">
                             <div class="position-relative media-wrapper" style="cursor:pointer;">
-                                <img src="<?= base_url() ?>/${item.file_path}"
+                                <img src="<?= base_url() ?>${item.file_path}"
                                     class="img-fluid rounded media-item"
-                                    data-src="<?= base_url() ?>/${item.file_path}"
+                                    data-src="<?= base_url() ?>${item.file_path}"
                                     style="height:120px;object-fit:cover;">
 
                                 <div class="media-check position-absolute top-0 end-0 m-1 d-none">
@@ -99,19 +99,23 @@
         }
 
         function toggleThumbnailInput(type) {
+            $("#selected_media").val('');
             if (type === 'link') {
                 $('#thumbnail-link-wrapper').show();
                 $('#thumbnail-upload-wrapper').hide();
                 $('#thumbnail-media-wrapper').hide();
+                $("#previewImage").hide();
             } else if (type === 'image') {
                 $('#thumbnail-upload-wrapper').show();
                 $('#thumbnail-link-wrapper').hide();
                 $('#thumbnail-media-wrapper').hide();
+                $("#previewImage").hide();
             } else if (type === 'media') {
 
                 $('#thumbnail-media-wrapper').show();
                 $('#thumbnail-link-wrapper').hide();
                 $('#thumbnail-upload-wrapper').hide();
+                $("#previewImage").hide();
 
                 if ($('#media-container').children().length === 0) {
                     loadMediaImages();
@@ -162,10 +166,19 @@
 
                 selectedMedia = src;
                 $('#selected_media').val(src);
+                const imgHtml = `<img src="${src}" style="width: 200px"; height: 150px; object-fit: cover><br>
+                <a href="javascript:void(0)" id="changeMediaxx" class="btn btn-dark btn-sm mt-3">Change</a>
+            `;
+                $("#previewImage").html(imgHtml);
+                $("#previewImage").show();
+                $('#thumbnail-media-wrapper').hide();
             }
         });
 
-
+        $(document).on('click', '#changeMediaxx', function() {
+            $("#previewImage").hide();
+            $('#thumbnail-media-wrapper').show();
+        })
 
         /* ----------------------------------------------------
          * Flatpickr
@@ -346,4 +359,6 @@
             });
         });
     });
+
+
 </script>

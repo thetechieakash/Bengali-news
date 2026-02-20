@@ -2,7 +2,9 @@
     $(document).ready(function() {
         // Data table config
         const table = $('#news-listing').DataTable();
+        // sorting methods
         const highlightId = "<?= $highlightId ?? '' ?>";
+        const sort = "<?= $sort ?? '' ?>";
 
         if (highlightId) {
 
@@ -33,6 +35,15 @@
                     });
 
                 }, 300);
+            }
+        }
+        if (sort) {
+            if (sort === 'published') {
+                table.order([4, 'desc']).draw();
+            }
+
+            if (sort === 'draft') {
+                table.order([4, 'asc']).draw();
             }
         }
 

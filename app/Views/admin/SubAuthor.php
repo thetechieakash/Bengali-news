@@ -13,7 +13,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">Add Sub Author</h4>
+                <h4 class="card-title">Add Guest Author</h4>
                 <form class="forms-sample" id="authorform" action="<?= base_url('admin/author-create') ?>" method="post" enctype="multipart/form-data">
                     <?= csrf_field() ?>
                     <div class="row">

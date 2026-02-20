@@ -8,38 +8,47 @@
 
 <?= $this->endSection() ?>
 <?= $this->section('content') ?>
-
 <div class="row">
     <div class="col-6 col-sm-3 col-lg-2 grid-margin stretch-card">
-        <div class="card card-rounded">
+        <a class="card card-rounded text-decoration-none" href="<?= base_url('admin/all-news') ?>">
             <div class="card-body">
                 <h2><?= $totalPosts ?></h2>
                 <p>Total Posts</p>
             </div>
-        </div>
+        </a>
     </div>
 
     <div class="col-6 col-sm-3 col-lg-2 grid-margin stretch-card">
-        <div class="card card-rounded">
+        <a class="card card-rounded text-decoration-none" href="<?= base_url('admin/all-news?sort=published') ?>">
             <div class="card-body">
                 <h2><?= $publishedPosts ?></h2>
                 <p>Published Posts</p>
             </div>
-        </div>
+        </a>
     </div>
+    <div class="col-6 col-sm-3 col-lg-2 grid-margin stretch-card">
+        <a class="card card-rounded text-decoration-none" href="<?= base_url('admin/all-news?sort=draft') ?>">
+            <div class="card-body">
+                <h2><?= $draftPosts ?></h2>
+                <p>Draft Posts</p>
+            </div>
+        </a>
+    </div>
+    <!-- </div>
+<div class="row"> -->
     <div class="col-6 col-sm-3 col-lg-2 grid-margin stretch-card">
         <div class="card card-rounded">
             <div class="card-body">
-                <h2><?= $draftPosts ?> ms</h2>
-                <p>Draft Posts</p>
+                <h2><?= $totalComments ?></h2>
+                <p>Total Comments</p>
             </div>
         </div>
     </div>
     <div class="col-6 col-sm-3 col-lg-2 grid-margin stretch-card">
-        <a class="card card-rounded text-decoration-none" href="<?= base_url('admin/approved-comments') ?>">
+        <a class="card card-rounded text-decoration-none" href="<?= base_url('admin/pending-comments') ?>">
             <div class="card-body">
-                <h2><?= $totalComments ?> ms</h2>
-                <p>Total Comments</p>
+                <h2><?= $publishedComments ?></h2>
+                <p>Published Comments</p>
             </div>
         </a>
     </div>
@@ -51,15 +60,9 @@
             </div>
         </a>
     </div>
+</div>
 
-    <div class="col-6 col-sm-3 col-lg-2 grid-margin stretch-card">
-        <div class="card card-rounded">
-            <div class="card-body">
-                <h2><?= $queryTime ?> ms</h2>
-                <p>DB Query Time</p>
-            </div>
-        </div>
-    </div>
+<div class="row">
     <div class="col-6 col-sm-3 col-lg-2 grid-margin stretch-card">
         <div class="card card-rounded">
             <div class="card-body">
@@ -69,20 +72,20 @@
         </div>
     </div>
     <div class="col-6 col-sm-3 col-lg-2 grid-margin stretch-card">
-        <div class="card card-rounded">
+        <a class="card card-rounded text-decoration-none" href="<?= base_url('admin/sub-categories') ?>">
             <div class="card-body">
                 <h2><?= $totalSubCats ?></h2>
-                <p>Total SubCats</p>
+                <p>Total Sub Categories</p>
             </div>
-        </div>
+        </a>
     </div>
     <div class="col-6 col-sm-3 col-lg-2 grid-margin stretch-card">
-        <div class="card card-rounded">
+        <a class="card card-rounded text-decoration-none" href="<?= base_url('admin/tags') ?>">
             <div class="card-body">
                 <h2><?= $totalTags ?></h2>
                 <p>Total Tags</p>
             </div>
-        </div>
+        </a>
     </div>
 </div>
 

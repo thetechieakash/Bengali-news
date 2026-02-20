@@ -14,6 +14,7 @@ class ViewsController extends BaseController
     public function index()
     {
         $highlightId = $this->request->getGet('highlight');
+        $sort = $this->request->getGet('sort');
         $newsModel = new NewsPostModel();
         $commentModel = new NewsPostCommentModel();
 
@@ -56,7 +57,8 @@ class ViewsController extends BaseController
         return view('admin/AllNews', [
             'pageTitle' => 'News',
             'news' => $news,
-            'highlightId' => $highlightId
+            'highlightId' => $highlightId,
+            'sort'=> $sort
         ]);
     }
 

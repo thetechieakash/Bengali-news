@@ -1,6 +1,44 @@
+<?php
+
+use App\Helpers\StringShort;
+use App\Helpers\ThumbHelper;
+    $thumbUrl = ThumbHelper::getThumbUrl(
+        $post['thumbnail']['thumbnail_url'] ?? null,
+        $post['thumbnail']['type'] ?? null
+    );
+?>
 <?= $this->extend('layouts/ViewLayout.php') ?>
 <?= $this->section('pageTitle') ?>
 <?= esc($pageTitle); ?>
+<?= $this->endSection() ?>
+<?= $this->section('HomeMeta') ?>
+    <meta name="description" content="<?= $post['short_description'] ?>">
+    <meta name="keywords" content="<?= esc($post['headline']) ?>, <?= $post['short_description'] ?>, Purulia news, West Bengal news, local news, Purulia Mirror">
+    <meta name="author" content="Purulia Mirror">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="<?= current_url(); ?>">
+
+    <meta property="og:type" content="news">
+    <meta property="og:title" content="<?= esc($pageTitle); ?>">
+    <meta property="og:description" content="<?= $post['short_description'] ?>">
+    <meta property="og:image" content="<?= $thumbUrl; ?>">
+    <meta property="og:url" content="<?= current_url(); ?>">
+    <meta property="og:site_name" content="Purulia Mirror">
+
+    <meta name="twitter:card" content="<?= $thumbUrl; ?>">
+    <meta name="twitter:title" content="<?= esc($post['headline']) ?>">
+    <meta name="twitter:description" content="<?= esc($post['headline']) ?>">
+    <meta name="twitter:image" content="<?= $thumbUrl; ?>">
+
+    <meta name="news_keywords" content="<?= esc($post['headline']) ?>, Purulia, West Bengal, Local News">
+    <meta property="article:published_time" content="<?= $post['post_date_time']; ?> +05:30">
+    <meta property="article:modified_time" content="<?= $post['post_date_time']; ?>+05:30">
+    <meta property="article:author" content="Purulia Mirror">
+
+    <meta name="geo.region" content="IN-WB">
+    <meta name="geo.placename" content="Purulia">
+    <meta name="geo.position" content="23.33;86.36">
+    <meta name="ICBM" content="23.33, 86.36">
 <?= $this->endSection() ?>
 <?= $this->section('cssPlugins') ?>
 <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/jquery-toast-plugin/jquery.toast.min.css">
@@ -8,8 +46,6 @@
 <?= $this->section('content') ?>
 <?php
 
-use App\Helpers\StringShort;
-use App\Helpers\ThumbHelper;
 
 
 function formattedPostDate($date)
@@ -48,7 +84,7 @@ function formattedPostDate($date)
                         <?php endif; ?>
                         <h1 class="utf_post_title"><?= esc($post['headline']) ?></h1>
                         <div class="utf_post_meta">
-                            <span class="utf_post_author"><?= esc($post['author']) ?></span>
+                            <span class="utf_post_author">Puruliamirror Desk</span>
                             <span class="utf_post_date"><?= formattedPostDate($post['post_date_time']) ?></span>
                             <span class="post-hits">
                                 <i class="fa fa-eye"></i> <?= sprintf("%02d", $post['views']) ?>
@@ -107,6 +143,12 @@ function formattedPostDate($date)
                         <div class="entry-content">
                             <?= $post['description'] ?>
                         </div>
+                        <?php if (!empty($post['sub_author'])): ?>
+                            <div class="warn_div">
+                                <h5>Disclaimer:</h5>
+                                <p>এই প্রবন্ধটি অতিথি লেখক <strong><?= esc($post['sub_author']['name']); ?></strong> -এর রচনা। এতে প্রকাশিত মতামত সম্পূর্ণভাবে লেখকের নিজস্ব এবং তা Purulia Mirror-এর মতামত বা অবস্থানকে প্রতিফলিত করে না। এই লেখায় উল্লিখিত তথ্যসমূহ Purulia Mirror স্বতন্ত্রভাবে যাচাই করেনি এবং এর বিষয়বস্তুর জন্য পত্রিকা কোনো দায়ভার গ্রহণ করে না। এ বিষয়ে কোনো প্রশ্ন বা আপত্তি থাকলে অনুগ্রহ করে সরাসরি লেখকের সঙ্গে <strong><a href="mailto:<?= $post['sub_author']['email']; ?>"><?= esc($post['sub_author']['email']); ?></a></strong> -এ যোগাযোগ করুন।</p>
+                            </div>
+                        <?php endif; ?>
                         <?php if (count($post['tags']) > 0): ?>
                             <div class="tags-area clearfix">
                                 <div class="post-tags">
@@ -187,7 +229,7 @@ function formattedPostDate($date)
                                     <div class="comment mb-3 p-3">
                                         <div class="comment-body">
                                             <div class="meta-data">
-                                                <span class="comment-author"><i class="fa fa-user me-2"></i><?= $comment['guest_name'] ?></span>
+                                                <span class="comment-author"><i class="fa fa-user me-2"></i><?= ucwords($comment['guest_name']) ?></span>
                                                 <span class="comment-date pull-right"><?= formattedPostDate($comment['created_at']) ?></span>
                                             </div>
                                             <div class="comment-content my-1 ms-4">

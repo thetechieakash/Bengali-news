@@ -6,7 +6,9 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title><?= $this->renderSection('pageTitle') ?> || Bangla Khobor </title>
+    <title><?= $this->renderSection('pageTitle') ?> || Purulia mirror </title>
+    <?= $this->renderSection("HomeMeta"); ?>
+
     <!-- plugins:css -->
     <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/css/vendor.bundle.base.css">
@@ -24,7 +26,7 @@
     <!-- endinject -->
     <link rel="shortcut icon" href="<?= base_url() ?>assets/images/bangla-logo-mini.svg" />
     <link rel="stylesheet" href="<?= base_url() ?>assets/customs/css/style.css?v=5.1">
-    <link rel="stylesheet" href="<?= base_url() ?>assets/customs/css/custom.css?v=5.1">
+    <link rel="stylesheet" href="<?= base_url() ?>assets/customs/css/custom.css?v=5.4">
 </head>
 
 <body>

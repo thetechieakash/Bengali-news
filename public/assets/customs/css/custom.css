@@ -388,3 +388,20 @@ h4,
         color: #000000;
     }
 }
+.warn_div{
+    padding: 15px;
+    border: dashed;
+    border-color: #f00;
+    color: #f00;
+    text-align: center;
+}
+.warn_div h5, .warn_div p{
+    color: #f00;
+}
+.warn_div p{
+    font-size: 12px;
+    font-weight: 400;
+}
+.grecaptcha-badge{
+    opacity: 0 !important;
+}

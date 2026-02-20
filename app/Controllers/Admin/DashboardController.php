@@ -28,7 +28,8 @@ class DashboardController extends BaseController
         $totalSubCats     = $subCatModel->countAll();
         $totalTags        = $tagModel->countAll();
         $totalComments    = $commentModel->countAll();
-        $pendingComments  = $commentModel->where('status', '0')->countAllResults();
+        $publishedComments    = $commentModel->where('status', 1)->countAllResults();
+        $pendingComments  = $commentModel->where('status', 0)->countAllResults();
 
         // Latest 5 Posts
         // $latestPosts = $postModel
@@ -37,11 +38,6 @@ class DashboardController extends BaseController
         //     ->find();
 
 
-        // Query Timing
-        $db = \Config\Database::connect();
-        $start = microtime(true);
-        $db->query("SELECT 1");
-        $queryTime = round((microtime(true) - $start) * 1000, 2);
 
         $data = [
             'pageTitle'        => 'Dashboard',
@@ -52,8 +48,8 @@ class DashboardController extends BaseController
             'totalSubCats'     => $totalSubCats,
             'totalTags'        => $totalTags,
             'totalComments'    => $totalComments,
+            'publishedComments'=> $publishedComments,
             'pendingComments'  => $pendingComments,
-            'queryTime'        => $queryTime,
             // 'latestPosts'      => $latestPosts,
         ];
 

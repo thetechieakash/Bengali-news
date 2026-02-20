@@ -17,7 +17,6 @@ class CategoriesController extends BaseController
             'pageTitle' => 'Categories',
             'cats' => $allCats,
         ];
-        // echo $slug;
         return view('admin/Categories', $data);
     }
 

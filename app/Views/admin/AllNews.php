@@ -72,7 +72,7 @@
 
                                     <?php $formattedDate = (new DateTime($post['updated_at']))->format('d M, Y h:i A'); ?>
                                     <td><?= $formattedDate ?></td>
-                                    <td>
+                                    <td data-order="<?= $post['status'] ?>">
                                         <div class="d-flex align-items-center gap-2">
                                             <label class="toggle-switch mb-0">
                                                 <input type="checkbox" name="activestatus"

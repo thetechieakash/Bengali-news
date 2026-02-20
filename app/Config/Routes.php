@@ -24,7 +24,7 @@ $routes->group('admin', ['filter' => 'group:superadmin,admin,author'], function 
     |--------------------------------------------------------------------------
     */
     $routes->get('/', 'Admin\DashboardController::index');
-    $routes->group('', ['filter' => 'group:admin,superadmin'], function ($routes) {
+    $routes->group('', ['filter' => 'group:author,admin,superadmin'], function ($routes) {
 
         // Categories
         $routes->get('categories', 'Admin\CategoriesController::index');
@@ -60,19 +60,6 @@ $routes->group('admin', ['filter' => 'group:superadmin,admin,author'], function 
         $routes->post('upload-media', 'Admin\MediaController::upload');
         $routes->delete('delete-media/(:num)', 'Admin\MediaController::delete/$1');
 
-        $routes->get('author', 'Admin\SubAuthorController::index');
-        $routes->get('author-get/(:num)', 'Admin\SubAuthorController::getAuthor/$1');
-        $routes->post('author-create', 'Admin\SubAuthorController::store');
-        $routes->post('author-update/(:num)', 'Admin\SubAuthorController::update/$1');
-        $routes->post('author-delete/(:num)', 'Admin\SubAuthorController::delete/$1');
-    });
-
-    /*
-    |--------------------------------------------------------------------------
-    | Author routes (author + admin + superadmin)
-    |--------------------------------------------------------------------------
-    */
-    $routes->group('', ['filter' => 'group:author,admin,superadmin'], function ($routes) {
         $routes->get('all-news', 'Admin\Post\ViewsController::index');
         $routes->get('create-news', 'Admin\Post\ViewsController::news');
         $routes->get('news-preview', 'Admin\Post\ViewsController::index');
@@ -81,6 +68,30 @@ $routes->group('admin', ['filter' => 'group:superadmin,admin,author'], function 
         $routes->post('news/update/(:num)', 'Admin\Post\UpdatePostController::updatePost/$1');
         $routes->post('news/update-status', 'Admin\Post\TogglersPost::updateStatus');
         $routes->post('news/delete/(:num)', 'Admin\Post\DeletePostController::deletePost/$1');
+
+        $routes->get('api/get-comment', 'Admin\CommentsController::getPostComment');
+        $routes->get('api/get-reply', 'Admin\CommentsController::getReply');
+        $routes->get('api/get-media', 'Admin\MediaController::getMedia');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Author routes (author + admin + superadmin)
+    |--------------------------------------------------------------------------
+    */
+    $routes->group('', ['filter' => 'group:admin,superadmin'], function ($routes) {
+        $routes->get('author', 'Admin\SubAuthorController::index');
+        $routes->get('author-get/(:num)', 'Admin\SubAuthorController::getAuthor/$1');
+        $routes->post('author-create', 'Admin\SubAuthorController::store');
+        $routes->post('author-update/(:num)', 'Admin\SubAuthorController::update/$1');
+        $routes->post('author-delete/(:num)', 'Admin\SubAuthorController::delete/$1');
+
+        $routes->get('ads', 'Admin\AdsController::index');
+        $routes->get('ads/(:num)', 'Admin\AdsController::getAd/$1');
+        $routes->post('ads/store', 'Admin\AdsController::store');
+        $routes->post('ads/toggle-status', 'Admin\AdsController::toggleStatus');
+        $routes->post('admin/ads/update/(:num)', 'Admin\AdsController::update/$1');
+        $routes->post('ads/delete', 'Admin\AdsController::delete');
     });
 
     /*
@@ -95,12 +106,6 @@ $routes->group('admin', ['filter' => 'group:superadmin,admin,author'], function 
         $routes->post('user/update', 'Admin\UserController::updateUser');
         $routes->post('user/delete', 'Admin\UserController::deleteUser');
         $routes->post('user/restore', 'Admin\UserController::restoreUser');
-    });
-
-    $routes->group('api', function ($routes) {
-        $routes->get('get-comment', 'Admin\CommentsController::getPostComment');
-        $routes->get('get-reply', 'Admin\CommentsController::getReply');
-        $routes->get('get-media', 'Admin\MediaController::getMedia');
     });
 });
 

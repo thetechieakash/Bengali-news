@@ -82,9 +82,16 @@ $user = auth()->user();
                     <span class="menu-title">Sub Categories</span>
                 </a>
             </li>
+            <li class="nav-item nav-category">ADS Manager</li>
+
+            <li class="nav-item <?= $uri === 'admin/ads' ? 'active' : '' ?>">
+                <a class="nav-link" href="<?= base_url('admin/ads') ?>">
+                    <i class="fa fa-sitemap"></i>
+                    <span class="menu-title">Ads</span>
+                </a>
+            </li>
 
             <li class="nav-item nav-category">User Manager</li>
-
             <li class="nav-item <?= $uri === 'admin/all-users' ? 'active' : '' ?>">
                 <a class="nav-link" href="<?= base_url('admin/all-users') ?>">
                     <i class="fa fa-user"></i>
