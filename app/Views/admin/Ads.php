@@ -18,7 +18,7 @@
         <div class="card ">
             <div class="card-body">
                 <h4 class="card-title">Create New Ad</h4>
-                <form id="adForm" method="post" enctype="multipart/form-data">
+                <form id="adForm" class="ad-form" enctype="multipart/form-data">
                     <?= csrf_field() ?>
 
                     <!-- Title -->
@@ -30,12 +30,12 @@
                     <!-- Ad Type -->
                     <div class="mb-3">
                         <label class="form-label">Ad Type</label>
-                        <select name="ad_type" id="ad_type" class="form-select select-type" required>
+                        <select name="ad_type" id="ad_type" class="form-select select-type create-ad-type" required>
                             <option value="image" selected>Image</option>
                             <option value="script">Script</option>
                         </select>
                     </div>
-                    <div id="image-wrapper" class="mb-3">
+                    <div class="image-wrapper mb-3">
                         <label class="form-label">Ad Image</label>
                         <input type="file"
                             class="dropify"
@@ -43,12 +43,12 @@
                             name="image"
                             accept="image/*">
                     </div>
-                    <div id="script-wrapper" class="mb-3 d-none">
+                    <div class="script-wrapper mb-3 d-none">
                         <label class="form-label">Ad Script</label>
                         <textarea name="script" class="form-control" rows="4"
                             placeholder="Paste ad script here..."></textarea>
                     </div>
-                    <div class="mb-3" id="url-wrapper">
+                    <div class="url-wrapper mb-3">
                         <label class="form-label">Redirect URL (optional)</label>
                         <input type="url" name="redirect_url" class="form-control" placeholder="https://example.com">
                     </div>
@@ -79,7 +79,7 @@
                             <label for="searchPage">Search Page</label>
                         </div>
                     </div>
-                    <div class="mb-3" id="position-wrapper">
+                    <div class="position-wrapper mb-3">
                         <label class="form-label d-block">Position</label>
                         <div class="form-check-inline">
                             <input class="form-check-input" type="checkbox" name="position[]" value="block" id="posBlock">
@@ -129,7 +129,7 @@
                                             <th>SL #</th>
                                             <th>Title</th>
                                             <th>Type</th>
-                                            <th>Position</th>
+                                            <th>Positions</th>
                                             <th>Status</th>
                                             <th>Actions</th>
                                         </tr>
@@ -141,7 +141,12 @@
                                                 <td><?= $sl ?></td>
                                                 <td><?= esc($ad['title']) ?></td>
                                                 <td><?= ucfirst($ad['ad_type']) ?></td>
-                                                <td><?= ucfirst($ad['position']) ?></td>
+                                                <td>
+                                                    <?php $postitons = json_decode($ad['position']); ?>
+                                                    <?php foreach ($postitons as $postiton): ?>
+                                                        <?= ucfirst($postiton . ', ') ?>
+                                                    <?php endforeach; ?>
+                                                </td>
                                                 <td>
                                                     <div class="d-flex align-items-center gap-2">
                                                         <label class="toggle-switch mb-0">
@@ -209,27 +214,39 @@
 
         $('.select-type').select2({
             theme: 'bootstrap',
-            minimumResultsForSearch: Infinity
+            minimumResultsForSearch: Infinity,
+            dropdownParent: $('#editAdsModal')
         });
 
 
         $('.dropify').dropify();
 
         // Toggle fields
-        $('#ad_type').on('change', function() {
-            let type = $(this).val();
+        function toggleAdType(form, type) {
+
             if (type === 'image') {
-                $('#image-wrapper').removeClass('d-none');
-                $('#url-wrapper').removeClass('d-none');
-                $('#position-wrapper').removeClass('d-none');
-                $('#script-wrapper').addClass('d-none');
+                form.find('.image-wrapper').removeClass('d-none');
+                form.find('.url-wrapper').removeClass('d-none');
+                form.find('.position-wrapper').removeClass('d-none');
+                form.find('.script-wrapper').addClass('d-none');
             } else {
-                $('#image-wrapper').addClass('d-none');
-                $('#url-wrapper').addClass('d-none');
-                $('#position-wrapper').addClass('d-none');
-                $('#script-wrapper').removeClass('d-none');
+                form.find('.image-wrapper').addClass('d-none');
+                form.find('.url-wrapper').addClass('d-none');
+                form.find('.position-wrapper').addClass('d-none');
+                form.find('.script-wrapper').removeClass('d-none');
             }
+        }
+
+        $(document).on('change', '.select-type', function() {
+
+            let form = $(this).closest('.ad-form');
+            let type = $(this).val();
+
+            toggleAdType(form, type);
+
         });
+
+
         let clickedStatus = null;
 
         $('button[type="submit"]').on('click', function() {
@@ -316,11 +333,107 @@
             });
 
         });
-        $(document).on('click', '.editBtn', function(e) {
-            e.preventDefault();
-            $('#editAdsModal').modal('show');
+
+        $(document).on('click', '.editBtn', function() {
+
+            let adId = $(this).data('id');
+
+            $.get("<?= base_url('admin/ads') ?>/" + adId, function(res) {
+
+                if (!res.success) {
+                    showDangerToast('Ad not found');
+                    return;
+                }
+
+                let ad = res.data;
+                let modal = $('#editAdsModal');
+                let form = modal.find('#editAdForm');
+
+                form.attr('data-id', ad.id);
+
+                form.find('[name="title"]').val(ad.title);
+                form.find('[name="ad_type"]').val(ad.ad_type).trigger('change');
+                form.find('[name="redirect_url"]').val(ad.url);
+                form.find('[name="script"]').val(ad.script);
+
+                // Pages
+                form.find('input[name="pages[]"]').prop('checked', false);
+                ad.pages?.forEach(page => {
+                    form.find(`input[name="pages[]"][value="${page}"]`).prop('checked', true);
+                });
+
+                // Position
+                form.find('input[name="position[]"]').prop('checked', false);
+                ad.position?.forEach(pos => {
+                    form.find(`input[name="position[]"][value="${pos}"]`).prop('checked', true);
+                });
+
+                // Toggle correctly
+                toggleAdType(form, ad.ad_type);
+
+                // Dropify Reset (clean version)
+                let dr = form.find('.dropify').data('dropify');
+                if (dr) {
+                    dr.resetPreview();
+                    dr.clearElement();
+                    if (ad.image) {
+                        dr.settings.defaultFile = "<?= base_url('uploads/ads/') ?>/" + ad.image;
+                        dr.destroy();
+                        dr.init();
+                    }
+                }
+
+                modal.modal('show');
+
+            });
 
         });
+
+        $('#editAdForm').on('submit', function(e) {
+            e.preventDefault();
+            let form = this;
+            let adId = $(this).data('id');
+            let modal = $('#editAdsModal');
+            Swal.fire({
+                title: 'Update Ad?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, update'
+            }).then(result => {
+
+                if (!result.isConfirmed) return;
+
+                let formData = new FormData(form);
+
+                $.ajax({
+                    url: "<?= base_url('admin/ads/update') ?>/" + adId,
+                    type: "POST",
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(res) {
+
+                        if (res.success) {
+                            modal.modal("hide");
+                            showSuccessToast(res.message);
+                            setTimeout(() => location.reload(), 1200);
+                        }
+
+                        if (res.errors) {
+                            Object.values(res.errors).forEach(msg => {
+                                showDangerToast(msg);
+                            });
+                        }
+                    },
+                    error: function(e) {
+                        showDangerToast('Server error');
+                        console.error('Update error', e);
+
+                    }
+                });
+            });
+        });
+
         $(document).on('click', '.deletebtn', function() {
 
             let adId = $(this).data('id');
@@ -359,8 +472,10 @@
                                 showDangerToast('Delete failed');
                             }
                         },
-                        error: function() {
+                        error: function(e) {
                             showDangerToast('Server error');
+                            console.error('Delete error', e);
+
                         }
                     });
                 }

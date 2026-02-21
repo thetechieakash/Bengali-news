@@ -27,33 +27,31 @@ class AdsModel extends Model
     protected $createdField = 'created_at';
     protected $updatedField = 'updated_at';
 
+
     /*
     |--------------------------------------------------------------------------
-    | Get Active Ads By Position
+    | Get Ads By Page + Position (Optimized for JSON columns)
     |--------------------------------------------------------------------------
     */
-    public function getActiveAdsByPosition(string $position)
+    public function getAdsForPage(string $page, string $position, bool $onlyImage = false): array
     {
-        return $this->where('status', 1)
-            ->where('position', $position)
+        $pageJson     = $this->db->escape(json_encode($page));
+        $positionJson = $this->db->escape(json_encode($position));
+
+        $builder = $this->where('status', 1)
+            ->where("JSON_CONTAINS(pages, $pageJson)", null, false)
+            ->where("JSON_CONTAINS(position, $positionJson)", null, false);
+
+        if ($onlyImage) {
+            $builder->where('ad_type', 'image')
+                ->where('image IS NOT NULL')
+                ->where('image !=', '');
+        }
+
+        return $builder
             ->orderBy('id', 'DESC')
             ->findAll();
     }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Get Ads By Page + Position
-    |--------------------------------------------------------------------------
-    */
-    public function getAdsForPage(string $page, string $position)
-    {
-        $ads = $this->getActiveAdsByPosition($position);
-
-        return array_filter($ads, function ($ad) use ($page) {
-            return in_array($page, $ad['pages'] ?? []);
-        });
-    }
-
     /*
     |--------------------------------------------------------------------------
     | Increment View Count

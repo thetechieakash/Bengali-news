@@ -90,7 +90,7 @@ $routes->group('admin', ['filter' => 'group:superadmin,admin,author'], function 
         $routes->get('ads/(:num)', 'Admin\AdsController::getAd/$1');
         $routes->post('ads/store', 'Admin\AdsController::store');
         $routes->post('ads/toggle-status', 'Admin\AdsController::toggleStatus');
-        $routes->post('admin/ads/update/(:num)', 'Admin\AdsController::update/$1');
+        $routes->post('ads/update/(:num)', 'Admin\AdsController::update/$1');
         $routes->post('ads/delete', 'Admin\AdsController::delete');
     });
 

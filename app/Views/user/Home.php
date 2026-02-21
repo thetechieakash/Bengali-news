@@ -3,33 +3,33 @@
 <?= esc($pageTitle); ?>
 <?= $this->endSection() ?>
 <?= $this->section('HomeMeta') ?>
-    <meta name="description" content="Latest news from Purulia, West Bengal and India. Breaking news, politics, education, local updates and more.">
-    <meta name="keywords" content="Purulia news, West Bengal news, local news, Purulia Mirror">
-    <meta name="author" content="Purulia Mirror">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="<?= base_url(); ?>">
+<meta name="description" content="Latest news from Purulia, West Bengal and India. Breaking news, politics, education, local updates and more.">
+<meta name="keywords" content="Purulia news, West Bengal news, local news, Purulia Mirror">
+<meta name="author" content="Purulia Mirror">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="<?= base_url(); ?>">
 
-    <meta property="og:type" content="article">
-    <meta property="og:title" content="Puruliamirror">
-    <meta property="og:description" content="Latest news from Purulia, West Bengal and India. Breaking news, politics, education, local updates and more.">
-    <meta property="og:image" content="<?= base_url('assets/images/bengali-logo.svg'); ?>">
-    <meta property="og:url" content="<?= base_url(); ?>">
-    <meta property="og:site_name" content="Purulia Mirror">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Puruliamirror">
+<meta property="og:description" content="Latest news from Purulia, West Bengal and India. Breaking news, politics, education, local updates and more.">
+<meta property="og:image" content="<?= base_url('assets/images/bengali-logo.svg'); ?>">
+<meta property="og:url" content="<?= base_url(); ?>">
+<meta property="og:site_name" content="Purulia Mirror">
 
-    <meta name="twitter:card" content="Latest news from Purulia, West Bengal and India. Breaking news, politics, education, local updates and more.">
-    <meta name="twitter:title" content="Purulia Mirror | Home">
-    <meta name="twitter:description" content="Latest news from Purulia, West Bengal and India. Breaking news, politics, education, local updates and more.">
-    <meta name="twitter:image" content="<?= base_url('assets/images/bengali-logo.svg'); ?>">
+<meta name="twitter:card" content="Latest news from Purulia, West Bengal and India. Breaking news, politics, education, local updates and more.">
+<meta name="twitter:title" content="Purulia Mirror | Home">
+<meta name="twitter:description" content="Latest news from Purulia, West Bengal and India. Breaking news, politics, education, local updates and more.">
+<meta name="twitter:image" content="<?= base_url('assets/images/bengali-logo.svg'); ?>">
 
-    <meta name="news_keywords" content="Purulia, West Bengal, Local News">
-    <meta property="article:published_time" content="2026-02-19T10:00:00+05:30">
-    <meta property="article:modified_time" content="2026-02-19T10:00:00+05:30">
-    <meta property="article:author" content="Purulia Mirror">
+<meta name="news_keywords" content="Purulia, West Bengal, Local News">
+<meta property="article:published_time" content="2026-02-19T10:00:00+05:30">
+<meta property="article:modified_time" content="2026-02-19T10:00:00+05:30">
+<meta property="article:author" content="Purulia Mirror">
 
-    <meta name="geo.region" content="IN-WB">
-    <meta name="geo.placename" content="Purulia">
-    <meta name="geo.position" content="23.33;86.36">
-    <meta name="ICBM" content="23.33, 86.36">
+<meta name="geo.region" content="IN-WB">
+<meta name="geo.placename" content="Purulia">
+<meta name="geo.position" content="23.33;86.36">
+<meta name="ICBM" content="23.33, 86.36">
 <?= $this->endSection() ?>
 <?= $this->section('cssPlugins') ?>
 <?= $this->endSection() ?>
@@ -40,7 +40,32 @@ use App\Helpers\StringShort;
 use App\Helpers\ThumbHelper;
 
 ?>
-<section class="utf_featured_post_area mt-5 pt-4">
+<?php if (!empty($topAds)) : ?>
+    <div class="utf_ad_content_area text-center utf_banner_area py-3">
+        <div class="container">
+            <div class="owl-carousel top-ads-carousel">
+                <?php foreach ($topAds as $topAd) : ?>
+                    <div class="item">
+                        <?php if (!empty($topAd['url'])) : ?>
+                            <a href="<?= esc($topAd['url']) ?>" target="_blank">
+                                <img class="img-fluid"
+                                    src="<?= base_url('uploads/ads/' . $topAd['image']) ?>"
+                                    alt="<?= esc($topAd['title']) ?>">
+                            </a>
+                        <?php else : ?>
+                            <img class="img-fluid"
+                                src="<?= base_url('uploads/ads/' . $topAd['image']) ?>"
+                                alt="<?= esc($topAd['title']) ?>">
+                        <?php endif; ?>
+
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
+
+<section class="utf_featured_post_area mt-1 pt-4">
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-md-12 pad-r">
@@ -146,7 +171,7 @@ use App\Helpers\ThumbHelper;
                                                 <div class="utf_post_thumb">
                                                     <a href="<?= base_url('news/' . $listPost['slug']) ?>">
                                                         <img class="img-fluid"
-                                                            src="<?= ThumbHelper::getThumbUrl($listPost['thumbnail_url'], $listPost['type'])?>"
+                                                            src="<?= ThumbHelper::getThumbUrl($listPost['thumbnail_url'], $listPost['type']) ?>"
                                                             alt="<?= $listPost['headline'] ?>">
                                                     </a>
                                                 </div>
@@ -206,7 +231,7 @@ use App\Helpers\ThumbHelper;
                     <div class="col-md-4">
                         <div class="utf_post_overaly_style text-center first clearfix mb-3 mb-md-0">
                             <div class="utf_post_thumb">
-                                <img class="img-fluid" src="<?= ThumbHelper::getThumbUrl($rpc['thumbnail_url'], $rpc['type'])?>" alt="<?= $rpc['headline'] ?>" />
+                                <img class="img-fluid" src="<?= ThumbHelper::getThumbUrl($rpc['thumbnail_url'], $rpc['type']) ?>" alt="<?= $rpc['headline'] ?>" />
                             </div>
                             <div class="utf_post_content">
                                 <h2 class="utf_post_title">
@@ -290,5 +315,18 @@ use App\Helpers\ThumbHelper;
 <?= $this->section('jsPlugins') ?>
 <?= $this->endSection() ?>
 <?= $this->section('customjs') ?>
-
+<script>
+    $(document).ready(function() {
+        $('.top-ads-carousel').owlCarousel({
+            items: 1,
+            loop: true,
+            margin: 10,
+            autoplay: true,
+            autoplayTimeout: 4000,
+            autoplayHoverPause: false,
+            nav: false,
+            dots: true
+        });
+    });
+</script>
 <?= $this->endSection() ?>

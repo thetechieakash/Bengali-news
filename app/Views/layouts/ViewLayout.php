@@ -80,13 +80,30 @@
                         </div>
                     </div>
                 </div>
-                <div class="utf_ad_content_area text-center utf_banner_area">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-sm-12"> <img class="img-fluid" src="<?= base_url() ?>assets/images/banner-ads/ad-content-one.jpg" alt="" /> </div>
+                <?php if (!empty($bottomAds)) : ?>
+                    <div class="utf_ad_content_area text-center utf_banner_area py-3">
+                        <div class="container">
+                            <div class="owl-carousel top-ads-carousel">
+                                <?php foreach ($bottomAds as $bottomAd) : ?>
+                                    <div class="item">
+                                        <?php if (!empty($bottomAd['url'])) : ?>
+                                            <a href="<?= esc($bottomAd['url']) ?>" target="_blank">
+                                                <img class="img-fluid"
+                                                    src="<?= base_url('uploads/ads/' . $bottomAd['image']) ?>"
+                                                    alt="<?= esc($bottomAd['title']) ?>">
+                                            </a>
+                                        <?php else : ?>
+                                            <img class="img-fluid"
+                                                src="<?= base_url('uploads/ads/' . $bottomAd['image']) ?>"
+                                                alt="<?= esc($bottomAd['title']) ?>">
+                                        <?php endif; ?>
+
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
                         </div>
                     </div>
-                </div>
+                <?php endif; ?>
                 <!-- content-wrapper ends -->
                 <!-- partial:partials/_footer.html -->
                 <?= $this->include('user/Components/Footer.php') ?>

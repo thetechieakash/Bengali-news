@@ -15,12 +15,31 @@ class AdsController extends BaseController
     }
     public function index()
     {
-        $adsModel = new AdsModel();
         $data = [
             'pageTitle' => 'Ads',
-            'ads' => $adsModel->orderBy('id', 'DESC')->findAll()
+            'ads' => $this->adsModel->orderBy('id', 'DESC')->findAll()
         ];
         return view('admin/Ads', $data);
+    }
+
+    public function getAd($id)
+    {
+        $ad = $this->adsModel->find($id);
+
+        if (!$ad) {
+            return $this->response->setJSON([
+                'error' => 'Ad not found'
+            ]);
+        }
+
+        // Decode JSON fields
+        $ad['pages'] = json_decode($ad['pages'], true);
+        $ad['position'] = $ad['position'] ? json_decode($ad['position'], true) : [];
+
+        return $this->response->setJSON([
+            'success' => true,
+            'data'    => $ad
+        ]);
     }
 
     public function store()
@@ -105,6 +124,7 @@ class AdsController extends BaseController
             'message' => 'Ad created successfully'
         ]);
     }
+
     public function toggleStatus()
     {
         $id = $this->request->getPost('id');
@@ -122,6 +142,7 @@ class AdsController extends BaseController
             'success' => true
         ]);
     }
+
     public function update($id)
     {
         $ad = $this->adsModel->find($id);
@@ -160,7 +181,6 @@ class AdsController extends BaseController
             'title'   => $request->getPost('title'),
             'ad_type' => $adType,
             'pages'   => json_encode($request->getPost('pages')),
-            'status'  => $request->getPost('status') === 'published' ? 1 : 0,
         ];
 
         if ($adType === 'image') {
@@ -205,6 +225,7 @@ class AdsController extends BaseController
             'message' => 'Ad updated successfully'
         ]);
     }
+
     public function delete()
     {
         $id = $this->request->getPost('id');

@@ -3,88 +3,88 @@
         <div class="modal-content">
             <div class="card">
                 <div class="card-body">
-                    <form id="adForm" method="post" enctype="multipart/form-data">
+                    <form id="editAdForm" class="ad-form" enctype="multipart/form-data">
                         <?= csrf_field() ?>
-        
+
                         <!-- Title -->
                         <div class="mb-3">
                             <label class="form-label">Ad Title</label>
                             <input type="text" name="title" class="form-control" required>
                         </div>
-        
+
                         <!-- Ad Type -->
                         <div class="mb-3">
                             <label class="form-label">Ad Type</label>
-                            <select name="ad_type" id="ad_type" class="form-select select-type" required>
+                            <select name="ad_type" id="ad_type" class="form-select select-type edit-ad-type" required>
                                 <option value="image" selected>Image</option>
                                 <option value="script">Script</option>
                             </select>
                         </div>
-                        <div id="image-wrapper" class="mb-3">
+                        <div class="image-wrapper mb-3">
                             <label class="form-label">Ad Image</label>
                             <input type="file"
                                 class="dropify"
-                                id="adimage"
+                                id="updateimage"
                                 name="image"
                                 accept="image/*">
                         </div>
-                        <div id="script-wrapper" class="mb-3 d-none">
+                        <div class="script-wrapper mb-3 d-none">
                             <label class="form-label">Ad Script</label>
                             <textarea name="script" class="form-control" rows="4"
                                 placeholder="Paste ad script here..."></textarea>
                         </div>
-                        <div class="mb-3" id="url-wrapper">
+                        <div class="url-wrapper mb-3">
                             <label class="form-label">Redirect URL (optional)</label>
                             <input type="url" name="redirect_url" class="form-control" placeholder="https://example.com">
                         </div>
                         <div class="mb-3">
                             <label class="form-label d-block">Show On Pages</label>
                             <div class="form-check-inline">
-                                <input class="form-check-input" type="checkbox" name="pages[]" value="home" id="homePage">
-                                <label for="homePage">Home Page</label>
+                                <input class="form-check-input" type="checkbox" name="pages[]" value="home" id="uhomePage">
+                                <label for="uhomePage">Home Page</label>
                             </div>
                             <div class=" form-check-inline">
-                                <input class="form-check-input" type="checkbox" name="pages[]" value="category" id="categoryPage">
-                                <label for="categoryPage">Category Page</label>
+                                <input class="form-check-input" type="checkbox" name="pages[]" value="category" id="uCategoryPage">
+                                <label for="uCategoryPage">Category Page</label>
                             </div>
                             <div class=" form-check-inline">
-                                <input class="form-check-input" type="checkbox" name="pages[]" value="sub_category" id="subCategoryPage">
-                                <label for="subCategoryPage">Sub Category Page</label>
+                                <input class="form-check-input" type="checkbox" name="pages[]" value="sub_category" id="uSubCategoryPage">
+                                <label for="uSubCategoryPage">Sub Category Page</label>
                             </div>
                             <div class="form-check-inline">
-                                <input class="form-check-input" type="checkbox" name="pages[]" value="post" id="postPage">
-                                <label for="postPage">Post Page</label>
+                                <input class="form-check-input" type="checkbox" name="pages[]" value="post" id="uPostPage">
+                                <label for="uPostPage">Post Page</label>
                             </div>
                             <div class="form-check-inline">
-                                <input class="form-check-input" type="checkbox" name="pages[]" value="tag" id="tagPage">
-                                <label for="tagPage">Tag Page</label>
+                                <input class="form-check-input" type="checkbox" name="pages[]" value="tag" id="uTagPage">
+                                <label for="uTagPage">Tag Page</label>
                             </div>
                             <div class="form-check-inline">
-                                <input class="form-check-input" type="checkbox" name="pages[]" value="search" id="searchPage">
-                                <label for="searchPage">Search Page</label>
+                                <input class="form-check-input" type="checkbox" name="pages[]" value="search" id="uSearchPage">
+                                <label for="uSearchPage">Search Page</label>
                             </div>
                         </div>
-                        <div class="mb-3" id="position-wrapper">
+                        <div class="position-wrapper mb-3">
                             <label class="form-label d-block">Position</label>
                             <div class="form-check-inline">
-                                <input class="form-check-input" type="checkbox" name="position[]" value="block" id="posBlock">
-                                <label for="posBlock">Block</label>
+                                <input class="form-check-input" type="checkbox" name="position[]" value="block" id="uPosBlock">
+                                <label for="uPosBlock">Block</label>
                             </div>
                             <div class=" form-check-inline">
-                                <input class="form-check-input" type="checkbox" name="position[]" value="top" id="posTop">
-                                <label for="posTop">Top</label>
+                                <input class="form-check-input" type="checkbox" name="position[]" value="top" id="uPosTop">
+                                <label for="uPosTop">Top</label>
                             </div>
                             <div class=" form-check-inline">
-                                <input class="form-check-input" type="checkbox" name="position[]" value="left" id="posLeft">
-                                <label for="posLeft">Left Side</label>
+                                <input class="form-check-input" type="checkbox" name="position[]" value="left" id="uPosLeft">
+                                <label for="uPosLeft">Left Side</label>
                             </div>
                             <div class="form-check-inline">
-                                <input class="form-check-input" type="checkbox" name="position[]" value="right" id="posRight">
-                                <label for="posRight">Right Side</label>
+                                <input class="form-check-input" type="checkbox" name="position[]" value="right" id="uPosRight">
+                                <label for="uPosRight">Right Side</label>
                             </div>
                             <div class="form-check-inline">
-                                <input class="form-check-input" type="checkbox" name="position[]" value="bottom" id="posBottom">
-                                <label for="posBottom">Bottom</label>
+                                <input class="form-check-input" type="checkbox" name="position[]" value="bottom" id="uPosBottom">
+                                <label for="uPosBottom">Bottom</label>
                             </div>
                         </div>
                         <!-- Buttons -->
