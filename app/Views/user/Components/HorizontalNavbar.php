@@ -143,10 +143,12 @@ foreach ($navbarCategories as $cat) {
                             </div>
                         </div>
                     </li>
-                <?php endif ?>
-                <form action="<?= base_url('search') ?>" class="my-2 m-md-auto " method="get">
-                    <input type="text" class="form-control border-1" autocomplete="off" name="q" placeholder="Search news..." required>
-                </form>
+                <?php endif; ?>
+                <?php if ($uri !== 'search'): ?>
+                    <form action=" <?= base_url('search') ?>" class="my-2 m-md-auto" method="get">
+                        <input type="text" class="form-control border-1" autocomplete="off" name="q" placeholder="Search news..." required>
+                    </form>
+                <?php endif; ?>
             </ul>
         </div>
     </nav>

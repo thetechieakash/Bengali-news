@@ -7,6 +7,7 @@ use App\Models\TagModel;
 use App\Models\NewsPostModel;
 use App\Models\NewsPostCommentModel;
 use App\Models\PostViewModel;
+use App\Models\AdsModel;
 use CodeIgniter\Exceptions\PageNotFoundException;
 
 
@@ -17,7 +18,9 @@ class Post extends BaseController
         $newsModel = new NewsPostModel();
         $commentModel = new NewsPostCommentModel();
         $tagModel = new TagModel();
-        $viewModel     = new PostViewModel();
+        $viewModel = new PostViewModel();
+        $adsModel  = new AdsModel();
+
 
         $post = $newsModel->getActivePostForUser($identifier);
         if (!$post) {
@@ -59,6 +62,11 @@ class Post extends BaseController
             'recapcha_key' => env('GOOGLE_RECAPTCHA_KEY'),
             'relatedPosts' => $newsModel->relatedPosts($post['id'], $post['category_ids'], $post['subcategory_ids'], 20),
             'popularTags' => $tagModel->popularTags(15),
+            'topAds'      => $adsModel->getAdsForPage('post', 'top', true),
+            'bottomAds'   => $adsModel->getAdsForPage('post', 'bottom', true),
+            'leftAds'     => $adsModel->getAdsForPage('post', 'left', true),
+            'rightAds'    => $adsModel->getAdsForPage('post', 'right', true),
+            'blockAds'    => $adsModel->getAdsForPage('post', 'block', true),
         ];
         return view('user/Post', array_merge($this->data, $data));
     }

@@ -119,3 +119,6 @@ table tbody tr td {
 .delete-media:hover div {
     transform: scale(1.1);
 }
+.select2-container--bootstrap .select2-selection--single {
+    height: 48px !important;
+}

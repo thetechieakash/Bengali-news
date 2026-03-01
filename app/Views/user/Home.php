@@ -2,6 +2,35 @@
 <?= $this->section('pageTitle') ?>
 <?= esc($pageTitle); ?>
 <?= $this->endSection() ?>
+<?= $this->section('HomeMeta') ?>
+<meta name="description" content="Latest news from Purulia, West Bengal and India. Breaking news, politics, education, local updates and more.">
+<meta name="keywords" content="Purulia news, West Bengal news, local news, Purulia Mirror">
+<meta name="author" content="Purulia Mirror">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="<?= base_url(); ?>">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Puruliamirror">
+<meta property="og:description" content="Latest news from Purulia, West Bengal and India. Breaking news, politics, education, local updates and more.">
+<meta property="og:image" content="<?= base_url('assets/images/bengali-logo.svg'); ?>">
+<meta property="og:url" content="<?= base_url(); ?>">
+<meta property="og:site_name" content="Purulia Mirror">
+
+<meta name="twitter:card" content="Latest news from Purulia, West Bengal and India. Breaking news, politics, education, local updates and more.">
+<meta name="twitter:title" content="Purulia Mirror | Home">
+<meta name="twitter:description" content="Latest news from Purulia, West Bengal and India. Breaking news, politics, education, local updates and more.">
+<meta name="twitter:image" content="<?= base_url('assets/images/bengali-logo.svg'); ?>">
+
+<meta name="news_keywords" content="Purulia, West Bengal, Local News">
+<meta property="article:published_time" content="2026-02-19T10:00:00+05:30">
+<meta property="article:modified_time" content="2026-02-19T10:00:00+05:30">
+<meta property="article:author" content="Purulia Mirror">
+
+<meta name="geo.region" content="IN-WB">
+<meta name="geo.placename" content="Purulia">
+<meta name="geo.position" content="23.33;86.36">
+<meta name="ICBM" content="23.33, 86.36">
+<?= $this->endSection() ?>
 <?= $this->section('cssPlugins') ?>
 <?= $this->endSection() ?>
 <?= $this->section('content') ?>
@@ -11,7 +40,9 @@ use App\Helpers\StringShort;
 use App\Helpers\ThumbHelper;
 
 ?>
-<section class="utf_featured_post_area mt-5 pt-4">
+
+
+<section class="utf_featured_post_area mt-1 pt-4">
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-md-12 pad-r">
@@ -32,7 +63,7 @@ use App\Helpers\ThumbHelper;
                                         </a>
                                     </h2>
                                     <div class="utf_post_meta">
-                                        <span class="utf_post_author"><?= esc($items['author']) ?></span>
+                                        <span class="utf_post_author">Puruliamirror Desk</span>
                                         <span class="utf_post_date"><?= date('d M, Y', strtotime($items['created_at'])) ?></span>
                                     </div>
                                 </div>
@@ -44,7 +75,27 @@ use App\Helpers\ThumbHelper;
             </div>
 
             <div class="col-lg-4 col-md-12 pad-l">
-                <div class="widget text-center"> <img class="banner img-fluid" src="<?= base_url() ?>assets/images/banner-ads/ad-sidebar.png" alt="" /> </div>
+                <?php if (!empty($blockAds)) : ?>
+                    <div class="widget text-center">
+                        <div class="owl-carousel blockAdsCarousel">
+                            <?php foreach ($blockAds as $blockAd) : ?>
+                                <div class="item">
+                                    <?php if (!empty($blockAd['url'])) : ?>
+                                        <a href="<?= esc($blockAd['url']) ?>" target="_blank">
+                                            <img class="banner img-fluid"
+                                                src="<?= base_url('uploads/ads/' . $blockAd['image']) ?>"
+                                                alt="<?= esc($blockAd['title']) ?>">
+                                        </a>
+                                    <?php else : ?>
+                                        <img class="banner img-fluid"
+                                            src="<?= base_url('uploads/ads/' . $blockAd['image']) ?>"
+                                            alt="<?= esc($blockAd['title']) ?>">
+                                    <?php endif; ?>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -97,7 +148,7 @@ use App\Helpers\ThumbHelper;
 
                                 <div class="utf_post_meta">
                                     <span class="utf_post_author">
-                                        <?= esc($featured['author']) ?>
+                                        Puruliamirror Desk
                                     </span>
                                     <span class="utf_post_date">
                                         <?= date('d M, Y', strtotime($featured['post_date_time'])) ?>
@@ -117,7 +168,7 @@ use App\Helpers\ThumbHelper;
                                                 <div class="utf_post_thumb">
                                                     <a href="<?= base_url('news/' . $listPost['slug']) ?>">
                                                         <img class="img-fluid"
-                                                            src="<?= ThumbHelper::getThumbUrl($listPost['thumbnail_url'], $listPost['type'])?>"
+                                                            src="<?= ThumbHelper::getThumbUrl($listPost['thumbnail_url'], $listPost['type']) ?>"
                                                             alt="<?= $listPost['headline'] ?>">
                                                     </a>
                                                 </div>
@@ -131,7 +182,7 @@ use App\Helpers\ThumbHelper;
 
                                                     <div class="utf_post_meta">
                                                         <span class="utf_post_author">
-                                                            <?= esc($listPost['author']) ?>
+                                                            Puruliamirror Desk
                                                         </span>
                                                         <span class="utf_post_date">
                                                             <?= date('d M, Y', strtotime($listPost['post_date_time'])) ?>
@@ -148,19 +199,10 @@ use App\Helpers\ThumbHelper;
 
                     </div>
                 </div>
-
             <?php endforeach; ?>
-
         </div>
     </div>
 </section>
-<div class="utf_ad_content_area text-center utf_banner_area">
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-12"> <img class="img-fluid" src="<?= base_url() ?>assets/images/banner-ads/ad-content-one.jpg" alt="" /> </div>
-        </div>
-    </div>
-</div>
 <!-- 1rd Block Wrapper End -->
 <div class="section-divider my-4">
     <span class="divider-title">আরও পড়ুন</span>
@@ -177,14 +219,14 @@ use App\Helpers\ThumbHelper;
                     <div class="col-md-4">
                         <div class="utf_post_overaly_style text-center first clearfix mb-3 mb-md-0">
                             <div class="utf_post_thumb">
-                                <img class="img-fluid" src="<?= ThumbHelper::getThumbUrl($rpc['thumbnail_url'], $rpc['type'])?>" alt="<?= $rpc['headline'] ?>" />
+                                <img class="img-fluid" src="<?= ThumbHelper::getThumbUrl($rpc['thumbnail_url'], $rpc['type']) ?>" alt="<?= $rpc['headline'] ?>" />
                             </div>
                             <div class="utf_post_content">
                                 <h2 class="utf_post_title">
                                     <a href="<?= base_url('news/' . $rpc['slug']) ?>"><?= StringShort::truncate($rpc['headline']) ?></a>
                                 </h2>
                                 <div class="utf_post_meta">
-                                    <span class="utf_post_author"><?= esc($rpc['author']) ?></span>
+                                    <span class="utf_post_author">Puruliamirror Desk</span>
                                     <span class="utf_post_date"><?= date('d M, Y', strtotime($rpc['post_date_time'])) ?></span>
                                 </div>
                             </div>
@@ -250,7 +292,23 @@ use App\Helpers\ThumbHelper;
                             </ul>
                         </div>
                     </div>
-                    <div class="widget text-center"> <img class="banner img-fluid" src="<?= base_url() ?>assets/images/banner-ads/ad-sidebar.png" alt="" /> </div>
+                    <?php if (!empty($blockAds)) : ?>
+                        <div class="widget text-center">
+                            <?php foreach ($blockAds as $blockAdb) : ?>
+                                <?php if (!empty($blockAdb['url'])) : ?>
+                                    <a href="<?= esc($blockAdb['url']) ?>" target="_blank">
+                                        <img class="banner img-fluid"
+                                            src="<?= base_url('uploads/ads/' . $blockAdb['image']) ?>"
+                                            alt="<?= esc($blockAdb['title']) ?>">
+                                    </a>
+                                <?php else : ?>
+                                    <img class="banner img-fluid"
+                                        src="<?= base_url('uploads/ads/' . $blockAdb['image']) ?>"
+                                        alt="<?= esc($blockAdb['title']) ?>">
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -261,5 +319,4 @@ use App\Helpers\ThumbHelper;
 <?= $this->section('jsPlugins') ?>
 <?= $this->endSection() ?>
 <?= $this->section('customjs') ?>
-
 <?= $this->endSection() ?>

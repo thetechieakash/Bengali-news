@@ -11,6 +11,29 @@ use App\Helpers\StringShort;
 use App\Helpers\ThumbHelper;
 
 ?>
+<?php if (!empty($topAds)) : ?>
+    <div class="utf_ad_content_area text-center utf_banner_area py-3">
+        <div class="container">
+            <div class="owl-carousel top-ads-carousel">
+                <?php foreach ($topAds as $topAd) : ?>
+                    <div class="item">
+                        <?php if (!empty($topAd['url'])) : ?>
+                            <a href="<?= esc($topAd['url']) ?>" target="_blank">
+                                <img class="img-fluid"
+                                    src="<?= base_url('uploads/ads/' . $topAd['image']) ?>"
+                                    alt="<?= esc($topAd['title']) ?>">
+                            </a>
+                        <?php else : ?>
+                            <img class="img-fluid"
+                                src="<?= base_url('uploads/ads/' . $topAd['image']) ?>"
+                                alt="<?= esc($topAd['title']) ?>">
+                        <?php endif; ?>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
 <!-- Page Breadcrumb Start -->
 <div class="page-title">
     <div class="container">
@@ -78,8 +101,28 @@ use App\Helpers\ThumbHelper;
                 <?= $pager->links() ?>
             </div>
             <div class="col-lg-4 col-md-12">
-                <div class="sidebar utf_sidebar_right">
-                    <div class="widget text-center"> <img class="banner img-fluid" src="<?= base_url() ?>assets/images/banner-ads/ad-sidebar.png" alt="" /> </div>
+                <div class="sidebar utf_sidebar_right mt-3 mt-md-0">
+                    <?php if (!empty($blockAds)) : ?>
+                        <div class="widget text-center">
+                            <div class="owl-carousel blockAdsCarousel">
+                                <?php foreach ($blockAds as $blockAd) : ?>
+                                    <div class="item">
+                                        <?php if (!empty($blockAd['url'])) : ?>
+                                            <a href="<?= esc($blockAd['url']) ?>" target="_blank">
+                                                <img class="banner img-fluid"
+                                                    src="<?= base_url('uploads/ads/' . $blockAd['image']) ?>"
+                                                    alt="<?= esc($blockAd['title']) ?>">
+                                            </a>
+                                        <?php else : ?>
+                                            <img class="banner img-fluid"
+                                                src="<?= base_url('uploads/ads/' . $blockAd['image']) ?>"
+                                                alt="<?= esc($blockAd['title']) ?>">
+                                        <?php endif; ?>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
                     <div class="widget color-primary">
                         <h3 class="utf_block_title"><span>বিখ্যাত সংবাদ</span></h3>
                         <div class="utf_list_post_block">
@@ -88,7 +131,7 @@ use App\Helpers\ThumbHelper;
                                     <li class="clearfix">
                                         <div class="utf_post_block_style post-float clearfix">
                                             <div class="utf_post_thumb">
-                                                <img class="img-fluid" src="<?= ThumbHelper::getThumbUrl($news['thumbnail_url'], $news['type'])?>" alt="<?= $news['headline'] ?>" />
+                                                <img class="img-fluid" src="<?= ThumbHelper::getThumbUrl($news['thumbnail_url'], $news['type']) ?>" alt="<?= $news['headline'] ?>" />
                                             </div>
                                             <div class="utf_post_content">
                                                 <h2 class="utf_post_title title-small">
@@ -105,7 +148,27 @@ use App\Helpers\ThumbHelper;
                             </ul>
                         </div>
                     </div>
-                    <div class="widget text-center"> <img class="banner img-fluid" src="<?= base_url() ?>assets/images/banner-ads/ad-sidebar.png" alt="" /> </div>
+                    <?php if (!empty($blockAds)) : ?>
+                        <div class="widget text-center">
+                            <div class="owl-carousel blockAdsCarousel">
+                                <?php foreach ($blockAds as $blockAdb) : ?>
+                                    <div class="item">
+                                        <?php if (!empty($blockAdb['url'])) : ?>
+                                            <a href="<?= esc($blockAdb['url']) ?>" target="_blank">
+                                                <img class="banner img-fluid"
+                                                    src="<?= base_url('uploads/ads/' . $blockAdb['image']) ?>"
+                                                    alt="<?= esc($blockAdb['title']) ?>">
+                                            </a>
+                                        <?php else : ?>
+                                            <img class="banner img-fluid"
+                                                src="<?= base_url('uploads/ads/' . $blockAdb['image']) ?>"
+                                                alt="<?= esc($blockAdb['title']) ?>">
+                                        <?php endif; ?>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

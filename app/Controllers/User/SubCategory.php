@@ -6,6 +6,7 @@ use App\Controllers\BaseController;
 use App\Models\Categories;
 use App\Models\SubCategories;
 use App\Models\NewsPostModel;
+use App\Models\AdsModel;
 use CodeIgniter\Exceptions\PageNotFoundException;
 
 class SubCategory extends BaseController
@@ -13,12 +14,15 @@ class SubCategory extends BaseController
     protected NewsPostModel $postModel;
     protected Categories $catModel;
     protected SubCategories $subCatModel;
+    protected AdsModel $adsModel;
+
 
     public function __construct()
     {
         $this->postModel   = new NewsPostModel();
         $this->catModel    = new Categories();
         $this->subCatModel = new SubCategories();
+        $this->adsModel  = new AdsModel();
     }
 
     public function index(string $categorySlug, string $subCategorySlug)
@@ -42,7 +46,12 @@ class SubCategory extends BaseController
             'posts'       => $posts,
             'pager'       => $this->postModel->pager,
             'popularNews' => $this->postModel->popularNews(7),
-            
+            'topAds'      => $this->adsModel->getAdsForPage('sub_category', 'top', true),
+            'bottomAds'   => $this->adsModel->getAdsForPage('sub_category', 'bottom', true),
+            'leftAds'     => $this->adsModel->getAdsForPage('sub_category', 'left', true),
+            'rightAds'    => $this->adsModel->getAdsForPage('sub_category', 'right', true),
+            'blockAds'    => $this->adsModel->getAdsForPage('sub_category', 'block', true),
+
         ];
 
         return view('user/SubCategory', array_merge($this->data, $data));

@@ -3,6 +3,7 @@
 namespace App\Controllers\User;
 
 use App\Controllers\BaseController;
+use App\Models\AdsModel;
 use App\Models\Categories;
 use App\Models\NewsPostModel;
 
@@ -10,11 +11,13 @@ class Home extends BaseController
 {
     protected NewsPostModel $postModel;
     protected Categories $catModel;
+    protected AdsModel $adsModel;
 
     public function __construct()
     {
         $this->postModel = new NewsPostModel();
         $this->catModel  = new Categories();
+        $this->adsModel  = new AdsModel();
     }
 
     public function index(): string
@@ -25,7 +28,12 @@ class Home extends BaseController
             'randomPosts'        => $this->getRandomCategoryPosts(3, 4),
             'getPostAndCategory' => $this->getPostAndCategory(3),
             'popularNews'        => $this->postModel->popularNews(7),
-            'postDuration'       => $this->postModel->postDuration(1,30),
+            'postDuration'       => $this->postModel->postDuration(1, 30),
+            'topAds'              => $this->adsModel->getAdsForPage('home', 'top', true),
+            'bottomAds'              => $this->adsModel->getAdsForPage('home', 'bottom', true),
+            'leftAds'              => $this->adsModel->getAdsForPage('home', 'left', true),
+            'rightAds'              => $this->adsModel->getAdsForPage('home', 'right', true),
+            'blockAds'              => $this->adsModel->getAdsForPage('home', 'block', true),
         ];
 
         return view('user/Home', array_merge($this->data, $data));

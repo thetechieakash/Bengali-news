@@ -32,7 +32,7 @@
                         <input type="text" class="form-control" id="slug" name="slug" placeholder="Slug" value="" autocomplete="off" required>
                     </div>
                     <div class="form-group">
-                        <label for="subauthor">Aub Author</label>
+                        <label for="subauthor">Guest Author</label>
                         <select class="form-control" id="subauthor" name="subauthor">
                             <option value=""></option> 
                             <?php foreach ($subAuthor as $author): ?>
@@ -157,6 +157,7 @@
                             accept="image/*">
                     </div>
                     <!-- Choose Media -->
+                    <div id="previewImage" style="display: none; padding: 15px; text-align: center;"></div>
                     <div id="thumbnail-media-wrapper">
                         <h4>Choose media</h4>
                         <div id="media-container" style="max-height: 500px;overflow-y: auto; overflow-x: hidden;">

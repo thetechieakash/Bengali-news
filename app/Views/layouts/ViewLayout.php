@@ -6,7 +6,9 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title><?= $this->renderSection('pageTitle') ?> || Bangla Khobor </title>
+    <title><?= $this->renderSection('pageTitle') ?> || Purulia mirror </title>
+    <?= $this->renderSection("HomeMeta"); ?>
+
     <!-- plugins:css -->
     <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/css/vendor.bundle.base.css">
@@ -23,8 +25,8 @@
     <link rel="stylesheet" href="<?= base_url() ?>assets/css/horizontal-layout-light/style.css">
     <!-- endinject -->
     <link rel="shortcut icon" href="<?= base_url() ?>assets/images/bangla-logo-mini.svg" />
-    <link rel="stylesheet" href="<?= base_url() ?>assets/customs/css/style.css?v=5.1">
-    <link rel="stylesheet" href="<?= base_url() ?>assets/customs/css/custom.css?v=5.1">
+    <link rel="stylesheet" href="<?= base_url() ?>assets/customs/css/style.css?v=6.1">
+    <link rel="stylesheet" href="<?= base_url() ?>assets/customs/css/custom.css?v=6.4">
 </head>
 
 <body>
@@ -72,19 +74,60 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <?php if (!empty($topAds)) : ?>
+                                        <div class="utf_ad_content_area text-center utf_banner_area py-3">
+                                            <div class="container">
+                                                <div class="owl-carousel ads-carousel">
+                                                    <?php foreach ($topAds as $topAd) : ?>
+                                                        <div class="item">
+                                                            <?php if (!empty($topAd['url'])) : ?>
+                                                                <a href="<?= esc($topAd['url']) ?>" target="_blank">
+                                                                    <img class="img-fluid"
+                                                                        src="<?= base_url('uploads/ads/' . $topAd['image']) ?>"
+                                                                        alt="<?= esc($topAd['title']) ?>">
+                                                                </a>
+                                                            <?php else : ?>
+                                                                <img class="img-fluid"
+                                                                    src="<?= base_url('uploads/ads/' . $topAd['image']) ?>"
+                                                                    alt="<?= esc($topAd['title']) ?>">
+                                                            <?php endif; ?>
+
+                                                        </div>
+                                                    <?php endforeach; ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
                                     <?= $this->renderSection('content') ?>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="utf_ad_content_area text-center utf_banner_area">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-sm-12"> <img class="img-fluid" src="<?= base_url() ?>assets/images/banner-ads/ad-content-one.jpg" alt="" /> </div>
+                <?php if (!empty($bottomAds)) : ?>
+                    <div class="utf_ad_content_area text-center utf_banner_area py-3">
+                        <div class="container">
+                            <div class="owl-carousel ads-carousel">
+                                <?php foreach ($bottomAds as $bottomAd) : ?>
+                                    <div class="item">
+                                        <?php if (!empty($bottomAd['url'])) : ?>
+                                            <a href="<?= esc($bottomAd['url']) ?>" target="_blank">
+                                                <img class="img-fluid"
+                                                    src="<?= base_url('uploads/ads/' . $bottomAd['image']) ?>"
+                                                    alt="<?= esc($bottomAd['title']) ?>">
+                                            </a>
+                                        <?php else : ?>
+                                            <img class="img-fluid"
+                                                src="<?= base_url('uploads/ads/' . $bottomAd['image']) ?>"
+                                                alt="<?= esc($bottomAd['title']) ?>">
+                                        <?php endif; ?>
+
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
                         </div>
                     </div>
-                </div>
+                <?php endif; ?>
                 <!-- content-wrapper ends -->
                 <!-- partial:partials/_footer.html -->
                 <?= $this->include('user/Components/Footer.php') ?>
@@ -150,9 +193,31 @@
                 touchDrag: true,
                 pullDrag: false
             });
+
             const lightbox = GLightbox();
             $('.glightbox').on('open', (target) => {
                 console.log('lightbox opened');
+            });
+
+            $('.ads-carousel').owlCarousel({
+                items: 1,
+                loop: true,
+                margin: 10,
+                autoplay: true,
+                autoplayTimeout: 4000,
+                autoplayHoverPause: false,
+                nav: false,
+                dots: true
+            });
+            $('.blockAdsCarousel').owlCarousel({
+                items: 1,
+                loop: true,
+                margin: 10,
+                autoplay: true,
+                autoplayTimeout: 3000,
+                autoplayHoverPause: false,
+                nav: false,
+                dots: true
             });
         });
     </script>

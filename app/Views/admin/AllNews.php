@@ -38,8 +38,8 @@
                                             <?= mb_strimwidth($post['headline'], 0, 30, "...") ?>
                                         </a>
                                         <div class="mt-2">
-                                            <span class="badge badge-outline-primary rounded" title="Total Views"><?= $post['views'] ?> <i class="fa fa-eye"></i></span>
-                                            <span class="badge badge-outline-primary rounded" title="Total Comments"><?= $post['total_comments'] ?> <i class="fa fa-comment-o"></i></span>
+                                            <span class="badge badge-outline-primary rounded" title="Total Views">Total views: <?= $post['views'] ?></span>
+                                            <span class="badge badge-outline-primary rounded" title="Total Comments">Total Comments: <?= $post['total_comments'] ?></span>
                                         </div>
                                     </td>
                                     <td>
@@ -72,7 +72,7 @@
 
                                     <?php $formattedDate = (new DateTime($post['updated_at']))->format('d M, Y h:i A'); ?>
                                     <td><?= $formattedDate ?></td>
-                                    <td>
+                                    <td data-order="<?= $post['status'] ?>">
                                         <div class="d-flex align-items-center gap-2">
                                             <label class="toggle-switch mb-0">
                                                 <input type="checkbox" name="activestatus"

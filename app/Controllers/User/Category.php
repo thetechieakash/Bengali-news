@@ -3,6 +3,7 @@
 namespace App\Controllers\User;
 
 use App\Controllers\BaseController;
+use App\Models\AdsModel;
 use App\Models\Categories;
 use App\Models\SubCategories;
 use App\Models\NewsPostModel;
@@ -13,12 +14,15 @@ class Category extends BaseController
     protected NewsPostModel $postModel;
     protected Categories $catModel;
     protected SubCategories $subCatModel;
+    protected AdsModel $adsModel;
+
 
     public function __construct()
     {
         $this->postModel   = new NewsPostModel();
         $this->catModel    = new Categories();
         $this->subCatModel = new SubCategories();
+        $this->adsModel  = new AdsModel();
     }
     public function index($identifier)
     {
@@ -37,6 +41,11 @@ class Category extends BaseController
             'posts'       => $posts,
             'pager'       => $this->postModel->pager,
             'popularNews' => $this->postModel->popularNews(7),
+            'topAds'      => $this->adsModel->getAdsForPage('category', 'top', true),
+            'bottomAds'   => $this->adsModel->getAdsForPage('category', 'bottom', true),
+            'leftAds'     => $this->adsModel->getAdsForPage('category', 'left', true),
+            'rightAds'    => $this->adsModel->getAdsForPage('category', 'right', true),
+            'blockAds'    => $this->adsModel->getAdsForPage('category', 'block', true),
         ];
 
         return view('user/Category', array_merge($this->data, $data));

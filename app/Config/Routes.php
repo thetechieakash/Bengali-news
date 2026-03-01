@@ -65,6 +65,13 @@ $routes->group('admin', ['filter' => 'group:superadmin,admin,author'], function 
         $routes->post('author-create', 'Admin\SubAuthorController::store');
         $routes->post('author-update/(:num)', 'Admin\SubAuthorController::update/$1');
         $routes->post('author-delete/(:num)', 'Admin\SubAuthorController::delete/$1');
+        
+        $routes->get('ads', 'Admin\AdsController::index');
+        $routes->get('ads/(:num)', 'Admin\AdsController::getAd/$1');
+        $routes->post('ads/store', 'Admin\AdsController::store');
+        $routes->post('ads/toggle-status', 'Admin\AdsController::toggleStatus');
+        $routes->post('ads/update/(:num)', 'Admin\AdsController::update/$1');
+        $routes->post('ads/delete', 'Admin\AdsController::delete');
     });
 
     /*

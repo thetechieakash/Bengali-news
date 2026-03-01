@@ -6,6 +6,7 @@
 <?= $this->endSection() ?>
 <?= $this->section('content') ?>
 <?php
+
 use App\Helpers\StringShort;
 use App\Helpers\ThumbHelper;
 
@@ -52,7 +53,7 @@ $defaultThumb = base_url('assets/images/news/placeholder.png');
                                     <div class="col-lg-5 col-md-6">
                                         <div class="utf_post_thumb thumb-float-style">
                                             <a href="#">
-                                                <img class="img-fluid" src="<?=ThumbHelper::getThumbUrl($post['thumbnail_url'], $post['type']) ?>" alt="<?= $post['headline'] ?>" />
+                                                <img class="img-fluid" src="<?= ThumbHelper::getThumbUrl($post['thumbnail_url'], $post['type']) ?>" alt="<?= $post['headline'] ?>" />
                                             </a>
                                         </div>
                                     </div>
@@ -80,8 +81,28 @@ $defaultThumb = base_url('assets/images/news/placeholder.png');
                 <?= $pager->links('default', 'custom'); ?>
             </div>
             <div class="col-lg-4 col-md-12">
-                <div class="sidebar utf_sidebar_right">
-                    <div class="widget text-center"> <img class="banner img-fluid" src="<?= base_url() ?>assets/images/banner-ads/ad-sidebar.png" alt="" /> </div>
+                <div class="sidebar utf_sidebar_right mt-3 mt-md-0">
+                    <?php if (!empty($blockAds)) : ?>
+                        <div class="widget text-center">
+                            <div class="owl-carousel blockAdsCarousel">
+                                <?php foreach ($blockAds as $blockAd) : ?>
+                                    <div class="item">
+                                        <?php if (!empty($blockAd['url'])) : ?>
+                                            <a href="<?= esc($blockAd['url']) ?>" target="_blank">
+                                                <img class="banner img-fluid"
+                                                    src="<?= base_url('uploads/ads/' . $blockAd['image']) ?>"
+                                                    alt="<?= esc($blockAd['title']) ?>">
+                                            </a>
+                                        <?php else : ?>
+                                            <img class="banner img-fluid"
+                                                src="<?= base_url('uploads/ads/' . $blockAd['image']) ?>"
+                                                alt="<?= esc($blockAd['title']) ?>">
+                                        <?php endif; ?>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
                     <div class="widget color-primary">
                         <h3 class="utf_block_title"><span>বিখ্যাত সংবাদ</span></h3>
                         <div class="utf_list_post_block">
@@ -107,7 +128,27 @@ $defaultThumb = base_url('assets/images/news/placeholder.png');
                             </ul>
                         </div>
                     </div>
-                    <div class="widget text-center"> <img class="banner img-fluid" src="<?= base_url() ?>assets/images/banner-ads/ad-sidebar.png" alt="" /> </div>
+                    <?php if (!empty($blockAds)) : ?>
+                        <div class="widget text-center">
+                            <div class="owl-carousel blockAdsCarousel">
+                                <?php foreach ($blockAds as $blockAdb) : ?>
+                                    <div class="item">
+                                        <?php if (!empty($blockAdb['url'])) : ?>
+                                            <a href="<?= esc($blockAdb['url']) ?>" target="_blank">
+                                                <img class="banner img-fluid"
+                                                    src="<?= base_url('uploads/ads/' . $blockAdb['image']) ?>"
+                                                    alt="<?= esc($blockAdb['title']) ?>">
+                                            </a>
+                                        <?php else : ?>
+                                            <img class="banner img-fluid"
+                                                src="<?= base_url('uploads/ads/' . $blockAdb['image']) ?>"
+                                                alt="<?= esc($blockAdb['title']) ?>">
+                                        <?php endif; ?>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

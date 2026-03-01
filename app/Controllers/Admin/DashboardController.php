@@ -8,7 +8,7 @@ use App\Models\Categories;
 use App\Models\SubCategories;
 use App\Models\TagModel;
 use App\Models\NewsPostCommentModel;
-
+use App\Models\WebsiteVisitModel;
 
 class DashboardController extends BaseController
 {
@@ -19,6 +19,7 @@ class DashboardController extends BaseController
         $subCatModel = new SubCategories();
         $tagModel = new TagModel();
         $commentModel = new NewsPostCommentModel();
+        $visitModel = new WebsiteVisitModel();
 
         // Basic Counts
         $totalPosts       = $postModel->countAll();
@@ -28,7 +29,8 @@ class DashboardController extends BaseController
         $totalSubCats     = $subCatModel->countAll();
         $totalTags        = $tagModel->countAll();
         $totalComments    = $commentModel->countAll();
-        $pendingComments  = $commentModel->where('status', '0')->countAllResults();
+        $publishedComments    = $commentModel->where('status', 1)->countAllResults();
+        $pendingComments  = $commentModel->where('status', 0)->countAllResults();
 
         // Latest 5 Posts
         // $latestPosts = $postModel
@@ -36,12 +38,16 @@ class DashboardController extends BaseController
         //     ->limit(5)
         //     ->find();
 
+        //  Get visits directly (ARRAY, not JSON response)
+        $visits = $visitModel
+            ->select('visit_date, COUNT(*) as total')
+            ->where('visit_date >=', date('Y-m-d', strtotime('-30 days')))
+            ->groupBy('visit_date')
+            ->orderBy('visit_date', 'ASC')
+            ->findAll();
 
-        // Query Timing
-        $db = \Config\Database::connect();
-        $start = microtime(true);
-        $db->query("SELECT 1");
-        $queryTime = round((microtime(true) - $start) * 1000, 2);
+        //  Total Website Visits (All Time)
+        $totalVisits = $visitModel->countAll();
 
         $data = [
             'pageTitle'        => 'Dashboard',
@@ -52,8 +58,10 @@ class DashboardController extends BaseController
             'totalSubCats'     => $totalSubCats,
             'totalTags'        => $totalTags,
             'totalComments'    => $totalComments,
+            'publishedComments' => $publishedComments,
             'pendingComments'  => $pendingComments,
-            'queryTime'        => $queryTime,
+            'visits'           => $visits,
+            'totalVisits'      => $totalVisits,
             // 'latestPosts'      => $latestPosts,
         ];
 

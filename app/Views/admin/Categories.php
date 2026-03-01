@@ -35,7 +35,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-8">
+    <div class="col-md-8 mt-3 mt-md-0">
         <div class="card">
             <div class="card-body">
                 <?php if (!empty($cats)): ?>

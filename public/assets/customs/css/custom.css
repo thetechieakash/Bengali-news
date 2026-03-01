@@ -349,9 +349,9 @@ h4,
         background-color: var(--lightest-white);
     }
 
-    .navbar-toggler {
-        background: transparent;
-    }
+    /* .navbar-toggler {
+        background: transparent !important;
+    } */
 
     .navbar-toggler:focus {
         text-decoration: none;
@@ -387,4 +387,21 @@ h4,
         font-weight: 500;
         color: #000000;
     }
+}
+.warn_div{
+    padding: 15px;
+    border: dashed;
+    border-color: #f00;
+    color: #f00;
+    text-align: center;
+}
+.warn_div h5, .warn_div p{
+    color: #f00;
+}
+.warn_div p{
+    font-size: 12px;
+    font-weight: 400;
+}
+.grecaptcha-badge{
+    opacity: 0 !important;
 }

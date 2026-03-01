@@ -5,17 +5,20 @@ namespace App\Controllers\User;
 use App\Controllers\BaseController;
 use App\Models\TagModel;
 use App\Models\NewsPostModel;
+use App\Models\AdsModel;
 use CodeIgniter\Exceptions\PageNotFoundException;
 
 class Tag extends BaseController
 {
     protected TagModel $tagModel;
     protected NewsPostModel $postModel;
+    protected AdsModel $adsModel;
 
     public function __construct()
     {
         $this->tagModel  = new TagModel();
         $this->postModel = new NewsPostModel();
+        $this->adsModel  = new AdsModel();
     }
 
     public function index(string $identifier): string
@@ -35,6 +38,11 @@ class Tag extends BaseController
             'posts'     => $posts,
             'pager'     => $this->postModel->pager,
             'popularNews' => $this->postModel->popularNews(7),
+            'topAds'    => $this->adsModel->getAdsForPage('tag', 'top', true),
+            'bottomAds' => $this->adsModel->getAdsForPage('tag', 'bottom', true),
+            'leftAds'   => $this->adsModel->getAdsForPage('tag', 'left', true),
+            'rightAds'  => $this->adsModel->getAdsForPage('tag', 'right', true),
+            'blockAds'  => $this->adsModel->getAdsForPage('tag', 'block', true),
         ];
 
         return view('user/Tag', array_merge($this->data, $data));
