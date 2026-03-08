@@ -84,10 +84,10 @@ use App\Helpers\StringShort;
                                     </td>
                                     <td>
                                         <div class="dropdown">
-                                            <button class="btn btn-success btn-sm dropdown-toggle" type="button" id="dropdownAction" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <button class="btn btn-success btn-sm dropdown-toggle" type="button"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                 Modify
                                             </button>
-                                            <div class="dropdown-menu" aria-labelledby="dropdownAction">
+                                            <div class="dropdown-menu" >
                                                 <?php if ($comment['status'] == 0): ?>
                                                     <button class="dropdown-item approveBtn" data-id="<?= $comment['id'] ?>">Approve</button>
                                                 <?php endif; ?>

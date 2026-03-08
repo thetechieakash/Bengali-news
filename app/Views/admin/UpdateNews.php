@@ -9,7 +9,6 @@
 <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/dropify/dist/css/dropify.css">
 <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/dropify/dist/css/dropify.min.css">
 <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/jquery-tags-input/jquery.tagsinput.min.css">
-<link rel="stylesheet" href="<?= base_url() ?>assets/vendors/flatpickr/flatpickr.min.css">
 <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/glightbox/glightbox.min.css" />
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -78,6 +77,7 @@
                         <?php
                         $selectedCats    = $post['category_ids'] ?? [];
                         $selectedSubCats = $post['subcategory_ids'] ?? [];
+                        $selectedChildCats = $post['childcategory_ids'] ?? [];
                         ?>
                         <select class="multiple-select w-100"
                             multiple
@@ -104,6 +104,21 @@
                                 </option>
                             <?php endforeach ?>
                         </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Child Categories</label>
+
+                        <select class="multiple-select w-100"
+                            multiple
+                            name="childcategories[]"
+                            id="childcategories">
+                            <?php foreach ($post['childcategories'] as $child): ?>
+                                <option value="<?= $child['id'] ?>" selected>
+                                    <?= esc($child['child_cat_name']) ?>
+                                </option>
+                            <?php endforeach ?>
+                        </select>
+
                     </div>
                 </div>
             </div>
@@ -183,10 +198,16 @@
                             accept="image/*">
                     </div>
                     <div id="thumbnail-media-wrapper">
-                        <h4>Choose media</h4>
+                        <div class="d-flex justify-content-between">
+                            <h4>Choose media</h4>
+                            <div class="mb-3">
+                                <input type="text" id="mediaSearch" class="form-control" placeholder="Search media...">
+                            </div>
+                        </div>
                         <div id="media-container" style="max-height: 500px;overflow-y: auto; overflow-x: hidden;">
                         </div>
                     </div>
+                    <div id="previewImage" style="display:none;padding:15px;text-align:center;"></div>
                 </div>
             </div>
         </div>
@@ -217,7 +238,6 @@
 <script src="<?= base_url() ?>assets/vendors/jquery-tags-input/jquery.tagsinput.min.js"></script>
 <script src="<?= base_url() ?>assets/vendors/select2/select2.min.js"></script>
 <script src="<?= base_url() ?>assets/vendors/dropify/dist/js/dropify.min.js"></script>
-<script src="<?= base_url() ?>assets/vendors/flatpickr/flatpickr.min.js"></script>
 <script src="<?= base_url() ?>assets/vendors/ckeditor/ckeditor.js"></script>
 <script src="<?= base_url() ?>assets/vendors/glightbox/glightbox.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

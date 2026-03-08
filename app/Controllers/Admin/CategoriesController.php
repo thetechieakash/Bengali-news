@@ -39,7 +39,7 @@ class CategoriesController extends BaseController
         $model = new Categories();
         $slugHelper = new Slug();
 
-        $catSlug = $slugHelper->slugify($data['category']);
+        $catSlug = $slugHelper->slugify($data['slug']);
         $insertableData = [
             'cat'       => trim($data['category']),
             'slug'      => $catSlug,
@@ -71,6 +71,7 @@ class CategoriesController extends BaseController
 
         $id     = $data['id'] ?? null;
         $newCat = $data['newCatName'] ?? null;
+        $newCatSlug = $data['slug'] ?? null;
 
         if (!$id) {
             return $this->response->setJSON([
@@ -85,6 +86,12 @@ class CategoriesController extends BaseController
                 'message' => 'Category name cannot be empty'
             ]);
         }
+        if ($newCatSlug === '') {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Category slug cannot be empty'
+            ]);
+        }
 
         $model = new Categories();
         $existingCat = $model->find($id);
@@ -95,16 +102,11 @@ class CategoriesController extends BaseController
                 'message' => 'Category not found'
             ]);
         }
-        if ($existingCat['cat'] === $newCat) {
-            return $this->response->setJSON([
-                'success' => true,
-                'message' => 'No changes detected'
-            ]);
-        }
+
         $slugHelper = new Slug();
         $updateData = [
             'cat' => $newCat,
-            'slug' => $slugHelper->slugify($newCat)
+            'slug' => $slugHelper->slugify($newCatSlug)
         ];
 
         $model->update($id, $updateData);

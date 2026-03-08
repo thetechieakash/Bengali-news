@@ -1974,9 +1974,9 @@ ul.nav li.dropdown .utf_dropdown_menu li.utf_dropdown_submenu:hover .utf_dropdow
 ================================================== */
 .utf_ad_content_area img {
     display: inline-block;
-    border: 1px solid #eeeeee;
-    padding: 15px 20px;
-    border-radius: 10px;
+    /* border: 1px solid #eeeeee; */
+    /* padding: 15px 20px; */
+    /* border-radius: 10px; */
 }
 
 /* Video Block

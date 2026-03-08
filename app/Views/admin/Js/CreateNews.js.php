@@ -21,18 +21,17 @@
 
         function formatAuthor(option) {
             if (!option.id) return option.text;
-
             let img = $(option.element).data('image');
 
             return `
-        <div style="display:flex; align-items:center;">
-            <img src="${img}" 
-                 style="width:35px;height:35px;border-radius:50%;margin-right:10px;object-fit:cover;">
-            <div>
-                ${option.text}
-            </div>
-        </div>
-    `;
+                <div style="display:flex; align-items:center;">
+                    <img src="${img}" 
+                        style="width:35px;height:35px;border-radius:50%;margin-right:10px;object-fit:cover;">
+                    <div>
+                        ${option.text}
+                    </div>
+                </div>
+            `;
         }
 
         /* ----------------------------------------------------
@@ -41,6 +40,7 @@
         let mediaPage = 1;
         let mediaLoading = false;
         let mediaHasMore = true;
+        let mediaSearch = '';
 
         function loadMediaImages() {
 
@@ -50,14 +50,16 @@
 
             $('#media-container').append('<div class="text-center loading-media">Loading...</div>');
 
-            $.get("<?= base_url('admin/api/get-media') ?>?page=" + mediaPage, function(res) {
+            $.get("<?= base_url('admin/api/get-media') ?>", {
+                page: mediaPage,
+                search: mediaSearch
+            }, function(res) {
 
                 $('.loading-media').remove();
 
-                console.log(res);
                 if (!res.data.length) {
                     mediaHasMore = false;
-                    $('#media-container').html('no image found')
+                    $('#media-container').append('<div class="text-center text-muted">No images found</div>');
                     return;
                 }
 
@@ -97,6 +99,25 @@
                 }
             });
         }
+        let searchTimer;
+
+        $('#mediaSearch').on('keyup', function() {
+
+            clearTimeout(searchTimer);
+
+            searchTimer = setTimeout(() => {
+
+                mediaSearch = $('#mediaSearch').val().trim();
+                mediaPage = 1;
+                mediaHasMore = true;
+
+                $('#media-container').html('');
+
+                loadMediaImages();
+
+            }, 300);
+
+        });
 
         function toggleThumbnailInput(type) {
             $("#selected_media").val('');
@@ -122,6 +143,7 @@
                 }
             }
         }
+
         $('#media-container').on('scroll', function() {
 
             const scrollTop = $(this).scrollTop();
@@ -180,21 +202,6 @@
             $('#thumbnail-media-wrapper').show();
         })
 
-        /* ----------------------------------------------------
-         * Flatpickr
-         * -------------------------------------------------- */
-        const fp = flatpickr('.datetimepicker', {
-            mode: "single",
-            dateFormat: "d/m/Y H:i",
-            enableTime: true,
-            disableMobile: true,
-            defaultDate: null,
-            minDate: "today",
-            maxDate: new Date().fp_incr(30),
-            monthSelectorType: "static",
-            yearSelectorType: "static",
-            allowInput: false
-        });
 
         /* ----------------------------------------------------
          * Select2
@@ -210,6 +217,11 @@
         });
 
         $('#subcategories').select2({
+            theme: 'bootstrap',
+            placeholder: 'Select sub categories'
+        });
+
+        $('#childcategories').select2({
             theme: 'bootstrap',
             placeholder: 'Select sub categories'
         });
@@ -293,8 +305,89 @@
 
             subSelect.prop('disabled', false).trigger('change');
         }
+        /* ----------------------------------------------------
+         * Child-category loader with cache
+         * -------------------------------------------------- */
 
+        const childCategoryCache = {};
 
+        $('#subcategories').on('change', function() {
+
+            const selectedSubs = $(this).val() || [];
+
+            if (!selectedSubs.length) {
+                resetChildCategories();
+                return;
+            }
+
+            $('#childcategories')
+                .html('<option>Loading...</option>')
+                .prop('disabled', true)
+                .trigger('change');
+
+            let childCats = [];
+
+            selectedSubs.forEach(id => {
+                if (childCategoryCache[id]) {
+                    childCats = childCats.concat(childCategoryCache[id]);
+                }
+            });
+
+            const missing = selectedSubs.filter(id => !childCategoryCache[id]);
+
+            if (!missing.length) {
+                renderChildCategories(childCats);
+                return;
+            }
+
+            $.post("<?= base_url('admin/child-categories/by-subcategories') ?>", {
+                subcategory_ids: missing
+            }).done(function(res) {
+
+                res.forEach(child => {
+                    childCategoryCache[child.sub_cat_id] ??= [];
+                    childCategoryCache[child.sub_cat_id].push(child);
+                });
+
+                selectedSubs.forEach(id => {
+                    if (childCategoryCache[id]) {
+                        childCats = childCats.concat(childCategoryCache[id]);
+                    }
+                });
+
+                renderChildCategories(childCats);
+
+            }).fail(function() {
+                showDangerToast('Failed to load child categories');
+                resetChildCategories();
+            });
+        });
+
+        function resetChildCategories() {
+            $('#childcategories')
+                .empty()
+                .prop('disabled', true)
+                .trigger('change');
+        }
+
+        function renderChildCategories(childCats) {
+
+            const childSelect = $('#childcategories');
+            childSelect.empty();
+
+            const unique = Object.values(
+                childCats.reduce((acc, cur) => {
+                    acc[cur.id] = cur;
+                    return acc;
+                }, {})
+            );
+
+            unique.forEach(child => {
+                childSelect.append(new Option(child.child_cat_name, child.id));
+            });
+
+            childSelect.prop('disabled', false).trigger('change');
+        }
         /* ----------------------------------------------------
          * Dropify
          * -------------------------------------------------- */

@@ -7,6 +7,7 @@ use App\Models\{
     NewsPostModel,
     NewsPostCategoryModel,
     NewsPostSubCategoryModel,
+    NewsPostChildCategoryModel,
     NewsPostTagModel,
     NewsPostThumbnailModel,
     MediaModel
@@ -32,6 +33,7 @@ class CreatePostController extends BaseController
 
             $this->syncPivot(new NewsPostCategoryModel(), $postId, 'category_id', $data['categories']);
             $this->syncPivot(new NewsPostSubCategoryModel(), $postId, 'sub_category_id', $data['subcategories']);
+            $this->syncPivot(new NewsPostChildCategoryModel(), $postId, 'child_category_id', $data['childcategories']);
             $this->syncPivot(new NewsPostTagModel(), $postId, 'tag_id', $data['tags']);
 
             $this->handleThumbnail($postId, $data);
@@ -58,7 +60,7 @@ class CreatePostController extends BaseController
             'description'   => trim($req['description'] ?? ''),
             'categories'    => array_unique(array_map('intval', (array)($req['categories'] ?? []))),
             'subcategories' => array_unique(array_map('intval', (array)($req['subcategories'] ?? []))),
-            'tags'          => array_unique(array_map('intval', (array)($req['tags'] ?? []))),
+            'childcategories' => array_unique(array_map('intval', (array)($req['childcategories'] ?? []))),            'tags'          => array_unique(array_map('intval', (array)($req['tags'] ?? []))),
             'thumbType'     => $req['thumbnail_type'] ?? 'link',
             'thumbLink'     => trim($req['thumbnail_link'] ?? ''),
             'selectedMedia' => trim($req['selected_media'] ?? ''),
@@ -155,8 +157,10 @@ class CreatePostController extends BaseController
             throw new \Exception('Invalid image type.');
         }
 
-        $folder = date('m_y');
-        $path   = FCPATH . "uploads/posts/thumbnails/$folder/";
+        $year  = date('Y');
+        $month = date('m');
+
+        $path = FCPATH . "uploads/$year/$month/images/";
 
         if (!is_dir($path)) {
             mkdir($path, 0775, true);
@@ -165,13 +169,13 @@ class CreatePostController extends BaseController
         $newName = $file->getRandomName();
         $file->move($path, $newName);
 
-        $relativePath = "uploads/posts/thumbnails/$folder/$newName";
-
+        $relativePath = "uploads/$year/$month/images/$newName";
+        
         (new MediaModel())->insert([
             'file_name' => $newName,
             'file_path' => $relativePath,
             'file_type' => 'image',
-            'folder'    => $folder,
+            'folder'    => "$year/$month/image",
             'file_size' => $file->getSize()
         ]);
 

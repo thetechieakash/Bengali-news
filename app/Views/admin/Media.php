@@ -30,7 +30,15 @@
     <div class="col-12">
         <div class="card mt-3">
             <div class="card-body">
-                <h4 class="card-title">All media</h4>
+                <div class="d-flex align-items-center justify-content-between">
+                    <h4 class="card-title">All media</h4>
+                    <div class="mb-3">
+                        <input type="text"
+                            id="mediaSearch"
+                            class="form-control"
+                            placeholder="Search images...">
+                    </div>
+                </div>
                 <div class="all-media" style="max-height: 500px;overflow-y: auto; overflow-x: hidden;">
                 </div>
             </div>
@@ -38,6 +46,23 @@
     </div>
 </div>
 <!-- Page modals start  -->
+<div class="modal fade" id="mediaPreviewModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Image Preview</h5>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="previewImage"
+                    src=""
+                    class="img-fluid rounded">
+            </div>
+
+        </div>
+    </div>
+</div>
 <!-- Page modals ends  -->
 
 <?= $this->endSection() ?>
@@ -55,36 +80,49 @@
         let currentPage = 1;
         let loading = false;
         let nextPage = 1;
+        let searchQuery = '';
+        let searchTimer;
 
+        // Media search 
+        $('#mediaSearch').on('keyup', function() {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(function() {
+                searchQuery = $('#mediaSearch').val();
+                currentPage = 1;
+                nextPage = 1;
+                loadMedia(1);
+            }, 400);
+        });
+
+        // Load media 
         function loadMedia(page = 1) {
-
             if (loading || (!nextPage && page !== 1)) return;
-
             loading = true;
-
             $.get("<?= base_url('admin/api/get-media') ?>", {
-                page: page
+                page: page,
+                search: searchQuery
             }, function(response) {
-
                 const media = response.data;
                 nextPage = response.next_page;
-
                 if (!media.length && page === 1) {
                     $('.all-media').html('<p>No media found</p>');
                     loading = false;
                     return;
                 }
-
                 let html = '';
-
                 media.forEach(function(item) {
                     html += `
-                        <div class="col-3 col-md-2 mb-3 media-item">
-                            <div class="position-relative">
+                        <div class="col-3 col-md-2 mb-3 media-item" data-name="${item.file_name.toLowerCase()}">
+                            <div class="position-relative media-box">
                                 <img src="https://placehold.co/300x200?text=Loading..."
                                     data-src="<?= base_url() ?>${item.file_path}"
-                                    class="img-fluid rounded lazy-media"
-                                    style="height:120px;object-fit:cover;">
+                                    data-url="<?= base_url() ?>${item.file_path}"
+                                    class="img-fluid rounded lazy-media preview-media"
+                                    style="height:120px;object-fit:cover;cursor:pointer;">
+                                <div class="copy-link position-absolute bottom-0 start-0 end-0 text-center"
+                                    data-url="<?= base_url() ?>${item.file_path}">
+                                    Copy Link
+                                </div>
 
                                 <div class="delete-media position-absolute top-0 end-0 m-1"
                                     data-id="${item.id}"
@@ -99,43 +137,32 @@
                             </div>
                         </div>
                         `;
-
                 });
-
                 if (page === 1) {
                     $('.all-media').html('<div class="row" id="media-grid">' + html + '</div>');
                 } else {
                     $('#media-grid').append(html);
                 }
-
                 initLazyLoading();
                 loading = false;
             });
         }
 
+        // Lazy Loading 
         function initLazyLoading() {
-
             const images = document.querySelectorAll('.lazy-media');
-
             const observer = new IntersectionObserver((entries, observer) => {
-
                 entries.forEach(entry => {
-
                     if (entry.isIntersecting) {
-
                         const img = entry.target;
                         img.src = img.dataset.src;
                         img.classList.remove('lazy-media');
-
                         observer.unobserve(img);
                     }
-
                 });
-
             }, {
                 rootMargin: '100px'
             });
-
             images.forEach(img => observer.observe(img));
         }
 
@@ -143,16 +170,12 @@
         initLazyLoading();
 
         $('.all-media').on('scroll', function() {
-
             let container = $(this)[0];
-
             if (container.scrollTop + container.clientHeight >= container.scrollHeight - 50) {
-
                 if (nextPage && !loading) {
                     loadMedia(nextPage);
                 }
             }
-
         });
 
         // AJAX upload
@@ -194,18 +217,14 @@
 
         // Delete media
         $(document).on('click', '.delete-media', function() {
-
             let id = $(this).data('id');
-
             Swal.fire({
                 title: 'Delete this media?',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
-
                 if (result.isConfirmed) {
-
                     $.ajax({
                         url: "<?= base_url('admin/delete-media') ?>/" + id,
                         type: "DELETE",
@@ -217,10 +236,25 @@
                             }
                         }
                     });
-
                 }
             });
         });
+
+        // Copy link 
+        $(document).on('click', '.copy-link', function() {
+            let url = $(this).data('url');
+            navigator.clipboard.writeText(url).then(function() {
+                showSuccessToast('Link copied');
+            });
+        });
+
+        // Image preview 
+        $(document).on('click', '.preview-media', function() {
+            let url = $(this).data('url');
+            $('#previewImage').attr('src', url);
+            $('#mediaPreviewModal').modal('show');
+        });
+
     });
 </script>
 <!-- Page js ends  -->

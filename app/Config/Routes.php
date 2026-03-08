@@ -43,6 +43,14 @@ $routes->group('admin', ['filter' => 'group:superadmin,admin,author'], function 
         $routes->post('sub-categories/delete', 'Admin\SubCatagoriesController::deleteSubCategory');
         $routes->post('sub-categories/by-categories', 'Admin\SubCatagoriesController::getByCategories');
 
+        // Child-categories
+        $routes->get('child-categories', 'Admin\ChildCatagoriesController::index');
+        $routes->post('child-categories', 'Admin\ChildCatagoriesController::createChildCategory');
+        $routes->post('child-categories/update', 'Admin\ChildCatagoriesController::updateChildCategory');
+        $routes->post('child-categories/delete', 'Admin\ChildCatagoriesController::deleteChildCategory');
+        $routes->post('child-categories/by-subcategories', 'Admin\ChildCatagoriesController::getChildren');
+
+
         // Comments
         $routes->get('approved-comments', 'Admin\CommentsController::approved');
         $routes->get('pending-comments', 'Admin\CommentsController::pending');
@@ -59,6 +67,11 @@ $routes->group('admin', ['filter' => 'group:superadmin,admin,author'], function 
         $routes->get('media', 'Admin\MediaController::index');
         $routes->post('upload-media', 'Admin\MediaController::upload');
         $routes->delete('delete-media/(:num)', 'Admin\MediaController::delete/$1');
+
+        $routes->get('documents', 'Admin\DocumentController::index');
+        $routes->post('document/upload', 'Admin\DocumentController::upload');
+        $routes->delete('delete-document/(:num)', 'Admin\DocumentController::delete/$1');
+
 
         $routes->get('author', 'Admin\SubAuthorController::index');
         $routes->get('author-get/(:num)', 'Admin\SubAuthorController::getAuthor/$1');
@@ -80,7 +93,8 @@ $routes->group('admin', ['filter' => 'group:superadmin,admin,author'], function 
     |--------------------------------------------------------------------------
     */
     $routes->group('', ['filter' => 'group:author,admin,superadmin'], function ($routes) {
-        $routes->get('all-news', 'Admin\Post\ViewsController::index');
+        $routes->get('published-news', 'Admin\Post\ViewsController::index');
+        $routes->get('draft-news', 'Admin\Post\ViewsController::draft');
         $routes->get('create-news', 'Admin\Post\ViewsController::news');
         $routes->get('news-preview', 'Admin\Post\ViewsController::index');
         $routes->post('news/create', 'Admin\Post\CreatePostController::createPost');
@@ -108,6 +122,7 @@ $routes->group('admin', ['filter' => 'group:superadmin,admin,author'], function 
         $routes->get('get-comment', 'Admin\CommentsController::getPostComment');
         $routes->get('get-reply', 'Admin\CommentsController::getReply');
         $routes->get('get-media', 'Admin\MediaController::getMedia');
+        $routes->get('get-documents', 'Admin\DocumentController::getDocuments');
     });
 });
 

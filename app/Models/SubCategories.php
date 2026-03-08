@@ -42,9 +42,10 @@ class SubCategories extends Model
     {
         return $this->select('sub_categories.*,categories.cat AS category_name')
             ->join('categories', 'categories.id = sub_categories.cat_id', 'left')
+            ->orderBy('sub_categories.created_at', 'DESC')
             ->findAll();
     }
-    
+
     public function getSubCatsByCatId($id)
     {
         return $this->where(['cat_id' => $id, 'status' => 1])->findAll();
@@ -54,5 +55,4 @@ class SubCategories extends Model
     {
         return $this->where(['sub_cat_slug' => $slug, 'status' => 1])->first();
     }
-    
 }

@@ -78,8 +78,17 @@ class NewsPostModel extends Model
             ->get()
             ->getResultArray();
 
+        /** ---------- SUBCATEGORIES ---------- */
+        $post['childcategories'] = $db->table('news_post_child_categories npcc')
+            ->select('cc.id, cc.sub_cat_id, cc.child_cat_name')
+            ->join('child_categories cc', 'cc.id = npcc.child_category_id')
+            ->where('npcc.news_post_id', $postId)
+            ->get()
+            ->getResultArray();
+
         $post['category_ids']    = array_column($post['categories'], 'id');
         $post['subcategory_ids'] = array_column($post['subcategories'], 'id');
+        $post['childcategories_ids'] = array_column($post['childcategories'], 'id');
 
         /** ---------- TAGS ---------- */
         $post['tags'] = $db->table('news_post_tags npt')

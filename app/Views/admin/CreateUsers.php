@@ -68,7 +68,6 @@
                     if (res.success) {
                         showSuccessToast(res.message);
                         $("#createUser")[0].reset();
-                        console.log(res);
 
                         setTimeout(() => window.location.href = res.redirect, 1000);
                     } else {
@@ -83,7 +82,7 @@
                 },
                 error(e) {
                     showDangerToast('Something went wrong');
-                    console.log("User create ajax error", e);
+                    console.error("User create ajax error", e);
 
                 },
                 complete() {

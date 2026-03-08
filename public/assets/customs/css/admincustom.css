@@ -122,3 +122,17 @@ table tbody tr td {
 .select2-container--bootstrap .select2-selection--single {
     height: 48px !important;
 }
+
+.media-box .copy-link {
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    font-size: 12px;
+    padding: 4px;
+    cursor: pointer;
+    opacity: 0;
+    transition: 0.2s;
+}
+
+.media-box:hover .copy-link {
+    opacity: 1;
+}

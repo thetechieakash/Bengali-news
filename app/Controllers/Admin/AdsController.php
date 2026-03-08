@@ -51,9 +51,7 @@ class AdsController extends BaseController
                 'message' => 'Invalid request'
             ])->setStatusCode(400);
         }
-        // echo "<pre>";
-        // print_r($request->getPost());
-        // die();
+        
         $adType  = $request->getPost('ad_type');
 
         // =============================

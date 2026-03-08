@@ -32731,7 +32731,7 @@ div.tagsinput span.tag a {
   text-align: center;
 }
 .horizontal-menu .top-navbar .navbar-brand-wrapper .brand-logo-mini img {
-  width: calc(70px - 30px);
+  width: 125px;
   max-width: 100%;
   margin: auto;
 }
@@ -33400,7 +33400,7 @@ div.tagsinput span.tag a {
 .horizontal-menu.fixed-on-scroll .bottom-navbar {
   border-bottom: 1px solid #dee2e6;
 }
-@media (max-width: 991px) {
+@media (max-width: 776px) {
   .horizontal-menu {
     position: fixed;
     z-index: 1030;

@@ -74,7 +74,7 @@
                 },
                 error(e) {
                     showDangerToast('Something went wrong');
-                    console.log("User create ajax error", e);
+                    console.error("User create ajax error", e);
 
                 },
                 complete() {

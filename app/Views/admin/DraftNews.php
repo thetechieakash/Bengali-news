@@ -64,7 +64,7 @@
                                         <?php endif; ?>
 
                                         <?php if ($post['approved_comments'] == 0 && $post['pending_comments'] == 0): ?>
-                                            <span class="badge badge-outline-danger">
+                                            <span class="badge badge-danger">
                                                 No Comments
                                             </span>
                                         <?php endif; ?>
@@ -85,10 +85,10 @@
                                     </td>
                                     <td>
                                         <div class="dropdown">
-                                            <button class="btn btn-success btn-sm dropdown-toggle" type="button" id="dropdownAction" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <button class="btn btn-success btn-sm dropdown-toggle" type="button"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                 Modify
                                             </button>
-                                            <div class="dropdown-menu" aria-labelledby="dropdownAction">
+                                            <div class="dropdown-menu" >
                                                 <button class="dropdown-item editBtn"
                                                     data-id="<?= $post['id'] ?>">Edit</button>
                                                 <button class="dropdown-item deleteBtn"

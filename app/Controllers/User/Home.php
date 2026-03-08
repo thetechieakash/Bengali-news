@@ -35,7 +35,9 @@ class Home extends BaseController
             'rightAds'              => $this->adsModel->getAdsForPage('home', 'right', true),
             'blockAds'              => $this->adsModel->getAdsForPage('home', 'block', true),
         ];
-
+// echo "<pre>";
+// print_r($this->data);
+// die;
         return view('user/Home', array_merge($this->data, $data));
     }
 

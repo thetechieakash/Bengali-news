@@ -6,52 +6,54 @@ use App\Controllers\BaseController;
 use App\Models\MediaModel;
 use CodeIgniter\Exceptions\PageNotFoundException;
 
-class MediaController extends BaseController
+class DocumentController extends BaseController
 {
     public function index()
     {
         $data = [
-            'pageTitle' => 'Media Manager',
+            'pageTitle' => 'Documents Manager',
         ];
-        return view('admin/Media', $data);
+        return view('admin/Documents', $data);
     }
 
     public function upload()
     {
         $files = $this->request->getFiles();
 
-        if (!isset($files['media'])) {
+        if (!isset($files['document'])) {
             return $this->response->setJSON([
                 'success' => false,
-                'error'   => 'No files selected'
+                'error' => 'No files selected'
             ]);
         }
 
-        $mediaModel = new MediaModel();
+        $docModel = new MediaModel();
 
         $year  = date('Y');
         $month = date('m');
 
-        $path = FCPATH . "uploads/$year/$month/images/";
+        $path = FCPATH . "uploads/$year/$month/documents/";
 
         if (!is_dir($path)) {
             mkdir($path, 0775, true);
         }
 
-        foreach ($files['media'] as $file) {
+        foreach ($files['document'] as $file) {
 
             if (!$file->isValid()) {
                 continue;
             }
 
+            if ($file->getClientMimeType() !== 'application/pdf') {
+                continue;
+            }
+
             $originalName = $file->getClientName();
 
-            // sanitize filename
             $fileName = preg_replace('/[^A-Za-z0-9\-\_\.]/', '-', $originalName);
 
             $targetPath = $path . $fileName;
 
-            // prevent overwrite
             $i = 1;
             $nameOnly = pathinfo($fileName, PATHINFO_FILENAME);
             $ext = pathinfo($fileName, PATHINFO_EXTENSION);
@@ -64,38 +66,45 @@ class MediaController extends BaseController
 
             $file->move($path, $fileName);
 
-            $relativePath = "uploads/$year/$month/images/$fileName";
+            $relativePath = "uploads/$year/$month/documents/$fileName";
 
-            $mediaModel->insert([
+            $docModel->insert([
                 'file_name' => $fileName,
                 'file_path' => $relativePath,
                 'file_type' => $file->getClientMimeType(),
-                'folder'    => "$year/$month/images",
+                'folder'    => "$year/$month/documents",
                 'file_size' => $file->getSize()
             ]);
         }
 
         return $this->response->setJSON([
             'success' => true,
-            'message' => 'Images uploaded successfully.'
+            'message' => 'PDF uploaded successfully'
         ]);
     }
 
     public function delete($id)
     {
-        $mediaModel = new MediaModel();
-        $media = $mediaModel->find($id);
-        if (!$media) {
-            return $this->response->setJSON(['error' => 'Not found']);
+        $docModel = new MediaModel();
+        $doc = $docModel->find($id);
+        if (!$doc) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Document not found'
+            ]);
         }
-        if (file_exists(FCPATH . $media['file_path'])) {
-            unlink(FCPATH . $media['file_path']);
+        $filePath = FCPATH . $doc['file_path'];
+        if (file_exists($filePath)) {
+            unlink($filePath);
         }
-        $mediaModel->delete($id);
-        return $this->response->setJSON(['success' => true]);
+        $docModel->delete($id);
+        return $this->response->setJSON([
+            'success' => true
+        ]);
     }
 
-    public function getMedia()
+
+    public function getDocuments()
     {
         if (!$this->request->isAJAX()) {
             throw PageNotFoundException::forPageNotFound();
@@ -104,17 +113,17 @@ class MediaController extends BaseController
         $search = $this->request->getGet('search');
         $limit = 30;
         $offset = ($page - 1) * $limit;
-        $mediaModel = new MediaModel();
-        $builder = $mediaModel
-            ->like('file_type', 'image', 'after')
+        $docModel = new MediaModel();
+        $builder = $docModel
+            ->where('file_type', 'application/pdf')
             ->orderBy('id', 'DESC');
         if ($search) {
             $builder->like('file_name', $search);
         }
-        $media = $builder->findAll($limit, $offset);
+        $docs = $builder->findAll($limit, $offset);
         return $this->response->setJSON([
-            'data' => $media,
-            'next_page' => count($media) === $limit ? $page + 1 : null
+            'data' => $docs,
+            'next_page' => count($docs) === $limit ? $page + 1 : null
         ]);
     }
 }

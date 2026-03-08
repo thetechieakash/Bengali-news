@@ -63,10 +63,10 @@
                                     </td>
                                     <td>
                                         <div class="dropdown">
-                                            <button class="btn btn-success btn-sm dropdown-toggle" type="button" id="dropdownAction" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <button class="btn btn-success btn-sm dropdown-toggle" type="button"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                 Modify
                                             </button>
-                                            <div class="dropdown-menu" aria-labelledby="dropdownAction">
+                                            <div class="dropdown-menu" >
                                                 <?php if ($user->deleted_at): ?>
                                                     <button class="dropdown-item restorebtn" data-id="<?= $user->id ?>">Reactivate</button>
                                                 <?php else: ?>

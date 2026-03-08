@@ -7,10 +7,10 @@
         </div>
         <div>
             <a class="navbar-brand brand-logo" href="<?= base_url() ?>">
-                <img src="<?= base_url() ?>assets/images/bengali-logo.svg" alt="logo" />
+                <img src="<?= base_url() ?>assets/images/purulia_logo.png" alt="logo" />
             </a>
             <a class="navbar-brand brand-logo-mini" href="<?= base_url() ?>">
-                <img src="<?= base_url() ?>assets/images/bangla-logo-mini.svg" alt="logo" />
+                <img src="<?= base_url() ?>assets/images/purulia_logo.png" alt="logo" />
             </a>
         </div>
     </div>

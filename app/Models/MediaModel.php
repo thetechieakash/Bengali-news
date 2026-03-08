@@ -17,5 +17,8 @@ class MediaModel extends Model
         'file_size',
     ];
 
-    protected $useTimestamps = false;
+    protected $useTimestamps = true;
+    protected $dateFormat    = 'datetime';
+    protected $createdField  = 'created_at';
+    protected $updatedField  = 'updated_at';
 }

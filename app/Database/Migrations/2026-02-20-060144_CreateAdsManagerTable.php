@@ -49,7 +49,8 @@ class CreateAdsManagerTable extends Migration
             ],
 
             'position' => [
-                'type' => 'JSON',
+                'type' => 'VARCHAR',
+                'constraint' => 150,
                 'null' => true,
             ],
 

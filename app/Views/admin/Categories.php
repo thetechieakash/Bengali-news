@@ -8,7 +8,7 @@
 <?= $this->endSection() ?>
 <?= $this->section('content') ?>
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-12">
         <div class="card" id="addcatcard">
             <div class="card-body">
                 <h4 class="card-title">Add catagories</h4>
@@ -17,10 +17,22 @@
                 </p> -->
                 <form class="forms-sample" id="catform" action="<?= base_url('admin/catagories') ?>" method="post">
                     <?= csrf_field() ?>
-                    <div class="form-group">
-                        <label for="category">Category</label>
-                        <input type="text" class="form-control" name="category" id="category" placeholder="Category Name">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="category">Category</label>
+                                <input type="text" class="form-control" name="category" id="category" placeholder="Category Name">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="slug">Slug</label>
+                                <input type="text" class="form-control" name="slug" id="slug" placeholder="Slug Name">
+                            </div>
+                        </div>
                     </div>
+
+
                     <div class="form-group">
                         <div class="d-flex align-items-center gap-2">
                             <label class="toggle-switch mb-0">
@@ -35,7 +47,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-8 mt-3 mt-md-0">
+    <div class="col-12 mt-3">
         <div class="card">
             <div class="card-body">
                 <?php if (!empty($cats)): ?>
@@ -84,10 +96,10 @@
                                                 </td>
                                                 <td>
                                                     <div class="dropdown">
-                                                        <button class="btn btn-success btn-sm dropdown-toggle" type="button" id="dropdownAction" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                        <button class="btn btn-success btn-sm dropdown-toggle" type="button"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                             Modify
                                                         </button>
-                                                        <div class="dropdown-menu" aria-labelledby="dropdownAction">
+                                                        <div class="dropdown-menu" >
                                                             <button class="dropdown-item editBtn" data-id="<?= $cat['id'] ?>"
                                                                 data-name="<?= $cat['cat'] ?>"
                                                                 data-slug="<?= $cat['slug'] ?>"

@@ -75,7 +75,6 @@
                         showDangerToast(res.message);
                         return;
                     }
-                    console.log(res);
 
                     loadCommentTable(res.comments);
                     $('#commentModal').modal('show');

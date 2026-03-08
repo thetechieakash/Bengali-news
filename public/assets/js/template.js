@@ -100,7 +100,7 @@
     })
 
     $(window).scroll(function () {
-      if (window.matchMedia('(min-width: 992px)').matches) {
+      if (window.matchMedia('(min-width: 776px)').matches) {
         var header = $('.horizontal-menu');
         if ($(window).scrollTop() >= 70) {
           $(header).addClass('fixed-on-scroll');

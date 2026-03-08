@@ -11,14 +11,18 @@ class SubCatagoriesController extends BaseController
 {
     public function index()
     {
-        $model = new SubCategories();
-        $allSubCats = $model->getAllSubCats();
+        $catModel = new Categories();
+        $allCats = $catModel->getAllCats();
+        $subModel = new SubCategories();
+        $allSubCats = $subModel->getAllSubCats();
         $data = [
             'pageTitle' => 'Sub Categories',
+            'cats' => $allCats,
             'subCats' => $allSubCats,
         ];
         return view('admin/SubCategories', $data);
     }
+
     public function createSubCategory()
     {
         $data = $this->request->getJSON(true);
@@ -35,12 +39,12 @@ class SubCatagoriesController extends BaseController
             ]);
         }
 
-        $subCatSlug = $slugHelper->slugify($data['subCatName']);
+        $subCatSlug = $slugHelper->slugify($data['subCatSlug']);
         $insertableData = [
             'cat_id'        => $data['id'],
             'sub_cat_name'  => trim($data['subCatName']),
             'sub_cat_slug'  => $subCatSlug,
-            'is_active'     => !empty($data['subCatStatus']) ? 1 : 0,
+            'is_active'     => 1,
             'status'        => 1,
         ];
         // die();
@@ -68,13 +72,15 @@ class SubCatagoriesController extends BaseController
 
         $subCatId   = $data['subCatId'] ?? null;
         $catId      = $data['catId'] ?? null;
-        $newCatName = $data['newCatName'] ?? null;
+        $newCatName = trim($data['newCatName']) ?? null;
+        $newCatSlug = trim($data['newCatSlug']) ?? null;
 
         // Validate required fields
         if (
             !isset($subCatId) ||
             !isset($catId) ||
-            trim($newCatName) === ''
+            $newCatName === '' ||
+            $newCatSlug === '' 
         ) {
             return $this->response->setJSON([
                 'success' => false,
@@ -104,19 +110,11 @@ class SubCatagoriesController extends BaseController
             ]);
         }
 
-        // No changes detected
-        if ($existingSubCat['sub_cat_name'] === trim($newCatName)) {
-            return $this->response->setJSON([
-                'success' => false,
-                'message' => 'No changes detected'
-            ]);
-        }
-
         $slugHelper = new Slug();
 
         $updateData = [
-            'sub_cat_name' => trim($newCatName),
-            'sub_cat_slug' => $slugHelper->slugify(trim($newCatName)),
+            'sub_cat_name' => $newCatName,
+            'sub_cat_slug' => $slugHelper->slugify($newCatSlug),
         ];
 
         $subCatModel->update($subCatId, $updateData);

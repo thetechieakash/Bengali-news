@@ -18,10 +18,16 @@ $user = auth()->user();
         <?php if ($user->inGroup('author', 'admin', 'superadmin')): ?>
             <li class="nav-item nav-category">News Manager</li>
 
-            <li class="nav-item <?= $uri === 'admin/all-news' ? 'active' : '' ?>">
-                <a class="nav-link" href="<?= base_url('admin/all-news') ?>">
+            <li class="nav-item <?= $uri === 'admin/published-news' ? 'active' : '' ?>">
+                <a class="nav-link" href="<?= base_url('admin/published-news') ?>">
                     <i class="fa fa-newspaper-o"></i>
-                    <span class="menu-title">All News</span>
+                    <span class="menu-title">Published News</span>
+                </a>
+            </li>
+            <li class="nav-item <?= $uri === 'admin/draft-news' ? 'active' : '' ?>">
+                <a class="nav-link" href="<?= base_url('admin/draft-news') ?>">
+                    <i class="fa fa-newspaper-o"></i>
+                    <span class="menu-title">Draft News</span>
                 </a>
             </li>
 
@@ -67,6 +73,12 @@ $user = auth()->user();
                     <span class="menu-title">Media</span>
                 </a>
             </li>
+            <li class="nav-item <?= $uri === 'admin/documents' ? 'active' : '' ?>">
+                <a class="nav-link" href="<?= base_url('admin/documents') ?>">
+                    <i class="fa fa-tags"></i>
+                    <span class="menu-title">PDF</span>
+                </a>
+            </li>
             <li class="nav-item nav-category">Categories Manager</li>
 
             <li class="nav-item <?= $uri === 'admin/categories' ? 'active' : '' ?>">
@@ -75,11 +87,16 @@ $user = auth()->user();
                     <span class="menu-title">Categories</span>
                 </a>
             </li>
-
             <li class="nav-item <?= $uri === 'admin/sub-categories' ? 'active' : '' ?>">
                 <a class="nav-link" href="<?= base_url('admin/sub-categories') ?>">
                     <i class="fa fa-sitemap"></i>
                     <span class="menu-title">Sub Categories</span>
+                </a>
+            </li>
+            <li class="nav-item <?= $uri === 'admin/child-categories' ? 'active' : '' ?>">
+                <a class="nav-link" href="<?= base_url('admin/child-categories') ?>">
+                    <i class="fa fa-sitemap"></i>
+                    <span class="menu-title">Child Categories</span>
                 </a>
             </li>
             <li class="nav-item nav-category">ADS Manager</li>

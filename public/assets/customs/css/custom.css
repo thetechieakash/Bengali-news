@@ -21,6 +21,7 @@ h5,
 h6 {
     font-family: 'NotoSerifBengali', 'Arial', 'Nunito', 'Helvetica', sans-serif !important;
 }
+
 /* scrollbar  */
 /* width */
 ::-webkit-scrollbar {
@@ -42,6 +43,15 @@ h6 {
     /* transition: 100ms; */
     background: #777;
 }
+
+.horizontal-menu .top-navbar .navbar-brand-wrapper .navbar-brand img {
+    width: 150PX;
+}
+
+.horizontal-menu .top-navbar .navbar-brand-wrapper .brand-logo-mini img {
+    width: 125px !important;
+}
+
 .nav.navbar-nav li a {
     font-size: 16px !important;
     font-weight: 400 !important;
@@ -324,6 +334,52 @@ h4,
     /* height: 450px !important; */
     border: none;
 }
+.entry-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 12px;
+}
+
+.entry-content table td,
+.entry-content table th {
+    padding: 12px 15px;
+    vertical-align: top;
+    border: 1px solid
+}
+
+/* alternate row background */
+
+.entry-content table tr:nth-child(even) {
+    background: #e8e8e8;
+}
+
+/* first column wider */
+.entry-content table td:first-child {
+    width: 45%;
+}
+
+/* second column */
+.entry-content table td:nth-child(2) {
+    width: 45%;
+}
+
+/* action column */
+.entry-content table td:last-child {
+    width: 10%;
+    text-align: right;
+}
+
+/* download link */
+.entry-content table a {
+    color: #e74c3c;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.entry-content table a:hover {
+    text-decoration: underline;
+}
 
 .horizontal-menu .bottom-navbar .page-navigation>.nav-item.mega-menu .submenu li a.sub-cat::before {
     position: absolute;
@@ -388,20 +444,50 @@ h4,
         color: #000000;
     }
 }
-.warn_div{
+
+.warn_div {
     padding: 15px;
     border: dashed;
     border-color: #f00;
     color: #f00;
     text-align: center;
 }
-.warn_div h5, .warn_div p{
+
+.warn_div h5,
+.warn_div p {
     color: #f00;
 }
-.warn_div p{
+
+.warn_div p {
     font-size: 12px;
     font-weight: 400;
 }
-.grecaptcha-badge{
+
+.grecaptcha-badge {
     opacity: 0 !important;
+}
+
+.glightbox-container .gslide-image img {
+    max-width: 90vw !important;
+    max-height: 90vh !important;
+    object-fit: contain !important;
+}
+.gslide-media {
+    overflow: hidden !important;
+}
+.gslide-image img {
+    border: 5px solid red !important;
+}
+.child-menu {
+    list-style: none;
+    padding: 0 0 0 15px !important;
+}
+
+.child-menu a {
+    /* font-size: 13px; */
+    color: #555;
+}
+
+.child-menu a:hover {
+    color: #000;
 }

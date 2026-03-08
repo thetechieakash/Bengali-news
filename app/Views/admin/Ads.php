@@ -35,6 +35,11 @@
                             <option value="script">Script</option>
                         </select>
                     </div>
+                    <div class="script-wrapper mb-3 d-none">
+                        <label class="form-label">Ad Script</label>
+                        <textarea name="script" class="form-control" rows="4"
+                            placeholder="Paste ad script here..."></textarea>
+                    </div>
                     <div class="image-wrapper mb-3">
                         <label class="form-label">Ad Image</label>
                         <input type="file"
@@ -43,15 +48,7 @@
                             name="image"
                             accept="image/*">
                     </div>
-                    <div class="script-wrapper mb-3 d-none">
-                        <label class="form-label">Ad Script</label>
-                        <textarea name="script" class="form-control" rows="4"
-                            placeholder="Paste ad script here..."></textarea>
-                    </div>
-                    <div class="url-wrapper mb-3">
-                        <label class="form-label">Redirect URL (optional)</label>
-                        <input type="url" name="redirect_url" class="form-control" placeholder="https://example.com">
-                    </div>
+
                     <div class="mb-3">
                         <label class="form-label d-block">Show On Pages</label>
                         <div class="form-check-inline">

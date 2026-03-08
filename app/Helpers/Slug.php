@@ -17,7 +17,9 @@ class Slug
         }
 
         // 3. Remove punctuation (keep letters, numbers, AND combining marks)
-        $text = preg_replace('/[^\p{L}\p{N}\p{M}\s]+/u', '', $text);
+        // Allow divider also
+        $allowedDivider = preg_quote($divider, '/');
+        $text = preg_replace('/[^\p{L}\p{N}\p{M}\s' . $allowedDivider . ']+/u', '', $text);
 
         // 4. Replace whitespace with divider
         $text = preg_replace('/\s+/u', $divider, $text);

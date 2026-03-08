@@ -189,7 +189,7 @@
         $(document).on('click', '.viewpost', function(e) {
             e.preventDefault();
             const id = $(this).data('id');
-            window.location.href = "<?= base_url('admin/all-news') ?>?highlight=" + id;
+            window.location.href = "<?= base_url('admin/published-news') ?>?highlight=" + id;
         })
         /* -------------------------------
          * OPEN REPLY MODAL

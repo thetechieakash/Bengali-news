@@ -7,6 +7,7 @@ use App\Models\{
     NewsPostModel,
     NewsPostCategoryModel,
     NewsPostSubCategoryModel,
+    NewsPostChildCategoryModel,
     NewsPostTagModel,
     NewsPostThumbnailModel,
     MediaModel
@@ -45,13 +46,14 @@ class UpdatePostController extends BaseController
 
             $this->syncPivot(new NewsPostCategoryModel(), $id, 'category_id', $data['categories']);
             $this->syncPivot(new NewsPostSubCategoryModel(), $id, 'sub_category_id', $data['subcategories']);
+            $this->syncPivot(new NewsPostChildCategoryModel(), $id, 'child_category_id', $data['childcategories']);
             $this->syncPivot(new NewsPostTagModel(), $id, 'tag_id', $data['tags']);
 
             $this->handleThumbnail($id, $data);
 
             $db->transCommit();
 
-            return $this->successResponse();
+            return $this->successResponse($data['status']);
         } catch (\Throwable $e) {
 
             $db->transRollback();
@@ -62,7 +64,11 @@ class UpdatePostController extends BaseController
     private function getPostOrFail(int $id)
     {
         $post = (new NewsPostModel())->find($id);
-        if (!$post) throw new \Exception('Post not found.');
+
+        if (!$post) {
+            throw new \Exception('Post not found.');
+        }
+
         return $post;
     }
 
@@ -78,11 +84,13 @@ class UpdatePostController extends BaseController
             'description'   => trim($req['description'] ?? ''),
             'categories'    => array_unique(array_map('intval', (array)($req['categories'] ?? []))),
             'subcategories' => array_unique(array_map('intval', (array)($req['subcategories'] ?? []))),
+            'childcategories' => array_unique(array_map('intval', (array)($req['childcategories'] ?? []))),
             'tags'          => array_unique(array_map('intval', (array)($req['tags'] ?? []))),
             'thumbType'     => $req['thumbnail_type'] ?? 'link',
             'thumbLink'     => trim($req['thumbnail_link'] ?? ''),
             'selectedMedia' => trim($req['selected_media'] ?? ''),
             'thumbRemoved'  => (int)($req['thumbnail_removed'] ?? 0),
+
             'status'        => isset($req['status']) ? (int)$req['status'] : (int)$post['status'],
         ];
     }
@@ -130,14 +138,10 @@ class UpdatePostController extends BaseController
         if ($data['thumbType'] === 'image') {
             $url  = $this->uploadImage();
             $type = $url ? 'image' : null;
-        }
-
-        if ($data['thumbType'] === 'link' && $data['thumbLink']) {
+        } elseif ($data['thumbType'] === 'link' && $data['thumbLink']) {
             $type = 'link';
             $url  = $data['thumbLink'];
-        }
-
-        if ($data['thumbType'] === 'media' && $data['selectedMedia']) {
+        } elseif ($data['thumbType'] === 'media' && $data['selectedMedia']) {
             $type = 'media';
             $url  = $data['selectedMedia'];
         }
@@ -163,21 +167,25 @@ class UpdatePostController extends BaseController
             throw new \Exception('Invalid image type.');
         }
 
-        $folder = date('m_y');
-        $path   = FCPATH . "uploads/posts/thumbnails/$folder/";
+        $year  = date('Y');
+        $month = date('m');
 
-        if (!is_dir($path)) mkdir($path, 0775, true);
+        $path = FCPATH . "uploads/$year/$month/images/";
+
+        if (!is_dir($path)) {
+            mkdir($path, 0775, true);
+        }
 
         $newName = $file->getRandomName();
         $file->move($path, $newName);
 
-        $relativePath = "uploads/posts/thumbnails/$folder/$newName";
+        $relativePath = "uploads/$year/$month/images/$newName";
 
         (new MediaModel())->insert([
             'file_name' => $newName,
             'file_path' => $relativePath,
             'file_type' => 'image',
-            'folder'    => $folder,
+            'folder'    => "$year/$month/image",
             'file_size' => $file->getSize()
         ]);
 
@@ -207,12 +215,13 @@ class UpdatePostController extends BaseController
         }
     }
 
-    private function successResponse()
+    private function successResponse($status)
     {
         return $this->response->setJSON([
-            'success' => true,
-            'message' => 'Post updated successfully',
-            'redirect' => base_url('admin/all-news')
+            'success'  => true,
+            'message'  => 'Post updated successfully',
+            'status' => $status,
+            'redirect' => $status == 1 ? base_url('admin/published-news') : base_url('admin/draft-news')
         ]);
     }
 

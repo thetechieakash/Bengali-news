@@ -5,6 +5,7 @@ namespace App\Controllers\Admin;
 use App\Controllers\BaseController;
 use App\Models\NewsPostModel;
 use App\Models\Categories;
+use App\Models\ChildCategories;
 use App\Models\SubCategories;
 use App\Models\TagModel;
 use App\Models\NewsPostCommentModel;
@@ -17,6 +18,7 @@ class DashboardController extends BaseController
         $postModel = new NewsPostModel();
         $catModel = new Categories();
         $subCatModel = new SubCategories();
+        $childCatModel = new ChildCategories();
         $tagModel = new TagModel();
         $commentModel = new NewsPostCommentModel();
         $visitModel = new WebsiteVisitModel();
@@ -27,6 +29,7 @@ class DashboardController extends BaseController
         $draftPosts       = $postModel->where('status', '0')->countAllResults();
         $totalCategories  = $catModel->countAll();
         $totalSubCats     = $subCatModel->countAll();
+        $totalChildCats     = $childCatModel->countAll();
         $totalTags        = $tagModel->countAll();
         $totalComments    = $commentModel->countAll();
         $publishedComments    = $commentModel->where('status', 1)->countAllResults();
@@ -56,6 +59,7 @@ class DashboardController extends BaseController
             'draftPosts'       => $draftPosts,
             'totalCategories'  => $totalCategories,
             'totalSubCats'     => $totalSubCats,
+            'totalChildCats'   => $totalChildCats,
             'totalTags'        => $totalTags,
             'totalComments'    => $totalComments,
             'publishedComments' => $publishedComments,

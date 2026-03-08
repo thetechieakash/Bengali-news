@@ -3,7 +3,7 @@
         <div class="modal-content">
 
             <div class="modal-header">
-                <h5 class="modal-title">Edit Category</h5>
+                <h5 class="modal-title">Edit Sub Category</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
@@ -14,8 +14,12 @@
                     <input type="hidden" id="cat_id">
                     <input type="hidden" id="cat_slug">
                     <div class="form-group">
-                        <label for="sub_cat_name">Category Name</label>
+                        <label for="sub_cat_name">Sub Category Name</label>
                         <input type="text" class="form-control" id="sub_cat_name" name="sub_cat_name" placeholder="Category Name">
+                    </div>
+                    <div class="form-group">
+                        <label for="sub_cat_slug">Slug Name</label>
+                        <input type="text" class="form-control" id="sub_cat_slug" name="sub_cat_slug" placeholder="Category Name">
                     </div>
                 </form>
             </div>

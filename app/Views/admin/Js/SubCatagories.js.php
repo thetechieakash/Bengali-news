@@ -22,17 +22,76 @@
 
             return result.isConfirmed;
         };
+        $('#subCatform').on('submit', async function(e) {
+            e.preventDefault();
 
+            const categoryId = $('#category').val();
+            const subCatName = $('#sub_cat_name').val().trim();
+            const subCatSlug = $('#sub_cat_slug').val().trim();
+
+            if (!categoryId) {
+                showDangerToast('Please select a category');
+                return;
+            }
+
+            if (!subCatName) {
+                showDangerToast('Sub category name is required');
+                return;
+            }
+
+            if (!subCatSlug) {
+                showDangerToast('Sub category slug is required');
+                return;
+            }
+
+            try {
+                const response = await fetch("<?= base_url('admin/sub-categories') ?>", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id: categoryId,
+                        subCatName: subCatName,
+                        subCatSlug: subCatSlug
+                    })
+                });
+
+                const resp = await response.json();
+
+                if (resp.success) {
+                    showSuccessToast(resp.message);
+                    $('#subCatform')[0].reset();
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
+                } else {
+                    if (typeof resp.errors === "object") {
+                        Object.values(resp.errors).forEach(err => {
+                            showDangerToast(err);
+                        });
+                    } else {
+                        showDangerToast(resp.message);
+                    }
+                }
+
+            } catch (error) {
+                console.error('Sub category ajax error:', error);
+                showDangerToast('Something went wrong, try again later');
+            }
+        });
         // Open modal function 
         $(document).on('click', '.editBtn', function() {
 
             let id = $(this).data('id');
             let catId = $(this).data('cat-id');
             let name = $(this).data('name');
+            let slug = $(this).data('slug');
 
             $('#sub_cat_id').val(id);
             $('#cat_id').val(catId);
-            $('#sub_cat_name').val(name);
+            $('#newSubCat #sub_cat_name').val(name);
+            $('#newSubCat #sub_cat_slug').val(slug);
 
             $('#editSubCatModal').modal('show');
         });
@@ -131,7 +190,7 @@
 
         // Update functions 
 
-        $(document).on('click', '.updateSubCatBtn', async function(e) {
+        $(document).on('click', '#updateSubCatBtn', async function(e) {
             e.preventDefault();
 
             const confirmed = await swalConfirm({
@@ -142,7 +201,8 @@
 
             let subCatId = $('#sub_cat_id').val();
             let catId = $('#cat_id').val();
-            let newCatName = $('#sub_cat_name').val();
+            let newCatName = $('#newSubCat #sub_cat_name').val();
+            let newCatSlug = $('#newSubCat #sub_cat_slug').val();
 
             try {
                 const response = await fetch("<?= base_url('admin/sub-categories/update') ?>", {
@@ -153,7 +213,8 @@
                     body: JSON.stringify({
                         subCatId,
                         catId,
-                        newCatName
+                        newCatName,
+                        newCatSlug
                     }),
                 });
                 const data = await response.json();
@@ -212,6 +273,73 @@
                 console.error('Delete ajax error', error);
                 showDangerToast('Something went wrong, try again later');
             }
+        });
+
+        $(document).on('click', '.addChildCat', async function(e) {
+            e.preventDefault();
+            const id = $(this).data('id');
+            $('#sub_cat_id').val(id)
+            $('#createChildCatModal').modal('show');
+            
+        });
+        $('#createChildCatBtn').on('click', async function(e) {
+            e.preventDefault();
+
+            const childCatName = $('#child_cat_name').val().trim();
+            const childCatSlug = $('#child_cat_slug').val().trim();
+
+            if (!childCatName) {
+                showDangerToast('Child category name required');
+                return;
+            }
+
+            if (!childCatSlug) {
+                showDangerToast('Slug required');
+                return;
+            }
+
+            try {
+
+                const response = await fetch("<?= base_url('admin/child-categories') ?>", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "<?= csrf_token() ?>": "<?= csrf_hash() ?>",
+                        sub_cat_id: $('#sub_cat_id').val(),
+                        child_cat_name: childCatName,
+                        child_cat_slug: childCatSlug
+                    })
+                });
+
+                const resp = await response.json();
+
+                if (resp.success) {
+
+                    showSuccessToast(resp.message);
+
+                    $('#childCatUpdate')[0].reset();
+                    $('#sub_cat_id').val(null);
+                    $('#createChildCatModal').modal('hide');
+
+                } else {
+
+                    if (typeof resp.errors === "object") {
+                        Object.values(resp.errors).forEach(err => showDangerToast(err));
+                    } else {
+                        showDangerToast(resp.message);
+                    }
+
+                }
+
+            } catch (error) {
+
+                console.error('Child category ajax error:', error);
+                showDangerToast('Something went wrong, try again later');
+
+            }
+
         });
     });
 </script>

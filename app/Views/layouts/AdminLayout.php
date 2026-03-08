@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="<?= base_url() ?>assets/css/vertical-layout-light/style.css">
     <!-- endinject -->
     <link rel="shortcut icon" href="<?= base_url() ?>assets/images/bangla-logo-mini.svg" />
-    <link rel="stylesheet" href="<?= base_url('assets/customs/css/admincustom.css') ?>?v=6.5">
+    <link rel="stylesheet" href="<?= base_url('assets/customs/css/admincustom.css') ?>?v=7.5">
     <style>
         #global-loader {
             position: fixed;

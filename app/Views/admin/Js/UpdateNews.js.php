@@ -1,6 +1,8 @@
 <script>
     const selectedSubCatIds = <?= json_encode($post['subcategory_ids'] ?? []) ?>;
     const preloadedSubCats = <?= json_encode($post['subcategories'] ?? []) ?>;
+    const selectedChildCatIds = <?= json_encode($post['childcategories_ids'] ?? []) ?>;
+    const preloadedChildCats = <?= json_encode($post['childcategories'] ?? []) ?>;
     $(function() {
         // CKEDITOR config
         CKEDITOR.replace('editor', {
@@ -43,6 +45,7 @@
         let mediaPage = 1;
         let mediaLoading = false;
         let mediaHasMore = true;
+        let mediaSearch = '';
 
         function initLazyLoading() {
 
@@ -56,7 +59,6 @@
 
                         const img = entry.target;
                         img.src = img.dataset.src;
-                        img.classList.remove('lazy-media');
 
                         observer.unobserve(img);
                     }
@@ -82,7 +84,10 @@
                 $('#media-container').append('<div class="text-center loading-media">Loading...</div>');
             }
 
-            $.get("<?= base_url('admin/api/get-media') ?>?page=" + mediaPage, function(res) {
+            $.get("<?= base_url('admin/api/get-media') ?>", {
+                page: mediaPage,
+                search: mediaSearch
+            }, function(res) {
 
                 $('.loading-media').remove();
 
@@ -104,39 +109,46 @@
                     return;
                 }
 
-                let html = mediaPage === 1 ? '<div class="row" id="media-grid">' : '';
+                let html = '';
 
                 images.forEach(function(image) {
 
                     const fullSrc = "<?= base_url() ?>" + image.file_path;
 
                     html += `
-                <div class="col-3 col-md-2 mb-3">
-                    <div class="position-relative media-wrapper" style="cursor:pointer;">
-                        
-                        <img src="https://placehold.co/300x200?text=Loading..."
-                                data-src="${fullSrc}"
-                                data-path="${image.file_path}"
-                                class="img-fluid rounded lazy-media"
-                                style="height:100px;object-fit:cover;">
+        <div class="col-3 col-md-2 mb-3">
+            <div class="position-relative media-wrapper" style="cursor:pointer;">
+                
+                <img src="https://placehold.co/300x200?text=Loading..."
+                    data-src="${fullSrc}"
+                    data-path="${image.file_path}"
+                    class="img-fluid rounded lazy-media"
+                    style="height:100px;object-fit:cover;">
 
-                        <div class="media-check position-absolute top-0 end-0 m-1 d-none">
-                            <div class="bg-success rounded-circle d-flex align-items-center justify-content-center"
-                                    style="width:22px;height:22px;">
-                                <i class="fa fa-check text-white" style="font-size:12px;"></i>
-                            </div>
-                        </div>
-
+                <div class="media-check position-absolute top-0 end-0 m-1 d-none">
+                    <div class="bg-success rounded-circle d-flex align-items-center justify-content-center"
+                        style="width:22px;height:22px;">
+                        <i class="fa fa-check text-white" style="font-size:12px;"></i>
                     </div>
                 </div>
-            `;
+
+            </div>
+        </div>
+    `;
                 });
 
                 if (mediaPage === 1) {
-                    html += '</div>';
-                    $('#media-container').html(html);
+
+                    $('#media-container').html(`
+        <div class="row" id="media-grid">
+            ${html}
+        </div>
+    `);
+
                 } else {
+
                     $('#media-grid').append(html);
+
                 }
 
                 initLazyLoading();
@@ -149,6 +161,54 @@
                 }
 
                 applyPreselectedMedia();
+            });
+        }
+        let searchTimer;
+
+        $('#mediaSearch').on('keyup', function() {
+
+            clearTimeout(searchTimer);
+
+            searchTimer = setTimeout(() => {
+
+                mediaSearch = $(this).val().trim();
+
+                mediaPage = 1;
+                mediaHasMore = true;
+                mediaLoading = false;
+
+                $('#media-container').html('');
+
+                loadMediaImages();
+
+            }, 300);
+
+        });
+
+        function applyPreselectedMedia() {
+
+            const preselected = $('#selected_media').val();
+            if (!preselected) return;
+
+            $('.media-wrapper').each(function() {
+
+                const img = $(this).find('img');
+
+                if (img.data('path') === preselected) {
+
+                    const src = img.data('src');
+
+                    $(this).addClass('selected');
+                    $(this).find('.media-check').removeClass('d-none');
+
+                    const imgHtml = `
+                <img src="${src}" style="width:200px;height:150px;object-fit:cover"><br>
+                <a href="javascript:void(0)" id="changeMediaxx" class="btn btn-dark btn-sm mt-3">Change</a>
+            `;
+
+                    $("#previewImage").html(imgHtml).show();
+                    $('#thumbnail-media-wrapper').hide();
+                }
             });
         }
 
@@ -175,7 +235,10 @@
                 $('#thumbnail-link-wrapper').hide();
                 $('#thumbnail-upload-wrapper').hide();
                 $('#thumbnail-media-wrapper').show();
-                loadMediaImages();
+                if ($('#media-container').children().length === 0) {
+                    loadMediaImages();
+                }
+                applyPreselectedMedia();
             }
         }
 
@@ -194,6 +257,7 @@
             const img = $(this).find('img');
             const check = $(this).find('.media-check');
             const path = img.data('path');
+            const src = img.attr('src') || img.data('src');
 
             if ($(this).hasClass('selected')) {
 
@@ -213,44 +277,20 @@
 
                 selectedMedia = path;
                 $('#selected_media').val(path);
+
+                const imgHtml = `
+            <img src="${src}" style="width:200px;height:150px;object-fit:cover"><br>
+            <a href="javascript:void(0)" id="changeMediaxx" class="btn btn-dark btn-sm mt-3">Change</a>
+        `;
+                $("#previewImage").html(imgHtml).show();
+                $('#thumbnail-media-wrapper').hide();
             }
         });
-
-        function applyPreselectedMedia() {
-
-            const preselected = $('#selected_media').val();
-
-            if (!preselected) return;
-
-            $('.media-wrapper').each(function() {
-
-                const img = $(this).find('img');
-
-                if (img.data('path') === preselected) {
-
-                    $(this).addClass('selected');
-                    $(this).find('.media-check').removeClass('d-none');
-                }
-            });
-        }
-
-
-        /* ----------------------------------------------------
-         * Flatpickr
-         * -------------------------------------------------- */
-        const fp = flatpickr('.datetimepicker', {
-            mode: "single",
-            dateFormat: "d/m/Y H:i",
-            enableTime: true,
-            disableMobile: true,
-            defaultDate: null,
-            minDate: "today",
-            maxDate: new Date().fp_incr(30),
-            monthSelectorType: "static",
-            yearSelectorType: "static",
-            allowInput: false
+        $(document).on('click', '#changeMediaxx', function() {
+            $("#previewImage").hide();
+            $('#thumbnail-media-wrapper').show();
+            $('#media-container').scrollTop(0);
         });
-
 
         /* ----------------------------------------------------
          * Select2
@@ -407,8 +447,110 @@
 
             subSelect.prop('disabled', false).trigger('change');
         }
+        /* ----------------------------------------------------
+         * Child-category loader with cache
+         * -------------------------------------------------- */
+        const childCategoryCache = {};
 
+        $('#childcategories').select2({
+            theme: 'bootstrap',
+            placeholder: 'Select child categories'
+        });
+        if (preloadedChildCats.length) {
 
+            let childCats = [];
+
+            preloadedChildCats.forEach(child => {
+
+                childCategoryCache[child.sub_cat_id] ??= [];
+                childCategoryCache[child.sub_cat_id].push(child);
+
+                childCats.push(child);
+
+            });
+
+            renderChildCategories(childCats);
+        }
+        $('#subcategories').on('change', function() {
+
+            const subIds = $(this).val() || [];
+
+            if (!subIds.length) {
+                $('#childcategories').empty().prop('disabled', true).trigger('change');
+                return;
+            }
+
+            $('#childcategories')
+                .html('<option>Loading...</option>')
+                .prop('disabled', true)
+                .trigger('change');
+
+            let childCats = [];
+
+            subIds.forEach(id => {
+                if (childCategoryCache[id]) {
+                    childCats = childCats.concat(childCategoryCache[id]);
+                }
+            });
+
+            const missing = subIds.filter(id => !childCategoryCache[id]);
+
+            if (!missing.length) {
+                renderChildCategories(childCats);
+                return;
+            }
+
+            $.post("<?= base_url('admin/child-categories/by-subcategories') ?>", {
+                subcategory_ids: missing
+            }).done(function(res) {
+
+                res.forEach(child => {
+                    childCategoryCache[child.sub_cat_id] ??= [];
+                    childCategoryCache[child.sub_cat_id].push(child);
+                });
+
+                subIds.forEach(id => {
+                    if (childCategoryCache[id]) {
+                        childCats = childCats.concat(childCategoryCache[id]);
+                    }
+                });
+
+                renderChildCategories(childCats);
+
+            }).fail(function() {
+                showDangerToast('Failed to load child categories');
+            });
+        });
+
+        function renderChildCategories(childCats) {
+
+            const childSelect = $('#childcategories');
+
+            childSelect.empty();
+
+            const unique = Object.values(
+                childCats.reduce((acc, cur) => {
+                    acc[cur.id] = cur;
+                    return acc;
+                }, {})
+            );
+
+            unique.forEach(child => {
+
+                childSelect.append(
+                    new Option(
+                        child.child_cat_name,
+                        child.id,
+                        false,
+                        selectedChildCatIds.includes(String(child.id)) ||
+                        selectedChildCatIds.includes(child.id)
+                    )
+                );
+
+            });
+
+            childSelect.prop('disabled', false).trigger('change');
+        }
         /* ----------------------------------------------------
          * Dropify
          * -------------------------------------------------- */

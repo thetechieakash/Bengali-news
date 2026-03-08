@@ -18,15 +18,14 @@
     <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/ti-icons/css/themify-icons.css">
     <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/owl-carousel-2/owl.carousel.min.css">
     <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/owl-carousel-2/owl.theme.default.min.css">
-    <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/glightbox/glightbox.min.css" />
     <?= $this->renderSection('cssPlugins') ?>
     <!-- End plugin css for this page -->
     <!-- inject:css -->
-    <link rel="stylesheet" href="<?= base_url() ?>assets/css/horizontal-layout-light/style.css">
+    <link rel="stylesheet" href="<?= base_url() ?>assets/css/horizontal-layout-light/style.css?v=6.4">
     <!-- endinject -->
     <link rel="shortcut icon" href="<?= base_url() ?>assets/images/bangla-logo-mini.svg" />
-    <link rel="stylesheet" href="<?= base_url() ?>assets/customs/css/style.css?v=6.1">
-    <link rel="stylesheet" href="<?= base_url() ?>assets/customs/css/custom.css?v=6.4">
+    <link rel="stylesheet" href="<?= base_url() ?>assets/customs/css/style.css?v=7.5">
+    <link rel="stylesheet" href="<?= base_url() ?>assets/customs/css/custom.css?v=7.5">
 </head>
 
 <body>
@@ -159,7 +158,6 @@
     <script src="<?= base_url() ?>assets/customs/js/jquery.colorbox.js"></script>
     <script src="<?= base_url() ?>assets/customs/js/custom_script.js"></script>
     <script src="<?= base_url() ?>assets/js/owl-carousel.js"></script>
-    <script src="<?= base_url() ?>assets/vendors/glightbox/glightbox.min.js"></script>
     <?= $this->renderSection('jsPlugins') ?>
     <script>
         /* Loading Js*/
@@ -194,11 +192,6 @@
                 pullDrag: false
             });
 
-            const lightbox = GLightbox();
-            $('.glightbox').on('open', (target) => {
-                console.log('lightbox opened');
-            });
-
             $('.ads-carousel').owlCarousel({
                 items: 1,
                 loop: true,
@@ -219,6 +212,30 @@
                 nav: false,
                 dots: true
             });
+        });
+    </script>
+    <script>
+        document.querySelectorAll('.nav-item > .nav-link').forEach(function(link) {
+
+            link.addEventListener('click', function(e) {
+
+                if (window.innerWidth <= 992) {
+
+                    const parent = this.closest('.nav-item');
+                    const submenu = parent.querySelector('.submenu');
+
+                    if (submenu) {
+
+                        if (!parent.classList.contains('submenu-open')) {
+                            e.preventDefault();
+                            parent.classList.add('submenu-open');
+                            submenu.style.display = 'block';
+                        }
+                    }
+                }
+
+            });
+
         });
     </script>
     <?= $this->renderSection('customjs') ?>

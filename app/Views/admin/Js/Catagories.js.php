@@ -221,12 +221,13 @@
         $(document).on('click', '.addSubCat', function(e) {
             e.preventDefault();
             currentCatId = $(this).data('id');
-            currentCatSlug = $(this).data('slug');
+            // currentCatSlug = $(this).data('slug');
 
             $('#cat_id').val(currentCatId);
             $('#cat_name').val($(this).data('name')).prop("readonly", true);
-            $('#cat_slug').val(currentCatSlug);
+            $('#cat_slug').val($(this).data('slug')).prop("readonly", true);
 
+            $('#editCatModal .modal-title').text('Add Sub Category')
             $('#editCatModal').modal('show');
 
             $('#updateBtn').hide();
@@ -237,10 +238,13 @@
             e.preventDefault();
 
             const subCatName = $('#sub_cat_name').val().trim();
-            const subCatStatus = $('#sub_cat_status').prop('checked');
-
+            const subCatSlug = $('#sub_cat_slug').val().trim();
             if (!subCatName) {
                 showDangerToast('Sub category name is required');
+                return;
+            }
+            if (!subCatSlug) {
+                showDangerToast('Sub category slug is required');
                 return;
             }
 
@@ -254,17 +258,18 @@
                         id: currentCatId,
                         slug: currentCatSlug,
                         subCatName,
-                        subCatStatus
+                        subCatSlug,
                     })
                 });
 
                 const resp = await sendData.json();
 
                 if (resp.success) {
-                    showSuccessToast(resp.message);
                     $('#editCatModal').modal('hide');
                     $('#sub_cat_name').val('');
+                    $('#sub_cat_slug').val('');
                     $('#sub_cat_status').prop('checked', false);
+                    showSuccessToast(resp.message);
                 } else {
                     if (typeof resp.errors == "object") {
                         Object.values(resp.errors).forEach(key => {

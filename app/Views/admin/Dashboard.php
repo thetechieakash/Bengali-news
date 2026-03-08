@@ -10,27 +10,27 @@
 <?= $this->section('content') ?>
 <div class="row">
     <div class="col-6 col-sm-4 grid-margin stretch-card">
-        <a class="card card-rounded text-decoration-none" href="<?= base_url('admin/all-news') ?>">
+        <div class="card card-rounded">
             <div class="card-body">
                 <h2><?= $totalPosts ?></h2>
-                <p>Total Posts</p>
+                <p>Total News</p>
             </div>
-        </a>
+        </div>
     </div>
 
     <div class="col-6 col-sm-4 grid-margin stretch-card">
-        <a class="card card-rounded text-decoration-none" href="<?= base_url('admin/all-news?sort=published') ?>">
+        <a class="card card-rounded text-decoration-none" href="<?= base_url('admin/published-news') ?>">
             <div class="card-body">
                 <h2><?= $publishedPosts ?></h2>
-                <p>Published Posts</p>
+                <p>Published News</p>
             </div>
         </a>
     </div>
     <div class="col-6 col-sm-4 grid-margin stretch-card">
-        <a class="card card-rounded text-decoration-none" href="<?= base_url('admin/all-news?sort=draft') ?>">
+        <a class="card card-rounded text-decoration-none" href="<?= base_url('admin/draft-news') ?>">
             <div class="card-body">
                 <h2><?= $draftPosts ?></h2>
-                <p>Draft Posts</p>
+                <p>Draft News</p>
             </div>
         </a>
     </div>
@@ -45,10 +45,10 @@
         </div>
     </div>
     <div class="col-6 col-sm-4 grid-margin stretch-card">
-        <a class="card card-rounded text-decoration-none" href="<?= base_url('admin/pending-comments') ?>">
+        <a class="card card-rounded text-decoration-none" href="<?= base_url('admin/approved-comments') ?>">
             <div class="card-body">
                 <h2><?= $publishedComments ?></h2>
-                <p>Published Comments</p>
+                <p>Approved Comments</p>
             </div>
         </a>
     </div>
@@ -63,7 +63,7 @@
 </div>
 
 <div class="row">
-    <div class="col-6 col-sm-4 grid-margin stretch-card">
+    <div class="col-6 col-sm-3 grid-margin stretch-card">
         <a class="card card-rounded text-decoration-none" href="<?= base_url('admin/categories') ?>">
             <div class="card-body">
                 <h2><?= $totalCategories ?></h2>
@@ -71,7 +71,7 @@
             </div>
         </a>
     </div>
-    <div class="col-6 col-sm-4 grid-margin stretch-card">
+    <div class="col-6 col-sm-3 grid-margin stretch-card">
         <a class="card card-rounded text-decoration-none" href="<?= base_url('admin/sub-categories') ?>">
             <div class="card-body">
                 <h2><?= $totalSubCats ?></h2>
@@ -79,7 +79,15 @@
             </div>
         </a>
     </div>
-    <div class="col-6 col-sm-4 grid-margin stretch-card">
+    <div class="col-6 col-sm-3 grid-margin stretch-card">
+        <a class="card card-rounded text-decoration-none" href="<?= base_url('admin/child-categories') ?>">
+            <div class="card-body">
+                <h2><?= $totalChildCats ?></h2>
+                <p>Total Child Categories</p>
+            </div>
+        </a>
+    </div>
+    <div class="col-6 col-sm-3 grid-margin stretch-card">
         <a class="card card-rounded text-decoration-none" href="<?= base_url('admin/tags') ?>">
             <div class="card-body">
                 <h2><?= $totalTags ?></h2>

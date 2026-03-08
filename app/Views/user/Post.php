@@ -43,6 +43,7 @@ $thumbUrl = ThumbHelper::getThumbUrl(
 <?= $this->endSection() ?>
 <?= $this->section('cssPlugins') ?>
 <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/jquery-toast-plugin/jquery.toast.min.css">
+<link rel="stylesheet" href="<?= base_url() ?>assets/vendors/glightbox/glightbox.min.css" />
 <?= $this->endSection() ?>
 <?= $this->section('content') ?>
 <?php
@@ -84,8 +85,13 @@ function formattedPostDate($date)
                             <?php endforeach; ?>
                         <?php endif; ?>
                         <h1 class="utf_post_title"><?= esc($post['headline']) ?></h1>
+                        <?php if (isset($post['short_description'])): ?>
+                            <div class="fst-italic p-3 px-5 mb-3">
+                                <?= $post['short_description'] ?>
+                            </div>
+                        <?php endif; ?>
                         <div class="utf_post_meta">
-                            <span class="utf_post_author">Puruliamirror Desk</span>
+                            <span class="utf_post_author">Puruliamirror Digital Desk</span>
                             <span class="utf_post_date"><?= formattedPostDate($post['post_date_time']) ?></span>
                             <span class="post-hits">
                                 <i class="fa fa-eye"></i> <?= sprintf("%02d", $post['views']) ?>
@@ -131,14 +137,6 @@ function formattedPostDate($date)
                                         <?= esc($post['sub_author']['email']); ?>
                                     </small>
                                 </div>
-                            </div>
-                        <?php endif; ?>
-
-                        <?php if (isset($post['short_description'])): ?>
-                            <div class="fst-italic p-3 px-5 mb-3 border rounded bg-light">
-                                <i class="fa fa-quote-left pe-2"></i>
-                                <?= $post['short_description'] ?>
-                                <i class="fa fa-quote-right ps-2"></i>
                             </div>
                         <?php endif; ?>
                         <div class="entry-content">
@@ -430,10 +428,18 @@ function formattedPostDate($date)
 <?= $this->section('jsPlugins') ?>
 <script src="<?= base_url() ?>assets/vendors/jquery-toast-plugin/jquery.toast.min.js"></script>
 <script src="<?= base_url() ?>assets/customs/js/custom.toast.js"></script>
+<script src="<?= base_url() ?>assets/vendors/glightbox/glightbox.min.js"></script>
 <?= $this->endSection() ?>
 <?= $this->section('customjs') ?>
 <script src="https://www.google.com/recaptcha/api.js?render=<?= $recapcha_key ?>"></script>
 <script>
+    const lightbox = GLightbox({
+        selector: '.glightbox',
+        touchNavigation: true,
+        loop: true,
+        zoomable: true,
+        maxZoom: 2
+    });
     $(document).on('click', '#commentSubmit', function(e) {
         e.preventDefault();
 
