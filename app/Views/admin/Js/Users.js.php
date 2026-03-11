@@ -30,7 +30,8 @@
             let id = $(this).data('id');
             let username = $(this).data('username');
             let email = $(this).data('email');
-            $('#role').val($(this).data('role'));
+            // $('#updateUser input[]').val($(this).data('role'));
+            $('#updateUser select[name="role"]').val($(this).data('role')).trigger('change');
 
             $('#user_id').val(id);
             $('#username').val(username);
@@ -62,6 +63,11 @@
                 success(res) {
                     if (res.success) {
                         showSuccessToast(res.message);
+                        form.reset();
+                        $('#userEditModal').modal('hide');
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
                     } else {
                         if (res.errors) {
                             Object.values(res.errors).forEach(err => {
@@ -77,13 +83,6 @@
                     console.error("User create ajax error", e);
 
                 },
-                complete() {
-                    form.reset();
-                    $('#userEditModal').modal('hide');
-                    setTimeout(() => {
-                        location.reload();
-                    }, 1000);
-                }
             });
         })
 
@@ -139,12 +138,17 @@
             }, function(res) {
                 if (res.success) {
                     showSuccessToast(res.message);
-                    setTimeout(() => location.reload(), 800);
+                    setTimeout(() => location.reload(), 1000);
                 } else {
                     showDangerToast(res.message);
                 }
             });
         });
-        
+
+        $('#users-listing').on('click', '.editpermission', async function() {
+            const id = $(this).data('id');
+            console.log(id);
+            window.location.href = `<?= base_url('admin/user/permission/') ?>${id}`;
+        });
     });
 </script>

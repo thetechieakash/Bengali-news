@@ -68,30 +68,70 @@ class AuthGroups extends ShieldAuthGroups
      * If a permission is not listed here it cannot be used.
      */
     public array $permissions = [
-        'user.manage',
-        'user.create',
-        'user.update',
-        'user.delete',
-        'category.manage',
-        'category.create',
-        'category.update',
-        'category.delete',
-        'tags.manage',
-        'tags.create',
-        'tags.update',
-        'tags.delete',
-        'news.manage',
-        'news.create',
-        'news.update',
-        'news.delete',
-        'comments.manage',
-        'comments.create',
-        'comments.update',
-        'comments.delete',
-        'ads.manage',
-        'ads.create',
-        'ads.update',
-        'ads.delete',
+        // Dashboard
+        'dashboard.view'   => 'View dashboard',
+
+        // Categories
+        'categories.view'   => 'View categories',
+        'categories.create' => 'Create categories',
+        'categories.update' => 'Update categories',
+        'categories.delete' => 'Delete categories',
+        'categories.status' => 'Update category status',
+
+        // Sub categories
+        'sub_categories.view'   => 'View sub categories',
+        'sub_categories.create' => 'Create sub categories',
+        'sub_categories.update' => 'Update sub categories',
+        'sub_categories.delete' => 'Delete sub categories',
+
+        // Child categories
+        'child_categories.view'   => 'View child categories',
+        'child_categories.create' => 'Create child categories',
+        'child_categories.update' => 'Update child categories',
+        'child_categories.delete' => 'Delete child categories',
+
+        // Comments
+        'comments.view'   => 'View comments',
+        'comments.approve' => 'Approve comments',
+        'comments.unpublish' => 'Unpublish comments',
+        'comments.reply'  => 'Reply comments',
+        'comments.delete' => 'Delete comments',
+
+        // Tags
+        'tags.view'   => 'View tags',
+        'tags.create' => 'Create tags',
+        'tags.update' => 'Update tags',
+        'tags.delete' => 'Delete tags',
+
+        // Media
+        'media.view'   => 'View media',
+        'media.create' => 'Create media',
+        'media.delete' => 'Delete media',
+
+        // Documents
+        'documents.view'   => 'View documents',
+        'documents.create' => 'Create documents',
+        'documents.delete' => 'Delete documents',
+
+        // Ads
+        'ads.view'   => 'View ads',
+        'ads.create' => 'Create ads',
+        'ads.update' => 'Update ads',
+        'ads.delete' => 'Delete ads',
+        'ads.status' => 'Toggle ad status',
+
+        // News
+        'news.view'   => 'View news',
+        'news.create' => 'Create news',
+        'news.update' => 'Update news',
+        'news.delete' => 'Delete news',
+        'news.status' => 'Change news status',
+
+        // News
+        'author.view'   => 'View author',
+        'author.create' => 'Create author',
+        'author.update' => 'Update author',
+        'author.delete' => 'Delete author',
     ];
 
     /**
@@ -104,16 +144,8 @@ class AuthGroups extends ShieldAuthGroups
      */
     public array $matrix = [
         'superadmin' => ['*'],
-        'admin' => [
-            'category.*',
-            'tags.*',
-            'news.*',
-            'comments.*',
-            'ads.*',
-        ],
-        'author' => [
-            'news.*'
-        ],
+        'admin' => [],
+        'author' => [],
         'user' => [],
     ];
 }

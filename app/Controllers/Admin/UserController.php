@@ -24,6 +24,39 @@ class UserController extends BaseController
         ];
         return view('admin/Users', $data);
     }
+
+    public function permission($userId)
+    {
+        $user = auth()->getProvider()->findById($userId);
+
+        if (!$user) {
+            return redirect()->back()->with('error', 'User not found');
+        }
+
+        $modules = [
+            'dashboard' => ['view'],
+            'categories' => ['view', 'create', 'update', 'delete', 'status'],
+            'sub_categories' => ['view', 'create', 'update', 'delete'],
+            'child_categories' => ['view', 'create', 'update', 'delete'],
+            'comments' => ['view', 'approve', 'unpublish', 'reply', 'delete'],
+            'tags' => ['view', 'create', 'update', 'delete'],
+            'media' => ['view', 'create', 'delete'],
+            'documents' => ['view', 'create', 'delete'],
+            'author' => ['view', 'create', 'update', 'delete'],
+            'ads' => ['view', 'create', 'update', 'delete', 'status'],
+            'news' => ['view', 'create', 'update', 'delete', 'status']
+        ];
+
+        $userPermissions = $user->getPermissions();
+
+        return view('admin/UsersPermission', [
+            'pageTitle' => 'Set User Permission',
+            'modules' => $modules,
+            'userPermissions' => $userPermissions,
+            'userId' => $userId
+        ]);
+    }
+
     public function user()
     {
         $data = [
@@ -31,6 +64,7 @@ class UserController extends BaseController
         ];
         return view('admin/CreateUsers', $data);
     }
+
     public function createUser()
     {
         if (!auth()->loggedIn()) {
@@ -260,7 +294,7 @@ class UserController extends BaseController
                 'message' => 'User not found'
             ]);
         }
-        
+
         $users = new UserModel();
 
         $users->where('id', $userId)->set('deleted_at', null)->update();
@@ -268,6 +302,41 @@ class UserController extends BaseController
         return $this->response->setJSON([
             'success' => true,
             'message' => 'User reactivated successfully'
+        ]);
+    }
+
+    public function setPermission($userId)
+    {
+        if (!$this->request->isAJAX()) {
+            return redirect()->back();
+        }
+
+        $user = auth()->getProvider()->findById($userId);
+
+        if (!$user) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'User not found'
+            ]);
+        }
+
+        $permissions = $this->request->getPost('permissions') ?? [];
+
+        // remove old permissions
+        $currentPermissions = $user->getPermissions();
+
+        if (!empty($currentPermissions)) {
+            $user->removePermission(...$currentPermissions);
+        }
+
+        // assign new permissions
+        foreach ($permissions as $permission) {
+            $user->addPermission($permission);
+        }
+
+        return $this->response->setJSON([
+            'status' => 'success',
+            'message' => 'Permissions updated successfully'
         ]);
     }
 }

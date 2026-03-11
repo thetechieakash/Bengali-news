@@ -46,8 +46,9 @@ class Category extends BaseController
             'leftAds'     => $this->adsModel->getAdsForPage('category', 'left', true),
             'rightAds'    => $this->adsModel->getAdsForPage('category', 'right', true),
             'blockAds'    => $this->adsModel->getAdsForPage('category', 'block', true),
+            'scriptAds'   => $this->adsModel->getScriptAds('category', 'script')
         ];
-
+        // dd($data);
         return view('user/Category', array_merge($this->data, $data));
     }
     /**
@@ -72,7 +73,13 @@ class Category extends BaseController
             )
             ->join(
                 'news_post_sub_categories npsc',
-                'npsc.news_post_id = news_posts.id'
+                'npsc.news_post_id = news_posts.id',
+                'left'
+            )
+            ->join(
+                'news_post_child_categories npcc',
+                'npcc.news_post_id = news_posts.id',
+                'left'
             )
             ->join(
                 'news_post_thumbnails npt',

@@ -311,12 +311,12 @@ function formattedPostDate($date)
                                         <?php if (!empty($blockAd['url'])) : ?>
                                             <a href="<?= esc($blockAd['url']) ?>" target="_blank">
                                                 <img class="banner img-fluid"
-                                                    src="<?= base_url('uploads/ads/' . $blockAd['image']) ?>"
+                                                    src="<?= base_url($blockAd['image']) ?>"
                                                     alt="<?= esc($blockAd['title']) ?>">
                                             </a>
                                         <?php else : ?>
                                             <img class="banner img-fluid"
-                                                src="<?= base_url('uploads/ads/' . $blockAd['image']) ?>"
+                                                src="<?= base_url($blockAd['image']) ?>"
                                                 alt="<?= esc($blockAd['title']) ?>">
                                         <?php endif; ?>
                                     </div>
@@ -377,12 +377,12 @@ function formattedPostDate($date)
                                         <?php if (!empty($blockAdb['url'])) : ?>
                                             <a href="<?= esc($blockAdb['url']) ?>" target="_blank">
                                                 <img class="banner img-fluid"
-                                                    src="<?= base_url('uploads/ads/' . $blockAdb['image']) ?>"
+                                                    src="<?= base_url($blockAdb['image']) ?>"
                                                     alt="<?= esc($blockAdb['title']) ?>">
                                             </a>
                                         <?php else : ?>
                                             <img class="banner img-fluid"
-                                                src="<?= base_url('uploads/ads/' . $blockAdb['image']) ?>"
+                                                src="<?= base_url($blockAdb['image']) ?>"
                                                 alt="<?= esc($blockAdb['title']) ?>">
                                         <?php endif; ?>
                                     </div>
@@ -402,19 +402,23 @@ function formattedPostDate($date)
                     </div>
                     <?php if (!empty($blockAds)) : ?>
                         <div class="widget text-center">
-                            <?php foreach ($blockAds as $blockAd) : ?>
-                                <?php if (!empty($blockAd['url'])) : ?>
-                                    <a href="<?= esc($blockAd['url']) ?>" target="_blank">
-                                        <img class="banner img-fluid"
-                                            src="<?= base_url('uploads/ads/' . $blockAd['image']) ?>"
-                                            alt="<?= esc($blockAd['title']) ?>">
-                                    </a>
-                                <?php else : ?>
-                                    <img class="banner img-fluid"
-                                        src="<?= base_url('uploads/ads/' . $blockAd['image']) ?>"
-                                        alt="<?= esc($blockAd['title']) ?>">
-                                <?php endif; ?>
-                            <?php endforeach; ?>
+                            <div class="owl-carousel blockAdsCarousel">
+                                <?php foreach ($blockAds as $blockAd) : ?>
+                                    <div class="item">
+                                        <?php if (!empty($blockAd['url'])) : ?>
+                                            <a href="<?= esc($blockAd['url']) ?>" target="_blank">
+                                                <img class="banner img-fluid"
+                                                    src="<?= base_url($blockAd['image']) ?>"
+                                                    alt="<?= esc($blockAd['title']) ?>">
+                                            </a>
+                                        <?php else : ?>
+                                            <img class="banner img-fluid"
+                                                src="<?= base_url($blockAd['image']) ?>"
+                                                alt="<?= esc($blockAd['title']) ?>">
+                                        <?php endif; ?>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
                         </div>
                     <?php endif; ?>
                 </div>

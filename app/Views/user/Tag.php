@@ -39,7 +39,7 @@ $defaultThumb = base_url('assets/images/news/placeholder.png');
                         <ul class="subCategory unstyled">
                             <?php foreach ($subCategory as $subCat): ?>
                                 <li>
-                                    <a href="<?= base_url("category/{$category['slug']}/sub-category/{$subCat['sub_cat_slug']}") ?>">
+                                    <a href="<?= base_url("category/{$category['slug']}/{$subCat['sub_cat_slug']}") ?>">
                                         <?= esc($subCat['sub_cat_name']) ?>
                                     </a>
                                 </li>
@@ -90,12 +90,12 @@ $defaultThumb = base_url('assets/images/news/placeholder.png');
                                         <?php if (!empty($blockAd['url'])) : ?>
                                             <a href="<?= esc($blockAd['url']) ?>" target="_blank">
                                                 <img class="banner img-fluid"
-                                                    src="<?= base_url('uploads/ads/' . $blockAd['image']) ?>"
+                                                    src="<?= base_url($blockAd['image']) ?>"
                                                     alt="<?= esc($blockAd['title']) ?>">
                                             </a>
                                         <?php else : ?>
                                             <img class="banner img-fluid"
-                                                src="<?= base_url('uploads/ads/' . $blockAd['image']) ?>"
+                                                src="<?= base_url($blockAd['image']) ?>"
                                                 alt="<?= esc($blockAd['title']) ?>">
                                         <?php endif; ?>
                                     </div>
@@ -136,12 +136,12 @@ $defaultThumb = base_url('assets/images/news/placeholder.png');
                                         <?php if (!empty($blockAdb['url'])) : ?>
                                             <a href="<?= esc($blockAdb['url']) ?>" target="_blank">
                                                 <img class="banner img-fluid"
-                                                    src="<?= base_url('uploads/ads/' . $blockAdb['image']) ?>"
+                                                    src="<?= base_url($blockAdb['image']) ?>"
                                                     alt="<?= esc($blockAdb['title']) ?>">
                                             </a>
                                         <?php else : ?>
                                             <img class="banner img-fluid"
-                                                src="<?= base_url('uploads/ads/' . $blockAdb['image']) ?>"
+                                                src="<?= base_url($blockAdb['image']) ?>"
                                                 alt="<?= esc($blockAdb['title']) ?>">
                                         <?php endif; ?>
                                     </div>

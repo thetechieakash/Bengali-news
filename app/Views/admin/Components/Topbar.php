@@ -10,7 +10,7 @@
                 <img src="<?= base_url() ?>assets/images/purulia_logo.png" alt="logo" />
             </a>
             <a class="navbar-brand brand-logo-mini" href="<?= base_url() ?>">
-                <img src="<?= base_url() ?>assets/images/purulia_logo.png" alt="logo" />
+                <img src="<?= base_url() ?>assets/images/insta-logo.jpg" alt="logo" />
             </a>
         </div>
     </div>

@@ -6,6 +6,7 @@ use App\Controllers\BaseController;
 use App\Helpers\Slug;
 use App\Models\Categories;
 use App\Models\SubCategories;
+use App\Models\ChildCategories;
 
 class SubCatagoriesController extends BaseController
 {
@@ -126,7 +127,7 @@ class SubCatagoriesController extends BaseController
         ]);
     }
 
-    public function updateActive($defaultActiveCount = 5)
+    public function updateActive()
     {
         $data  = $this->request->getJSON(true);
         $id    = $data['id'] ?? null;
@@ -151,50 +152,25 @@ class SubCatagoriesController extends BaseController
             ]);
         }
 
-        /* -------- WHEN ACTIVATING -------- */
         if ($value === 1) {
 
-            /* ---- CHECK PARENT CATEGORY ---- */
             $parent = $catModel->find($sub['cat_id']);
 
-            if (
-                !$parent ||
-                (int) $parent['is_active'] !== 1 ||
-                (int) $parent['status'] !== 1
-            ) {
+            if (!$parent || (int)$parent['is_active'] !== 1) {
                 return $this->response->setJSON([
                     'success' => false,
                     'message' => 'Cannot activate subcategory while parent category is inactive'
                 ]);
             }
-
-            /* ---- LIMIT CHECK (MAX 5 ACTIVE PER CATEGORY) ---- */
-            if ((int) $sub['is_active'] === $defaultActiveCount) {
-
-                $activeCount = $subModel
-                    ->where('cat_id', $sub['cat_id'])
-                    ->where('is_active', 1)
-                    ->countAllResults();
-
-                if ($activeCount >= 5) {
-                    return $this->response->setJSON([
-                        'success' => false,
-                        'message' => "Only {$defaultActiveCount} subcategories can be active under a category. Disable another subcategory first."
-                    ]);
-                }
-            }
         }
 
-        /* -------- UPDATE SUBCATEGORY -------- */
         $subModel->update($id, ['is_active' => $value]);
 
         cache()->delete('navbar_categories');
 
         return $this->response->setJSON([
             'success' => true,
-            'message' => $value
-                ? 'Subcategory activated successfully'
-                : 'Subcategory deactivated successfully'
+            'message' => 'Subcategory updated successfully'
         ]);
     }
 
@@ -261,34 +237,56 @@ class SubCatagoriesController extends BaseController
         $subCatId = $data['subCatId'] ?? null;
         $catId    = $data['catId'] ?? null;
 
-        if (!isset($subCatId) || !isset($catId)) {
+        if (!$subCatId || !$catId) {
             return $this->response->setJSON([
                 'success' => false,
                 'message' => 'Invalid request'
             ]);
         }
 
-        $subCatModel = new SubCategories();
+        $db = db_connect();
+        $db->transBegin();
 
-        // Validate sub category + parent relationship
-        $existingSubCat = $subCatModel
-            ->where('id', $subCatId)
-            ->where('cat_id', $catId)
-            ->first();
+        try {
 
-        if (!$existingSubCat) {
+            $subCatModel   = new SubCategories();
+            $childModel    = new ChildCategories();
+
+            $existingSubCat = $subCatModel
+                ->where('id', $subCatId)
+                ->where('cat_id', $catId)
+                ->first();
+
+            if (!$existingSubCat) {
+                throw new \Exception('Sub category not found');
+            }
+
+            /* -------- DELETE CHILD CATEGORIES -------- */
+            $childModel
+                ->where('sub_cat_id', $subCatId)
+                ->delete();
+
+            /* -------- DELETE SUB CATEGORY -------- */
+            $subCatModel->delete($subCatId);
+
+            cache()->delete('navbar_categories');
+
+            $db->transCommit();
+
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Sub category and its child categories deleted successfully'
+            ]);
+        } catch (\Throwable $e) {
+
+            $db->transRollback();
+
             return $this->response->setJSON([
                 'success' => false,
-                'message' => 'Sub category not found or invalid category'
+                'message' => 'Failed to delete sub category',
+                'debug' => ENVIRONMENT !== 'production' ? $e->getMessage() : null
             ]);
         }
-        $subCatModel->delete($subCatId);
-        cache()->delete('navbar_categories');
-
-        return $this->response->setJSON([
-            'success' => true,
-            'message' => 'Sub category deleted successfully'
-        ]);
     }
 
     public function getByCategories()

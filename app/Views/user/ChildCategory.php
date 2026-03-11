@@ -10,22 +10,33 @@
 use App\Helpers\StringShort;
 use App\Helpers\ThumbHelper;
 
+$defaultThumb = base_url('assets/images/news/placeholder.png');
 ?>
-<section class="utf_block_wrapper py-3 mt-3">
+<!-- Page Breadcrumb Start -->
+<div class="page-title">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <ul class="breadcrumb">
+                    <li><a href="<?= base_url() ?>">হোম</a></li>
+                    <li><a href="<?= base_url("category/{$category['slug']}") ?>"><?= esc($category['cat']) ?></a></li>
+                    <li><a href="<?= base_url("category/{$category['slug']}/{$subCategory['sub_cat_slug']}") ?>"><?= esc($subCategory['sub_cat_name']) ?></a></li>
+                    <li><?= esc($childCategory['child_cat_name']) ?></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Page Breadcrumb end -->
+
+<section class="utf_block_wrapper py-3">
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-md-12">
-                <form action="<?= base_url('search') ?>" class="" method="get">
-                    <div class="input-group">
-                        <span class="input-group-text">Search News</span>
-                        <input type="text" class="form-control border-1" autocomplete="off" id="search" name="q" placeholder="Search news..." value="<?= esc($keyword) ?>" required>
-                    </div>
-                </form>
                 <div class="block category-listing category-style2 color-primary">
-                    <h3 class="mt-3">Search result for : "<?= esc($keyword) ?>"</h3>
-                    <h3 class="utf_block_title"></h3>
-                    <?php if (!empty($results)): ?>
-                        <?php foreach ($results as $post): ?>
+                    <h3 class="utf_block_title"><span>News</span></h3>
+                    <?php if (!empty($posts)): ?>
+                        <?php foreach ($posts as $post): ?>
                             <div class="utf_post_block_style post-list clearfix">
                                 <div class="row">
                                     <div class="col-lg-5 col-md-6">
@@ -53,16 +64,38 @@ use App\Helpers\ThumbHelper;
                                 </div>
                             </div>
                         <?php endforeach; ?>
-                    <?php else: ?>
-                        <div class="card ">
-                            <div class="card-body bg-info mx-auto">
-                                Sorry! can not found any news releated to "<?= esc($keyword) ?>"!
+                     <?php else: ?>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card shadow-sm border-0 text-center p-4 my-4">
+
+                                    <div class="mb-3">
+                                        <i class="fa fa-newspaper-o text-muted" style="font-size:50px;"></i>
+                                    </div>
+
+                                    <h4 class="text-dark mb-2">
+                                        No News Available
+                                    </h4>
+
+                                    <p class="text-muted mb-3">
+                                        There are currently no news articles available in this section.
+                                        Please check back later.
+                                    </p>
+
+                                    <a href="<?= base_url() ?>" class="btn btn-primary">
+                                        <i class="fa fa-home"></i> Back to Home
+                                    </a>
+
+                                </div>
                             </div>
                         </div>
                     <?php endif; ?>
                 </div>
-                <?= $pager->links('default', 'custom') ?>
+                <?php if (!empty($posts)): ?>
+                    <?= $pager->links('default', 'custom') ?>
+                <?php endif; ?>
             </div>
+
             <div class="col-lg-4 col-md-12">
                 <div class="sidebar utf_sidebar_right mt-3 mt-md-0">
                     <?php if (!empty($blockAds)) : ?>
@@ -94,7 +127,7 @@ use App\Helpers\ThumbHelper;
                                     <li class="clearfix">
                                         <div class="utf_post_block_style post-float clearfix">
                                             <div class="utf_post_thumb">
-                                                <img class="img-fluid" src="<?= ThumbHelper::getThumbUrl($news['thumbnail_url'], $news['type']) ?>" alt="<?= $news['headline'] ?>" />
+                                                <img class="img-fluid" src="<?= ThumbHelper::getThumbUrl($news['thumbnail_url'], $news['type']) ?>" alt="$news['headline']" />
                                             </div>
                                             <div class="utf_post_content">
                                                 <h2 class="utf_post_title title-small">

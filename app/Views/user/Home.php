@@ -83,12 +83,12 @@ use App\Helpers\ThumbHelper;
                                     <?php if (!empty($blockAd['url'])) : ?>
                                         <a href="<?= esc($blockAd['url']) ?>" target="_blank">
                                             <img class="banner img-fluid"
-                                                src="<?= base_url('uploads/ads/' . $blockAd['image']) ?>"
+                                                src="<?= base_url($blockAd['image']) ?>"
                                                 alt="<?= esc($blockAd['title']) ?>">
                                         </a>
                                     <?php else : ?>
                                         <img class="banner img-fluid"
-                                            src="<?= base_url('uploads/ads/' . $blockAd['image']) ?>"
+                                            src="<?= base_url($blockAd['image']) ?>"
                                             alt="<?= esc($blockAd['title']) ?>">
                                     <?php endif; ?>
                                 </div>
@@ -294,19 +294,23 @@ use App\Helpers\ThumbHelper;
                     </div>
                     <?php if (!empty($blockAds)) : ?>
                         <div class="widget text-center">
-                            <?php foreach ($blockAds as $blockAdb) : ?>
-                                <?php if (!empty($blockAdb['url'])) : ?>
-                                    <a href="<?= esc($blockAdb['url']) ?>" target="_blank">
-                                        <img class="banner img-fluid"
-                                            src="<?= base_url('uploads/ads/' . $blockAdb['image']) ?>"
-                                            alt="<?= esc($blockAdb['title']) ?>">
-                                    </a>
-                                <?php else : ?>
-                                    <img class="banner img-fluid"
-                                        src="<?= base_url('uploads/ads/' . $blockAdb['image']) ?>"
-                                        alt="<?= esc($blockAdb['title']) ?>">
-                                <?php endif; ?>
-                            <?php endforeach; ?>
+                            <div class="owl-carousel blockAdsCarousel">
+                                <?php foreach ($blockAds as $blockAdb) : ?>
+                                    <div class="item">
+                                        <?php if (!empty($blockAdb['url'])) : ?>
+                                            <a href="<?= esc($blockAdb['url']) ?>" target="_blank">
+                                                <img class="banner img-fluid"
+                                                    src="<?= base_url($blockAdb['image']) ?? 'javascript:void(0)' ?>"
+                                                    alt="<?= esc($blockAdb['title']) ?>">
+                                            </a>
+                                        <?php else : ?>
+                                            <img class="banner img-fluid"
+                                                src="<?= base_url($blockAdb['image']) ?>"
+                                                alt="<?= esc($blockAdb['title']) ?>">
+                                        <?php endif; ?>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
                         </div>
                     <?php endif; ?>
                 </div>

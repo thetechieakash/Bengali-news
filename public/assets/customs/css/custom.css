@@ -380,6 +380,10 @@ h4,
 .entry-content table a:hover {
     text-decoration: underline;
 }
+.form-control.news-search {
+    padding: 0px 15px;
+    height: 40px;
+}
 
 .horizontal-menu .bottom-navbar .page-navigation>.nav-item.mega-menu .submenu li a.sub-cat::before {
     position: absolute;
@@ -387,7 +391,7 @@ h4,
     width: 6px;
     height: 2px;
     border-radius: 100%;
-    background: var(--ticker-red);
+    /* background: var(--ticker-red); */
     top: 12px;
     left: 0;
 }
@@ -478,6 +482,7 @@ h4,
 .gslide-image img {
     border: 5px solid red !important;
 }
+.nav-link.sub-cat-link
 .child-menu {
     list-style: none;
     padding: 0 0 0 15px !important;

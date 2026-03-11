@@ -8,17 +8,25 @@ use App\Models\AdsModel;
 class AdsController extends BaseController
 {
     protected $adsModel;
+    protected $uploadPath;
 
     public function __construct()
     {
         $this->adsModel = new AdsModel();
+        $this->uploadPath = FCPATH . 'uploads/ads/';
+
+        if (!is_dir($this->uploadPath)) {
+            mkdir($this->uploadPath, 0777, true);
+        }
     }
+
     public function index()
     {
         $data = [
             'pageTitle' => 'Ads',
             'ads' => $this->adsModel->orderBy('id', 'DESC')->findAll()
         ];
+
         return view('admin/Ads', $data);
     }
 
@@ -28,50 +36,24 @@ class AdsController extends BaseController
 
         if (!$ad) {
             return $this->response->setJSON([
-                'error' => 'Ad not found'
+                'success' => false
             ]);
         }
 
-        // Decode JSON fields
-        $ad['pages'] = json_decode($ad['pages'], true);
-        $ad['position'] = $ad['position'] ? json_decode($ad['position'], true) : [];
-
         return $this->response->setJSON([
             'success' => true,
-            'data'    => $ad
+            'data' => $ad
         ]);
     }
 
     public function store()
     {
         $request = $this->request;
-        if (!$request->isAJAX()) {
-            return $this->response->setJSON([
-                'status' => false,
-                'message' => 'Invalid request'
-            ])->setStatusCode(400);
-        }
-        
-        $adType  = $request->getPost('ad_type');
-
-        // =============================
-        // VALIDATION RULES
-        // =============================
 
         $rules = [
-            'title'   => 'required|max_length[150]',
-            'ad_type' => 'required|in_list[image,script]',
-            'pages'   => 'required'
+            'title' => 'required|max_length[150]',
+            'ad_type' => 'required'
         ];
-
-        if ($adType === 'image') {
-            $rules['image']    = 'uploaded[image]|is_image[image]';
-            $rules['position'] = 'required';
-        }
-
-        if ($adType === 'script') {
-            $rules['script'] = 'required';
-        }
 
         if (!$this->validate($rules)) {
             return $this->response->setJSON([
@@ -79,43 +61,57 @@ class AdsController extends BaseController
             ]);
         }
 
-        // =============================
-        // DATA PREPARE
-        // =============================
+        $title     = $request->getPost('title');
+        $adType    = $request->getPost('ad_type');
+        $pages     = $request->getPost('pages') ?? [];
+        $positions = $request->getPost('position') ?? [];
 
-        $data = [
-            'title'      => $request->getPost('title'),
-            'ad_type'    => $adType,
-            'pages'      => json_encode($request->getPost('pages')),
-            'status'     => 1,
-        ];
+        /* ---------------- SCRIPT AD ---------------- */
 
-        // =============================
-        // IMAGE TYPE
-        // =============================
+        if ($adType == "script") {
 
-        if ($adType === 'image') {
+            $this->adsModel->insert([
+                'title' => $title,
+                'ad_type' => 'script',
+                'script' => $request->getPost('script'),
+                'pages' => json_encode($pages),
+                'status' => 1
+            ]);
 
-            $image = $request->getFile('image');
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Script ad created'
+            ]);
+        }
 
-            if ($image->isValid() && !$image->hasMoved()) {
+        /* ---------------- IMAGE ADS ---------------- */
 
-                $newName = $image->getRandomName();
-                $image->move(ROOTPATH . 'public/uploads/ads', $newName);
+        foreach ($positions as $pos) {
 
-                $data['image']     = $newName;
-                $data['url']       = $request->getPost('redirect_url');
-                $data['position']  = json_encode($request->getPost('position'));
+            $file = $request->getFile("position_images.$pos");
+
+            if ($file && $file->isValid() && !$file->hasMoved()) {
+
+                $newName = $file->getRandomName();
+                $file->move($this->uploadPath, $newName);
+
+                $redirectUrl = $request->getPost($pos . '_redirect_url');
+
+                $data = [
+
+                    'title' => $title,
+                    'ad_type' => 'image',
+                    'image' => 'uploads/ads/' . $newName,
+                    'url' => $redirectUrl,
+                    'pages' => json_encode($pages),
+                    'position' => $pos,
+                    'status' => 1
+
+                ];
+
+                $this->adsModel->insert($data);
             }
         }
-
-        if ($adType === 'script') {
-            $data['script'] = $request->getPost('script');
-            $data['position'] = null;
-            $data['url'] = null;
-        }
-
-        $this->adsModel->insert($data);
 
         return $this->response->setJSON([
             'success' => true,
@@ -147,73 +143,44 @@ class AdsController extends BaseController
 
         if (!$ad) {
             return $this->response->setJSON([
-                'error' => 'Ad not found'
+                'success' => false
             ]);
         }
 
-        $request = service('request');
-        $adType  = $request->getPost('ad_type');
+        $request = $this->request;
 
-        $rules = [
-            'title'   => 'required|max_length[150]',
-            'ad_type' => 'required|in_list[image,script]',
-            'pages'   => 'required'
-        ];
-
-        if ($adType === 'image') {
-            $rules['position'] = 'required';
-            // image is NOT required during update
-        }
-
-        if ($adType === 'script') {
-            $rules['script'] = 'required';
-        }
-
-        if (!$this->validate($rules)) {
-            return $this->response->setJSON([
-                'errors' => $this->validator->getErrors()
-            ]);
-        }
+        $title = $request->getPost('title');
+        $pages = $request->getPost('pages') ?? [];
 
         $data = [
-            'title'   => $request->getPost('title'),
-            'ad_type' => $adType,
-            'pages'   => json_encode($request->getPost('pages')),
+            'title' => $title,
+            'pages' => json_encode($pages)
         ];
 
-        if ($adType === 'image') {
+        if ($request->getPost('edit-ad-type') == "script") {
 
-            $image = $request->getFile('image');
-
-            if ($image && $image->isValid() && !$image->hasMoved()) {
-
-                // Delete old image
-                if (!empty($ad['image']) && file_exists(ROOTPATH . 'public/uploads/ads/' . $ad['image'])) {
-                    unlink(ROOTPATH . 'public/uploads/ads/' . $ad['image']);
-                }
-
-                $newName = $image->getRandomName();
-                $image->move(ROOTPATH . 'public/uploads/ads', $newName);
-
-                $data['image'] = $newName;
-            }
-
-            $data['url']      = $request->getPost('redirect_url');
-            $data['position'] = json_encode($request->getPost('position'));
-            $data['script']   = null;
+            $data['script'] = $request->getPost('script');
         }
 
-        if ($adType === 'script') {
+        if ($request->getPost('edit-ad-type') == "image") {
 
-            // Delete old image if exists
-            if (!empty($ad['image']) && file_exists(ROOTPATH . 'public/uploads/ads/' . $ad['image'])) {
-                unlink(ROOTPATH . 'public/uploads/ads/' . $ad['image']);
+            $pos = $ad['position'];
+
+            $file = $request->getFile("position_images.$pos");
+
+            if ($file && $file->isValid()) {
+
+                if (!empty($ad['image']) && file_exists(FCPATH . $ad['image'])) {
+                    unlink(FCPATH . $ad['image']);
+                }
+
+                $newName = $file->getRandomName();
+                $file->move($this->uploadPath, $newName);
+
+                $data['image'] = 'uploads/ads/' . $newName;
             }
 
-            $data['script']   = $request->getPost('script');
-            $data['image']    = null;
-            $data['url']      = null;
-            $data['position'] = null;
+            $data['url'] = $request->getPost($pos . '_redirect_url');
         }
 
         $this->adsModel->update($id, $data);
@@ -231,18 +198,21 @@ class AdsController extends BaseController
         $ad = $this->adsModel->find($id);
 
         if (!$ad) {
-            return $this->response->setJSON(['error' => 'Ad not found']);
+            return $this->response->setJSON([
+                'success' => false,
+                'messagw' => "Can't find add"
+            ]);
         }
 
-        if (!empty($ad['image']) && file_exists(ROOTPATH . 'public/uploads/ads/' . $ad['image'])) {
-            unlink(ROOTPATH . 'public/uploads/ads/' . $ad['image']);
+        if (!empty($ad['image']) && file_exists(FCPATH . $ad['image'])) {
+            unlink(FCPATH . $ad['image']);
         }
 
         $this->adsModel->delete($id);
 
         return $this->response->setJSON([
             'success' => true,
-            'message' => 'Ad deleted successfully'
+            'message' => 'Ad deleted'
         ]);
     }
 }

@@ -67,6 +67,7 @@ class Post extends BaseController
             'leftAds'     => $adsModel->getAdsForPage('post', 'left', true),
             'rightAds'    => $adsModel->getAdsForPage('post', 'right', true),
             'blockAds'    => $adsModel->getAdsForPage('post', 'block', true),
+            'scriptAds'   => $adsModel->getScriptAds('post', 'script')
         ];
         return view('user/Post', array_merge($this->data, $data));
     }

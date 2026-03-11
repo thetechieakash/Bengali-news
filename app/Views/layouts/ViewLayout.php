@@ -21,11 +21,11 @@
     <?= $this->renderSection('cssPlugins') ?>
     <!-- End plugin css for this page -->
     <!-- inject:css -->
-    <link rel="stylesheet" href="<?= base_url() ?>assets/css/horizontal-layout-light/style.css?v=6.4">
+    <link rel="stylesheet" href="<?= base_url() ?>assets/css/horizontal-layout-light/style.css?v=9.0">
     <!-- endinject -->
-    <link rel="shortcut icon" href="<?= base_url() ?>assets/images/bangla-logo-mini.svg" />
-    <link rel="stylesheet" href="<?= base_url() ?>assets/customs/css/style.css?v=7.5">
-    <link rel="stylesheet" href="<?= base_url() ?>assets/customs/css/custom.css?v=7.5">
+    <link rel="shortcut icon" href="<?= base_url() ?>assets/images/insta-logo.jpg" />
+    <link rel="stylesheet" href="<?= base_url() ?>assets/customs/css/style.css?v=9.0">
+    <link rel="stylesheet" href="<?= base_url() ?>assets/customs/css/custom.css?v=9.0">
 </head>
 
 <body>
@@ -49,9 +49,32 @@
         <div class="container-fluid page-body-wrapper">
             <div class="main-panel">
                 <div class="content-wrapper">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-sm-12 px-0 px-md-3">
+                    <div class="container-fluid">
+                        <div class="row justify-content-center">
+                            <!-- <div class="col-sm-2 p-0 d-none d-md-block">
+                                <div class="container">
+                                    <div class="owl-carousel ads-carousel">
+                                        <?php foreach ($leftAds as $leftAd) : ?>
+                                            <div class="item">
+                                                <?php if (!empty($leftAd['url'])) : ?>
+                                                    <a href="<?= esc($leftAd['url']) ?>" target="_blank">
+                                                        <img class="img-fluid"
+                                                            src="<?= base_url($leftAd['image']) ?>"
+                                                            alt="<?= esc($leftAd['title']) ?>">
+                                                    </a>
+                                                <?php else : ?>
+                                                    <img class="img-fluid"
+                                                        src="<?= base_url($leftAd['image']) ?>"
+                                                        alt="<?= esc($leftAd['title']) ?>">
+                                                <?php endif; ?>
+
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+                            </div> -->
+
+                            <div class="col-sm-12 col-md-12 px-0">
                                 <div class="home-tab">
                                     <!-- News ticker  -->
                                     <div class="mx-auto px-md-3" style="max-width: 1100px;">
@@ -82,12 +105,12 @@
                                                             <?php if (!empty($topAd['url'])) : ?>
                                                                 <a href="<?= esc($topAd['url']) ?>" target="_blank">
                                                                     <img class="img-fluid"
-                                                                        src="<?= base_url('uploads/ads/' . $topAd['image']) ?>"
+                                                                        src="<?= base_url($topAd['image']) ?>"
                                                                         alt="<?= esc($topAd['title']) ?>">
                                                                 </a>
                                                             <?php else : ?>
                                                                 <img class="img-fluid"
-                                                                    src="<?= base_url('uploads/ads/' . $topAd['image']) ?>"
+                                                                    src="<?= base_url($topAd['image']) ?>"
                                                                     alt="<?= esc($topAd['title']) ?>">
                                                             <?php endif; ?>
 
@@ -100,6 +123,28 @@
                                     <?= $this->renderSection('content') ?>
                                 </div>
                             </div>
+                            <!-- <div class="col-sm-2 p-0 d-none d-md-block">
+                                <div class="container">
+                                    <div class="owl-carousel ads-carousel">
+                                        <?php foreach ($rightAds as $rightAd) : ?>
+                                            <div class="item">
+                                                <?php if (!empty($rightAd['url'])) : ?>
+                                                    <a href="<?= esc($rightAd['url']) ?>" target="_blank">
+                                                        <img class="img-fluid"
+                                                            src="<?= base_url($rightAd['image']) ?>"
+                                                            alt="<?= esc($leftAd['title']) ?>">
+                                                    </a>
+                                                <?php else : ?>
+                                                    <img class="img-fluid"
+                                                        src="<?= base_url($rightAd['image']) ?>"
+                                                        alt="<?= esc($rightAd['title']) ?>">
+                                                <?php endif; ?>
+
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>
@@ -112,12 +157,12 @@
                                         <?php if (!empty($bottomAd['url'])) : ?>
                                             <a href="<?= esc($bottomAd['url']) ?>" target="_blank">
                                                 <img class="img-fluid"
-                                                    src="<?= base_url('uploads/ads/' . $bottomAd['image']) ?>"
+                                                    src="<?= base_url($bottomAd['image']) ?>"
                                                     alt="<?= esc($bottomAd['title']) ?>">
                                             </a>
                                         <?php else : ?>
                                             <img class="img-fluid"
-                                                src="<?= base_url('uploads/ads/' . $bottomAd['image']) ?>"
+                                                src="<?= base_url($bottomAd['image']) ?>"
                                                 alt="<?= esc($bottomAd['title']) ?>">
                                         <?php endif; ?>
 
@@ -158,6 +203,10 @@
     <script src="<?= base_url() ?>assets/customs/js/jquery.colorbox.js"></script>
     <script src="<?= base_url() ?>assets/customs/js/custom_script.js"></script>
     <script src="<?= base_url() ?>assets/js/owl-carousel.js"></script>
+
+    <?php foreach ($scriptAds as $scAds): ?>
+        <?= $scAds['script'] ?>
+    <?php endforeach; ?>
     <?= $this->renderSection('jsPlugins') ?>
     <script>
         /* Loading Js*/
@@ -197,7 +246,7 @@
                 loop: true,
                 margin: 10,
                 autoplay: true,
-                autoplayTimeout: 4000,
+                autoplayTimeout: 7000,
                 autoplayHoverPause: false,
                 nav: false,
                 dots: true
@@ -207,7 +256,7 @@
                 loop: true,
                 margin: 10,
                 autoplay: true,
-                autoplayTimeout: 3000,
+                autoplayTimeout: 5000,
                 autoplayHoverPause: false,
                 nav: false,
                 dots: true

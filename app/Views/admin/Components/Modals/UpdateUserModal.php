@@ -3,7 +3,7 @@
         <div class="modal-content">
 
             <div class="modal-header">
-                <h5 class="modal-title">Edit Category</h5>
+                <h5 class="modal-title">Edit User</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
@@ -19,7 +19,7 @@
                         <input type="email" class="form-control form-control-lg" name="email" placeholder="Email" id="email">
                     </div>
                     <div class="form-group">
-                        <select class="form-select form-select-lg" name="role" placeholder="Email" placeholder="Select role">
+                        <select class="form-select form-select-lg" name="role" placeholder="Select role">
                             <option selected>Select role</option>
                             <option value="superadmin">Super Admin</option>
                             <option value="admin">Admin</option>

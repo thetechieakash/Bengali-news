@@ -10,7 +10,7 @@ use App\Models\NewsPostModel;
 use App\Models\AdsModel;
 use CodeIgniter\Exceptions\PageNotFoundException;
 
-class SubCategory extends BaseController
+class ChildCategory extends BaseController
 {
     protected NewsPostModel $postModel;
     protected Categories $catModel;
@@ -18,57 +18,62 @@ class SubCategory extends BaseController
     protected ChildCategories $childCatModel;
     protected AdsModel $adsModel;
 
-
     public function __construct()
     {
-        $this->postModel   = new NewsPostModel();
-        $this->catModel    = new Categories();
-        $this->subCatModel = new SubCategories();
+        $this->postModel     = new NewsPostModel();
+        $this->catModel      = new Categories();
+        $this->subCatModel   = new SubCategories();
         $this->childCatModel = new ChildCategories();
-        $this->adsModel  = new AdsModel();
+        $this->adsModel      = new AdsModel();
     }
 
-    public function index(string $categorySlug, string $subCategorySlug)
+    public function index(string $categorySlug, string $subCategorySlug, string $childCategorySlug)
     {
-        $category    = $this->catModel->getSpecificCatBySlug($categorySlug);
+        $category = $this->catModel->getSpecificCatBySlug($categorySlug);
         $subCategory = $this->subCatModel->getSubCatsBySlug($subCategorySlug);
+        $childCategory = $this->childCatModel->getChildBySlug($childCategorySlug);
 
-        if (!$category || !$subCategory) {
+        if (!$category || !$subCategory || !$childCategory) {
             throw PageNotFoundException::forPageNotFound();
         }
 
-        $posts = $this->getSubCategoryPosts(
+        $posts = $this->getChildCategoryPosts(
             $category['id'],
-            $subCategory['id']
+            $subCategory['id'],
+            $childCategory['id']
         );
 
         $data = [
-            'pageTitle'   => $subCategory['sub_cat_name'],
-            'category'    => $category,
-            'subCategory' => $subCategory,
-            'childCategory' => $this->childCatModel->getChildBySubCatId($subCategory['id']),
-            'posts'       => $posts,
-            'pager'       => $this->postModel->pager,
-            'popularNews' => $this->postModel->popularNews(7),
-            'topAds'      => $this->adsModel->getAdsForPage('sub_category', 'top', true),
-            'bottomAds'   => $this->adsModel->getAdsForPage('sub_category', 'bottom', true),
-            'leftAds'     => $this->adsModel->getAdsForPage('sub_category', 'left', true),
-            'rightAds'    => $this->adsModel->getAdsForPage('sub_category', 'right', true),
-            'blockAds'    => $this->adsModel->getAdsForPage('sub_category', 'block', true),
-            'scriptAds'   => $this->adsModel->getScriptAds('sub_category', 'script')
-        ];
+            'pageTitle'     => $childCategory['child_cat_name'],
+            'category'      => $category,
+            'subCategory'   => $subCategory,
+            'childCategory' => $childCategory,
+            'posts'         => $posts,
+            'pager'         => $this->postModel->pager,
+            'popularNews'   => $this->postModel->popularNews(7),
 
-        return view('user/SubCategory', array_merge($this->data, $data));
+            // Ads
+            'topAds'    => $this->adsModel->getAdsForPage('child_category', 'top', true),
+            'bottomAds' => $this->adsModel->getAdsForPage('child_category', 'bottom', true),
+            'leftAds'   => $this->adsModel->getAdsForPage('child_category', 'left', true),
+            'rightAds'  => $this->adsModel->getAdsForPage('child_category', 'right', true),
+            'blockAds'  => $this->adsModel->getAdsForPage('child_category', 'block', true),
+            'scriptAds' => $this->adsModel->getScriptAds('child_category', 'script'),
+        ];
+// dd($data);
+        return view('user/ChildCategory', array_merge($this->data, $data));
     }
 
     /**
-     * Get paginated posts by category & sub-category
+     * Get paginated posts by child category
      */
-    private function getSubCategoryPosts(
+    private function getChildCategoryPosts(
         int $categoryId,
         int $subCategoryId,
+        int $childCategoryId,
         int $perPage = 5
     ): array {
+
         return $this->postModel
             ->select('
                 news_posts.id,
@@ -101,9 +106,10 @@ class SubCategory extends BaseController
             )
             ->where('npc.category_id', $categoryId)
             ->where('npsc.sub_category_id', $subCategoryId)
+            ->where('npcc.child_category_id', $childCategoryId)
             ->where('news_posts.status', 1)
             ->groupBy('news_posts.id')
             ->orderBy('news_posts.post_date_time', 'DESC')
-            ->paginate($perPage, 'subcategory');
+            ->paginate($perPage, 'childcategory');
     }
 }

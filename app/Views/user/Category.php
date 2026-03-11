@@ -20,12 +20,12 @@ use App\Helpers\ThumbHelper;
                         <?php if (!empty($topAd['url'])) : ?>
                             <a href="<?= esc($topAd['url']) ?>" target="_blank">
                                 <img class="img-fluid"
-                                    src="<?= base_url('uploads/ads/' . $topAd['image']) ?>"
+                                    src="<?= base_url($topAd['image']) ?>"
                                     alt="<?= esc($topAd['title']) ?>">
                             </a>
                         <?php else : ?>
                             <img class="img-fluid"
-                                src="<?= base_url('uploads/ads/' . $topAd['image']) ?>"
+                                src="<?= base_url($topAd['image']) ?>"
                                 alt="<?= esc($topAd['title']) ?>">
                         <?php endif; ?>
                     </div>
@@ -59,7 +59,7 @@ use App\Helpers\ThumbHelper;
                         <ul class="subCategory unstyled">
                             <?php foreach ($subCategory as $subCat): ?>
                                 <li>
-                                    <a href="<?= base_url("category/{$category['slug']}/sub-category/{$subCat['sub_cat_slug']}") ?>">
+                                    <a href="<?= base_url("category/{$category['slug']}/{$subCat['sub_cat_slug']}") ?>">
                                         <?= esc($subCat['sub_cat_name']) ?>
                                     </a>
                                 </li>
@@ -96,9 +96,35 @@ use App\Helpers\ThumbHelper;
                             </div>
                         <?php endforeach; ?>
                     <?php else: ?>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card shadow-sm border-0 text-center p-4 my-4">
+
+                                    <div class="mb-3">
+                                        <i class="fa fa-newspaper-o text-muted" style="font-size:50px;"></i>
+                                    </div>
+
+                                    <h4 class="text-dark mb-2">
+                                        No News Available
+                                    </h4>
+
+                                    <p class="text-muted mb-3">
+                                        There are currently no news articles available in this section.
+                                        Please check back later.
+                                    </p>
+
+                                    <a href="<?= base_url() ?>" class="btn btn-primary">
+                                        <i class="fa fa-home"></i> Back to Home
+                                    </a>
+
+                                </div>
+                            </div>
+                        </div>
                     <?php endif; ?>
                 </div>
-                <?= $pager->links() ?>
+                <?php if (!empty($posts)): ?>
+                    <?= $pager->links('default', 'custom') ?>
+                <?php endif; ?>
             </div>
             <div class="col-lg-4 col-md-12">
                 <div class="sidebar utf_sidebar_right mt-3 mt-md-0">
@@ -110,12 +136,12 @@ use App\Helpers\ThumbHelper;
                                         <?php if (!empty($blockAd['url'])) : ?>
                                             <a href="<?= esc($blockAd['url']) ?>" target="_blank">
                                                 <img class="banner img-fluid"
-                                                    src="<?= base_url('uploads/ads/' . $blockAd['image']) ?>"
+                                                    src="<?= base_url($blockAd['image']) ?>"
                                                     alt="<?= esc($blockAd['title']) ?>">
                                             </a>
                                         <?php else : ?>
                                             <img class="banner img-fluid"
-                                                src="<?= base_url('uploads/ads/' . $blockAd['image']) ?>"
+                                                src="<?= base_url($blockAd['image']) ?>"
                                                 alt="<?= esc($blockAd['title']) ?>">
                                         <?php endif; ?>
                                     </div>
@@ -156,12 +182,12 @@ use App\Helpers\ThumbHelper;
                                         <?php if (!empty($blockAdb['url'])) : ?>
                                             <a href="<?= esc($blockAdb['url']) ?>" target="_blank">
                                                 <img class="banner img-fluid"
-                                                    src="<?= base_url('uploads/ads/' . $blockAdb['image']) ?>"
+                                                    src="<?= base_url($blockAdb['image']) ?>"
                                                     alt="<?= esc($blockAdb['title']) ?>">
                                             </a>
                                         <?php else : ?>
                                             <img class="banner img-fluid"
-                                                src="<?= base_url('uploads/ads/' . $blockAdb['image']) ?>"
+                                                src="<?= base_url($blockAdb['image']) ?>"
                                                 alt="<?= esc($blockAdb['title']) ?>">
                                         <?php endif; ?>
                                     </div>

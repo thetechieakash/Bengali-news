@@ -8,7 +8,7 @@
 <?= $this->endSection() ?>
 <?= $this->section('content') ?>
 <div class="row w-100 mx-0">
-    <div class="col-md-6 mx-auto">
+    <div class="col-md-8 mx-auto">
         <div class="auth-form-light text-left py-4 px-4 px-sm-5">
             <div class="card">
                 <div class="card-body">

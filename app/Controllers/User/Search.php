@@ -33,6 +33,7 @@ class Search extends BaseController
             'leftAds'     => $adsModel->getAdsForPage('search', 'left', true),
             'rightAds'    => $adsModel->getAdsForPage('search', 'right', true),
             'blockAds'    => $adsModel->getAdsForPage('search', 'block', true),
+            'scriptAds'   => $adsModel->getScriptAds('search', 'script')
         ];
         // dd(array_merge($this->data, $data));
         return view('user/Search', array_merge($this->data, $data));

@@ -43,6 +43,7 @@ class Tag extends BaseController
             'leftAds'   => $this->adsModel->getAdsForPage('tag', 'left', true),
             'rightAds'  => $this->adsModel->getAdsForPage('tag', 'right', true),
             'blockAds'  => $this->adsModel->getAdsForPage('tag', 'block', true),
+            'scriptAds' => $this->adsModel->getScriptAds('tag', 'script')
         ];
 
         return view('user/Tag', array_merge($this->data, $data));

@@ -63,17 +63,19 @@
                                     </td>
                                     <td>
                                         <div class="dropdown">
-                                            <button class="btn btn-success btn-sm dropdown-toggle" type="button"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <button class="btn btn-success btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                 Modify
                                             </button>
-                                            <div class="dropdown-menu" >
+                                            <div class="dropdown-menu">
                                                 <?php if ($user->deleted_at): ?>
                                                     <button class="dropdown-item restorebtn" data-id="<?= $user->id ?>">Reactivate</button>
                                                 <?php else: ?>
                                                     <button class="dropdown-item editBtn"
                                                         data-id="<?= $user->id ?>"
                                                         data-username="<?= $user->username ?>"
+                                                        data-role="<?= $role ?>"
                                                         data-email="<?= $user->email ?>">Edit</button>
+                                                    <button class="dropdown-item editpermission" data-id="<?= $user->id ?>">Edit Permissions</button>
                                                     <div class="dropdown-divider"></div>
                                                     <button class="dropdown-item deletebtn" data-id="<?= $user->id ?>">Delete</button>
                                                 <?php endif; ?>

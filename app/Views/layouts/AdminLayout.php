@@ -23,10 +23,10 @@
     <?= $this->renderSection('plugin') ?>
     <!-- End plugin css for this page -->
     <!-- inject:css -->
-    <link rel="stylesheet" href="<?= base_url() ?>assets/css/vertical-layout-light/style.css">
+    <link rel="stylesheet" href="<?= base_url() ?>assets/css/vertical-layout-light/style.css?v=8.5">
     <!-- endinject -->
-    <link rel="shortcut icon" href="<?= base_url() ?>assets/images/bangla-logo-mini.svg" />
-    <link rel="stylesheet" href="<?= base_url('assets/customs/css/admincustom.css') ?>?v=7.5">
+    <link rel="shortcut icon" href="<?= base_url() ?>assets/images/insta-logo.jpg" />
+    <link rel="stylesheet" href="<?= base_url('assets/customs/css/admincustom.css') ?>?v=8.5">
     <style>
         #global-loader {
             position: fixed;

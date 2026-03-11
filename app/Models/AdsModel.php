@@ -40,7 +40,8 @@ class AdsModel extends Model
 
         $builder = $this->where('status', 1)
             ->where("JSON_CONTAINS(pages, $pageJson)", null, false)
-            ->where("JSON_CONTAINS(position, $positionJson)", null, false);
+            // ->where("JSON_CONTAINS(position, $positionJson)", null, false);
+            ->where("position", $position);
 
         if ($onlyImage) {
             $builder->where('ad_type', 'image')
@@ -49,6 +50,16 @@ class AdsModel extends Model
         }
 
         return $builder
+            ->orderBy('id', 'DESC')
+            ->findAll();
+    }
+    public function getScriptAds(string $page, string $type ): array
+    {
+        $pageJson = $this->db->escape(json_encode($page));
+
+        return $this->where('status', 1)
+            ->where('ad_type', $type)
+            ->where("JSON_CONTAINS(pages, $pageJson)", null, false)
             ->orderBy('id', 'DESC')
             ->findAll();
     }

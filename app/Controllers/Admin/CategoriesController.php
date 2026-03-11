@@ -6,9 +6,11 @@ use App\Controllers\BaseController;
 use App\Helpers\Slug;
 use App\Models\Categories;
 use App\Models\SubCategories;
+use App\Models\ChildCategories;
 
 class CategoriesController extends BaseController
 {
+    private int $navbarLimit = 10;
     public function index()
     {
         $model = new Categories();
@@ -30,20 +32,41 @@ class CategoriesController extends BaseController
         }
 
         $data = $this->request->getPost();
+
         if (empty(trim($data['category'] ?? ''))) {
             return $this->response->setJSON([
                 'success' => false,
                 'message' => 'Category name is required'
             ]);
         }
+
         $model = new Categories();
         $slugHelper = new Slug();
 
+        $isActive = isset($data['status']) ? 1 : 0;
+
+        /* -------- CHECK ACTIVE LIMIT -------- */
+
+        if ($isActive === 1) {
+
+            $activeCount = $model
+                ->where('is_active', 1)
+                ->countAllResults();
+
+            if ($activeCount >= $this->navbarLimit) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => "Only {$this->navbarLimit} categories can be active in the navbar. Disable another category first."
+                ]);
+            }
+        }
+
         $catSlug = $slugHelper->slugify($data['slug']);
+
         $insertableData = [
             'cat'       => trim($data['category']),
             'slug'      => $catSlug,
-            'is_active' => isset($data['status']) ? 1 : 0,
+            'is_active' => $isActive,
             'status'    => 1,
         ];
 
@@ -56,6 +79,7 @@ class CategoriesController extends BaseController
         }
 
         $model->insert($insertableData);
+
         cache()->delete('navbar_categories');
 
         return $this->response->setJSON([
@@ -118,7 +142,7 @@ class CategoriesController extends BaseController
         ]);
     }
 
-    public function updateActive($defaultActiveCount = 10)
+    public function updateActive()
     {
         $data  = $this->request->getJSON(true);
         $id    = $data['id'] ?? null;
@@ -153,12 +177,12 @@ class CategoriesController extends BaseController
                         ->where('is_active', 1)
                         ->countAllResults();
 
-                    if ($activeCount >= $defaultActiveCount) {
+                    if ($activeCount >= $this->navbarLimit) {
                         $db->transRollback();
 
                         return $this->response->setJSON([
                             'success' => false,
-                            'message' => "Only {$defaultActiveCount} categories can be active in the navbar. Please disable another category first."
+                            'message' => "Only {$this->navbarLimit} categories can be active in the navbar. Please disable another category first."
                         ]);
                     }
                 }
@@ -270,12 +294,15 @@ class CategoriesController extends BaseController
                 'message' => 'Invalid request'
             ]);
         }
+
         $db = db_connect();
         $db->transBegin();
 
         try {
+
             $categoryModel     = new Categories();
             $subCategoryModel  = new SubCategories();
+            $childCategoryModel = new ChildCategories();
 
             $category = $categoryModel->find($id);
 
@@ -288,6 +315,15 @@ class CategoriesController extends BaseController
                 ->where('cat_id', $id)
                 ->findColumn('id');
 
+            /* -------- GET CHILD CATEGORY IDS -------- */
+
+            if (!empty($subCategoryIds)) {
+
+                $childIds = $childCategoryModel
+                    ->whereIn('sub_cat_id', $subCategoryIds)
+                    ->findColumn('id');
+            }
+
             /* -------- DELETE POST ↔ CATEGORY LINKS -------- */
             $db->table('news_post_categories')
                 ->where('category_id', $id)
@@ -295,8 +331,17 @@ class CategoriesController extends BaseController
 
             /* -------- DELETE POST ↔ SUBCATEGORY LINKS -------- */
             if (!empty($subCategoryIds)) {
+
                 $db->table('news_post_sub_categories')
                     ->whereIn('sub_category_id', $subCategoryIds)
+                    ->delete();
+            }
+
+            /* -------- DELETE CHILD CATEGORIES -------- */
+            if (!empty($subCategoryIds)) {
+
+                $childCategoryModel
+                    ->whereIn('sub_cat_id', $subCategoryIds)
                     ->delete();
             }
 
@@ -307,14 +352,14 @@ class CategoriesController extends BaseController
 
             /* -------- DELETE CATEGORY -------- */
             $categoryModel->delete($id);
-            cache()->delete('navbar_categories');
 
+            cache()->delete('navbar_categories');
 
             $db->transCommit();
 
             return $this->response->setJSON([
                 'success' => true,
-                'message' => 'Category and related subcategories deleted successfully'
+                'message' => 'Category, subcategories and child categories deleted successfully'
             ]);
         } catch (\Throwable $e) {
 
@@ -323,7 +368,7 @@ class CategoriesController extends BaseController
             return $this->response->setJSON([
                 'success' => false,
                 'message' => 'Failed to delete category',
-                'debug'   => ENVIRONMENT !== 'production' ? $e->getMessage() : null
+                'debug' => ENVIRONMENT !== 'production' ? $e->getMessage() : null
             ]);
         }
     }
