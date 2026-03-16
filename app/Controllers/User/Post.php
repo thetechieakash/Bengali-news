@@ -56,10 +56,11 @@ class Post extends BaseController
         $comments = $commentModel->getCommentsWithAdminReply($post['id']);
         $data = [
             'pageTitle' => $post['headline'],
+            'tickerActive' => true,
             'post' => $post,
             'readMorePosts' => $readMorePosts,
             'comments' => $comments,
-            'recapcha_key' => env('GOOGLE_RECAPTCHA_KEY'),
+            'recaptcha_key' => env('GOOGLE_RECAPTCHA_KEY'),
             'relatedPosts' => $newsModel->relatedPosts($post['id'], $post['category_ids'], $post['subcategory_ids'], 20),
             'popularTags' => $tagModel->popularTags(15),
             'topAds'      => $adsModel->getAdsForPage('post', 'top', true),

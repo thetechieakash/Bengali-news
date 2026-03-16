@@ -52,7 +52,7 @@
                         <label class="me-3">
                             <input type="checkbox" name="pages[]" value="sub_category"> Sub Category
                         </label>
-                        
+
                         <label class="me-3">
                             <input type="checkbox" name="pages[]" value="child_category"> Child Category
                         </label>
@@ -263,10 +263,10 @@
 
         const positionSizes = {
             block: "500x500",
-            top: "1200x150",
-            left: "300x600",
-            right: "300x600",
-            bottom: "1200x200"
+            top: "1100x180",
+            left: "180x1100",
+            right: "180x1100",
+            bottom: "1100x180"
         };
 
 

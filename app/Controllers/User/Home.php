@@ -24,8 +24,9 @@ class Home extends BaseController
     {
         $data = [
             'pageTitle'          => 'Home',
+            'tickerActive' => true,
             'carousal'           => $this->getCarouselPosts(),
-            'randomPosts'        => $this->getRandomCategoryPosts(3, 4),
+            'randomPosts'        => $this->getFixedCategoryPosts([1,3,5], 4),
             'getPostAndCategory' => $this->getPostAndCategory(3),
             'popularNews'        => $this->postModel->popularNews(7),
             'postDuration'       => $this->postModel->postDuration(1, 30),
@@ -145,4 +146,30 @@ class Home extends BaseController
             ->limit($limit)
             ->findAll();
     }
+    private function getFixedCategoryPosts(array $categoryIds, int $postLimit): array
+    {
+        $categories = $this->catModel
+            ->whereIn('id', $categoryIds)
+            ->findAll();
+
+        $result = [];
+
+        foreach ($categories as $category) {
+
+            $posts = $this->getPostsByCategory(
+                $category['id'],
+                $postLimit
+            );
+
+            if (!empty($posts)) {
+                $result[] = [
+                    'category' => $category,
+                    'posts'    => $posts
+                ];
+            }
+        }
+
+        return $result;
+    }
+    
 }

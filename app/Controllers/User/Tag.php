@@ -34,6 +34,8 @@ class Tag extends BaseController
 
         $data = [
             'pageTitle' => 'Tag: ' . $tag['name'],
+            'tickerActive' => true,
+
             'tag'       => $tag,
             'posts'     => $posts,
             'pager'     => $this->postModel->pager,

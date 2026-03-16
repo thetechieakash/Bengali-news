@@ -10,6 +10,7 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-primary" id="submitReply">Reply</button>
+                <button class="btn btn-danger" id="deleteReply">Delete Reply</button>
             </div>
         </div>
     </div>

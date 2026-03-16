@@ -21,11 +21,11 @@
     <?= $this->renderSection('cssPlugins') ?>
     <!-- End plugin css for this page -->
     <!-- inject:css -->
-    <link rel="stylesheet" href="<?= base_url() ?>assets/css/horizontal-layout-light/style.css?v=9.0">
+    <link rel="stylesheet" href="<?= base_url() ?>assets/css/horizontal-layout-light/style.css?v=10.5">
     <!-- endinject -->
     <link rel="shortcut icon" href="<?= base_url() ?>assets/images/insta-logo.jpg" />
-    <link rel="stylesheet" href="<?= base_url() ?>assets/customs/css/style.css?v=9.0">
-    <link rel="stylesheet" href="<?= base_url() ?>assets/customs/css/custom.css?v=9.0">
+    <link rel="stylesheet" href="<?= base_url() ?>assets/customs/css/style.css?v=10.5">
+    <link rel="stylesheet" href="<?= base_url() ?>assets/customs/css/custom.css?v=10.5">
 </head>
 
 <body>
@@ -44,60 +44,65 @@
     <!-- End Pre Loader -->
     <div class="container-scroller">
         <!-- partial:partials/_horizontal-navbar.html -->
-        <?= $this->include('user/Components/HorizontalNavbar.php') ?>
+        <?= $this->include('user/Components/Horizontal.php') ?>
         <!-- partial -->
         <div class="container-fluid page-body-wrapper">
             <div class="main-panel">
                 <div class="content-wrapper">
                     <div class="container-fluid">
                         <div class="row justify-content-center">
-                            <!-- <div class="col-sm-2 p-0 d-none d-md-block">
-                                <div class="container">
-                                    <div class="owl-carousel ads-carousel">
-                                        <?php foreach ($leftAds as $leftAd) : ?>
-                                            <div class="item">
-                                                <?php if (!empty($leftAd['url'])) : ?>
-                                                    <a href="<?= esc($leftAd['url']) ?>" target="_blank">
+                            <?php if (isset($leftAds)): ?>
+                                <div class="col-sm-2 p-0 d-none d-md-block">
+                                    <div class="container">
+                                        <div class="owl-carousel left-carousel">
+                                            <?php foreach ($leftAds as $leftAd) : ?>
+                                                <div class="item">
+                                                    <?php if (!empty($leftAd['url'])) : ?>
+                                                        <a href="<?= esc($leftAd['url']) ?>" target="_blank">
+                                                            <img class="img-fluid"
+                                                                src="<?= base_url($leftAd['image']) ?>"
+                                                                alt="<?= esc($leftAd['title']) ?>">
+                                                        </a>
+                                                    <?php else : ?>
                                                         <img class="img-fluid"
                                                             src="<?= base_url($leftAd['image']) ?>"
                                                             alt="<?= esc($leftAd['title']) ?>">
-                                                    </a>
-                                                <?php else : ?>
-                                                    <img class="img-fluid"
-                                                        src="<?= base_url($leftAd['image']) ?>"
-                                                        alt="<?= esc($leftAd['title']) ?>">
-                                                <?php endif; ?>
+                                                    <?php endif; ?>
 
-                                            </div>
-                                        <?php endforeach; ?>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        </div>
                                     </div>
                                 </div>
-                            </div> -->
-
-                            <div class="col-sm-12 col-md-12 px-0">
+                            <?php endif; ?>
+                            <?= $this->renderSection('w-full') ?>
+                            <div class="col-sm-12 col-md-8 px-0">
                                 <div class="home-tab">
                                     <!-- News ticker  -->
-                                    <div class="mx-auto px-md-3" style="max-width: 1100px;">
-                                        <div class="container my-2 px-0">
-                                            <div class="breaking-wrapper d-flex align-items-center shadow-lg">
-                                                <!-- LEFT LABEL -->
-                                                <div class="breaking-label">
-                                                    BREAKING NEWS
-                                                </div>
-                                                <!-- TICKER -->
-                                                <div class="breaking-ticker owl-carousel ticker ps-0">
-                                                    <?php foreach ($tickers as $ticker): ?>
-                                                        <div class="ticker-item">
-                                                            <i class="fa fa-circle"></i>
-                                                            <a href="<?= base_url('news/' . $ticker['slug']) ?>"><?= StringShort::truncate($ticker['headline'], 50)  ?></a>
-                                                        </div>
-                                                    <?php endforeach; ?>
+                                    <?php if ($tickerActive): ?>
+                                        <div class="mx-auto px-md-3" style="max-width: 1100px;">
+                                            <div class="container my-2 px-0">
+                                                <div class="breaking-wrapper d-flex align-items-center shadow-lg">
+                                                    <!-- LEFT LABEL -->
+                                                    <div class="breaking-label">
+                                                        BREAKING NEWS
+                                                    </div>
+                                                    <!-- TICKER -->
+                                                    <div class="breaking-ticker owl-carousel ticker ps-0">
+                                                        <?php foreach ($tickers as $ticker): ?>
+                                                            <div class="ticker-item">
+                                                                <i class="fa fa-circle"></i>
+                                                                <a href="<?= base_url('news/' . $ticker['slug']) ?>"><?= StringShort::truncate($ticker['headline'], 50)  ?></a>
+                                                            </div>
+                                                        <?php endforeach; ?>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    <?php endif; ?>
+
                                     <?php if (!empty($topAds)) : ?>
-                                        <div class="utf_ad_content_area text-center utf_banner_area py-3">
+                                        <div class="utf_ad_content_area text-center utf_banner_area pt-3 pb-0">
                                             <div class="container">
                                                 <div class="owl-carousel ads-carousel">
                                                     <?php foreach ($topAds as $topAd) : ?>
@@ -123,33 +128,35 @@
                                     <?= $this->renderSection('content') ?>
                                 </div>
                             </div>
-                            <!-- <div class="col-sm-2 p-0 d-none d-md-block">
-                                <div class="container">
-                                    <div class="owl-carousel ads-carousel">
-                                        <?php foreach ($rightAds as $rightAd) : ?>
-                                            <div class="item">
-                                                <?php if (!empty($rightAd['url'])) : ?>
-                                                    <a href="<?= esc($rightAd['url']) ?>" target="_blank">
+                            <?php if (isset($rightAds)): ?>
+                                <div class="col-sm-2 p-0 d-none d-md-block">
+                                    <div class="container">
+                                        <div class="owl-carousel right-carousel">
+                                            <?php foreach ($rightAds as $rightAd) : ?>
+                                                <div class="item">
+                                                    <?php if (!empty($rightAd['url'])) : ?>
+                                                        <a href="<?= esc($rightAd['url']) ?>" target="_blank">
+                                                            <img class="img-fluid"
+                                                                src="<?= base_url($rightAd['image']) ?>"
+                                                                alt="<?= esc($leftAd['title']) ?>">
+                                                        </a>
+                                                    <?php else : ?>
                                                         <img class="img-fluid"
                                                             src="<?= base_url($rightAd['image']) ?>"
-                                                            alt="<?= esc($leftAd['title']) ?>">
-                                                    </a>
-                                                <?php else : ?>
-                                                    <img class="img-fluid"
-                                                        src="<?= base_url($rightAd['image']) ?>"
-                                                        alt="<?= esc($rightAd['title']) ?>">
-                                                <?php endif; ?>
+                                                            alt="<?= esc($rightAd['title']) ?>">
+                                                    <?php endif; ?>
 
-                                            </div>
-                                        <?php endforeach; ?>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        </div>
                                     </div>
                                 </div>
-                            </div> -->
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
                 <?php if (!empty($bottomAds)) : ?>
-                    <div class="utf_ad_content_area text-center utf_banner_area py-3">
+                    <div class="utf_ad_content_area text-center utf_banner_area pb-3 pt-0">
                         <div class="container">
                             <div class="owl-carousel ads-carousel">
                                 <?php foreach ($bottomAds as $bottomAd) : ?>
@@ -173,7 +180,6 @@
                     </div>
                 <?php endif; ?>
                 <!-- content-wrapper ends -->
-                <!-- partial:partials/_footer.html -->
                 <?= $this->include('user/Components/Footer.php') ?>
                 <div id="back-to-top" class="back-to-top">
                     <button class="btn" title="Back to Top"> <i class="fa fa-angle-up"></i> </button>
@@ -185,6 +191,26 @@
         <!-- page-body-wrapper ends -->
     </div>
     <!-- container-scroller -->
+    <div class="modal fade" id="searchModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header border-0 pb-1">
+                    <h5 class="modal-title">Search news</h5>
+                </div>
+                <div class="modal-body">
+                    <form action="<?= base_url('search') ?>" method="get">
+                        <input type="text"
+                            class="form-control border-1 news-search"
+                            autocomplete="off"
+                            name="q"
+                            placeholder="Search news..."
+                            required>
+                        <button type="submit" class="btn btn-primary mt-2">Search</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- plugins:js -->
     <script src="<?= base_url() ?>assets/vendors/js/vendor.bundle.base.js"></script>
@@ -203,10 +229,11 @@
     <script src="<?= base_url() ?>assets/customs/js/jquery.colorbox.js"></script>
     <script src="<?= base_url() ?>assets/customs/js/custom_script.js"></script>
     <script src="<?= base_url() ?>assets/js/owl-carousel.js"></script>
-
-    <?php foreach ($scriptAds as $scAds): ?>
-        <?= $scAds['script'] ?>
-    <?php endforeach; ?>
+    <?php if (isset($scriptAds)): ?>
+        <?php foreach ($scriptAds as $scAds): ?>
+            <?= $scAds['script'] ?>
+        <?php endforeach; ?>
+    <?php endif; ?>
     <?= $this->renderSection('jsPlugins') ?>
     <script>
         /* Loading Js*/
@@ -249,7 +276,28 @@
                 autoplayTimeout: 7000,
                 autoplayHoverPause: false,
                 nav: false,
+                dots: true,
+            });
+            $('.left-carousel').owlCarousel({
+                items: 1,
+                loop: true,
+                margin: 10,
+                autoplay: true,
+                autoplayTimeout: 8000,
+                autoplayHoverPause: false,
+                nav: false,
                 dots: true
+            });
+            $('.right-carousel').owlCarousel({
+                items: 1,
+                loop: true,
+                margin: 10,
+                autoplay: true,
+                autoplayTimeout: 8000,
+                autoplayHoverPause: false,
+                nav: false,
+                dots: true,
+                rtl: true
             });
             $('.blockAdsCarousel').owlCarousel({
                 items: 1,
@@ -286,6 +334,14 @@
             });
 
         });
+        const search = document.querySelector('.search-btn');
+
+        if (search) {
+            search.addEventListener('click', function(e) {
+                e.preventDefault();
+                $('#searchModal').modal('show');
+            });
+        }
     </script>
     <?= $this->renderSection('customjs') ?>
 

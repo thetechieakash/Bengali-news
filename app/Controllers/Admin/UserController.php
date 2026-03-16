@@ -44,7 +44,8 @@ class UserController extends BaseController
             'documents' => ['view', 'create', 'delete'],
             'author' => ['view', 'create', 'update', 'delete'],
             'ads' => ['view', 'create', 'update', 'delete', 'status'],
-            'news' => ['view', 'create', 'update', 'delete', 'status']
+            'news' => ['view', 'create', 'update', 'delete', 'status'],
+            'messages' => ['view', 'delete'],
         ];
 
         $userPermissions = $user->getPermissions();

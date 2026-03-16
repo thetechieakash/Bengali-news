@@ -5,6 +5,7 @@ namespace App\Controllers\Admin;
 use App\Controllers\BaseController;
 use App\Helpers\Slug;
 use App\Models\TagModel;
+use App\Models\NewsPostTagModel;
 
 class TagsController extends BaseController
 {

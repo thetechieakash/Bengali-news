@@ -135,7 +135,31 @@ $user = auth()->user();
             </li>
         <?php endif; ?>
 
+        <?php if ($user->can('messages.view')): ?>
+            <li class="nav-item nav-category">Messages Manager</li>
+            <li class="nav-item <?= $uri === 'admin/messages' ? 'active' : '' ?>">
+                <a class="nav-link" href="<?= base_url('admin/messages') ?>">
+                    <i class="fa fa-user"></i>
+                    <span class="menu-title">Messages</span>
+                </a>
+            </li>
+        <?php endif; ?>
+
         <?php if ($user->inGroup('superadmin')): ?>
+            <li class="nav-item nav-category">Pages Manager</li>
+            <li class="nav-item <?= $uri === 'admin/about-us' ? 'active' : '' ?>">
+                <a class="nav-link" href="<?= base_url('admin/about-us') ?>">
+                    <i class="fa fa-user"></i>
+                    <span class="menu-title">About Us</span>
+                </a>
+            </li>
+            <li class="nav-item <?= $uri === 'admin/privacy-policy' ? 'active' : '' ?>">
+                <a class="nav-link" href="<?= base_url('admin/privacy-policy') ?>">
+                    <i class="fa fa-user"></i>
+                    <span class="menu-title">Privacy & Policy</span>
+                </a>
+            </li>
+
             <li class="nav-item nav-category">User Manager</li>
             <li class="nav-item <?= $uri === 'admin/all-users' ? 'active' : '' ?>">
                 <a class="nav-link" href="<?= base_url('admin/all-users') ?>">

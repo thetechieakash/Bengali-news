@@ -5,7 +5,7 @@ namespace App\Controllers\User;
 use App\Controllers\BaseController;
 use App\Models\NewsPostCommentModel;
 use App\Models\NewsPostModel;
-use Config\Services;
+use App\Libraries\RecaptchaService;
 
 class PostComment extends BaseController
 {
@@ -24,7 +24,7 @@ class PostComment extends BaseController
              * 1. BASIC INPUT
              * ----------------------------- */
             $postId  = (int) ($data['postid'] ?? 0);
-            $token   = $data['g-recaptcha-response'] ?? '';
+            $token = $this->request->getPost('g-recaptcha-response');
 
             if ($postId <= 0 || empty($token)) {
                 throw new \Exception('Invalid request');
@@ -62,7 +62,8 @@ class PostComment extends BaseController
             /* -----------------------------
              * 4. VERIFY reCAPTCHA v3
              * ----------------------------- */
-            $recaptcha = $this->verifyRecaptcha($token);
+            $recaptchaService = new RecaptchaService();
+            $recaptcha = $recaptchaService->verify($token);
 
             if (
                 empty($recaptcha['success']) || ($recaptcha['score'] ?? 0) < 0.4 || ($recaptcha['action'] ?? '') !== 'comment'
@@ -100,40 +101,6 @@ class PostComment extends BaseController
                 'success' => false,
                 'errors' => $e->getMessage(),
             ]);
-        }
-    }
-
-    /* ------------------------------------
-     * reCAPTCHA v3 SERVER VERIFY
-     * ------------------------------------ */
-    private function verifyRecaptcha(string $token): array
-    {
-        $secret = env('GOOGLE_RECAPTCHA_SECRET');
-
-        $client = Services::curlrequest([
-            'timeout' => 10,
-            // 'verify'  => false, // this need to be removed 
-            'verify'  => ENVIRONMENT !== 'development' // this need to be removed 
-
-        ]);
-
-
-        try {
-            $response = $client->post(
-                'https://www.google.com/recaptcha/api/siteverify',
-                [
-                    'form_params' => [
-                        'secret'   => $secret,
-                        'response' => $token,
-                        'remoteip' => $this->request->getIPAddress(),
-                    ],
-                ]
-            );
-
-            return json_decode($response->getBody(), true) ?? ['success' => false];
-        } catch (\Throwable $e) {
-            log_message('error', 'reCAPTCHA error: ' . $e->getMessage());
-            return ['success' => false];
         }
     }
 }

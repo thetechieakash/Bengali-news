@@ -132,6 +132,10 @@ class AuthGroups extends ShieldAuthGroups
         'author.create' => 'Create author',
         'author.update' => 'Update author',
         'author.delete' => 'Delete author',
+
+        // Message
+        'messages.view' => 'View messages',
+        'messages.delete' => 'Delete messages'
     ];
 
     /**

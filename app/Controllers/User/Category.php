@@ -36,6 +36,7 @@ class Category extends BaseController
 
         $data = [
             'pageTitle'   => $category['cat'],
+            'tickerActive' => true,
             'category'    => $category,
             'subCategory' => $this->subCatModel->getSubCatsByCatId($category['id']),
             'posts'       => $posts,

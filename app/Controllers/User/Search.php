@@ -24,6 +24,7 @@ class Search extends BaseController
 
         $data = [
             'pageTitle' => 'Search Result',
+            'tickerActive' => true,
             'keyword' => $keyword,
             'results' => $results,
             'popularNews' => $newsModel->popularNews(7),

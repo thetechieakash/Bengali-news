@@ -45,6 +45,7 @@ class ChildCategory extends BaseController
 
         $data = [
             'pageTitle'     => $childCategory['child_cat_name'],
+            'tickerActive' => true,
             'category'      => $category,
             'subCategory'   => $subCategory,
             'childCategory' => $childCategory,

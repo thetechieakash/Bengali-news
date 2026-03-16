@@ -41,7 +41,6 @@ use App\Helpers\ThumbHelper;
                                                 <a href="<?= base_url('news/' . $post['slug']) ?>"><?= StringShort::truncate($post['headline']) ?></a>
                                             </h2>
                                             <div class="utf_post_meta">
-                                                <span class="utf_post_author"><?= esc($post['author']) ?></span>
                                                 <span class="utf_post_date">
                                                     <?php $formattedPostDate = (new DateTime($post['post_date_time']))->format('d M, Y'); ?>
                                                     <?= $formattedPostDate ?>
@@ -101,7 +100,6 @@ use App\Helpers\ThumbHelper;
                                                     <a href="<?= base_url('news/' . $news['slug']) ?>"><?= StringShort::truncate($news['headline'], 30)  ?></a>
                                                 </h2>
                                                 <div class="utf_post_meta">
-                                                    <span class="utf_post_author"><?= esc($news['author']) ?></span>
                                                     <span class="utf_post_date"><?= date('d M, Y', strtotime($news['post_date_time'])) ?></span>
                                                 </div>
                                             </div>

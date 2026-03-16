@@ -11,29 +11,6 @@ use App\Helpers\StringShort;
 use App\Helpers\ThumbHelper;
 
 ?>
-<?php if (!empty($topAds)) : ?>
-    <div class="utf_ad_content_area text-center utf_banner_area py-3">
-        <div class="container">
-            <div class="owl-carousel top-ads-carousel">
-                <?php foreach ($topAds as $topAd) : ?>
-                    <div class="item">
-                        <?php if (!empty($topAd['url'])) : ?>
-                            <a href="<?= esc($topAd['url']) ?>" target="_blank">
-                                <img class="img-fluid"
-                                    src="<?= base_url($topAd['image']) ?>"
-                                    alt="<?= esc($topAd['title']) ?>">
-                            </a>
-                        <?php else : ?>
-                            <img class="img-fluid"
-                                src="<?= base_url($topAd['image']) ?>"
-                                alt="<?= esc($topAd['title']) ?>">
-                        <?php endif; ?>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        </div>
-    </div>
-<?php endif; ?>
 <!-- Page Breadcrumb Start -->
 <div class="page-title">
     <div class="container">
@@ -56,9 +33,9 @@ use App\Helpers\ThumbHelper;
                 <div class="block category-listing category-style2 color-primary">
                     <h3 class="utf_block_title"><span><?= esc($category['cat']) ?></span></h3>
                     <?php if (!empty($subCategory)): ?>
-                        <ul class="subCategory unstyled">
+                        <ul class="subCategory unstyled mb-3">
                             <?php foreach ($subCategory as $subCat): ?>
-                                <li>
+                                <li class="mb-2">
                                     <a href="<?= base_url("category/{$category['slug']}/{$subCat['sub_cat_slug']}") ?>">
                                         <?= esc($subCat['sub_cat_name']) ?>
                                     </a>
@@ -83,13 +60,12 @@ use App\Helpers\ThumbHelper;
                                                 <a href="<?= base_url('news/' . $post['slug']) ?>"><?= StringShort::truncate($post['headline']) ?></a>
                                             </h2>
                                             <div class="utf_post_meta">
-                                                <span class="utf_post_author"><?= esc($post['author']) ?></span>
                                                 <span class="utf_post_date">
                                                     <?php $formattedPostDate = (new DateTime($post['post_date_time']))->format('d M, Y'); ?>
                                                     <?= $formattedPostDate ?>
                                                 </span>
                                             </div>
-                                            <p><?= $post['short_description'] ?></p>
+                                            <p><?= StringShort::truncate($post['short_description']) ?></p>
                                         </div>
                                     </div>
                                 </div>
@@ -164,7 +140,6 @@ use App\Helpers\ThumbHelper;
                                                     <a href="<?= base_url('news/' . $news['slug']) ?>"><?= StringShort::truncate($news['headline'], 30)  ?></a>
                                                 </h2>
                                                 <div class="utf_post_meta">
-                                                    <span class="utf_post_author"><?= esc($news['author']) ?></span>
                                                     <span class="utf_post_date"><?= date('d M, Y', strtotime($news['post_date_time'])) ?></span>
                                                 </div>
                                             </div>

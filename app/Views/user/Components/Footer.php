@@ -8,19 +8,19 @@
 <div class="container">
     <footer class="pt-5">
         <div class="row align-items-center">
-            <div class="col-6 col-md-2">
-                <!-- <h5>Section</h5> -->
+            <div class="col-6 col-md-7">
                 <ul class="nav flex-column">
                     <li class="nav-item mb-2"><a href="<?= base_url() ?>" class="nav-link p-0 text-muted">Home</a></li>
                     <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Archive</a></li>
                     <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Site Map</a></li>
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">FAQs</a></li>
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">About</a></li>
+                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Old Website</a></li>
+                    <li class="nav-item mb-2"><a href="<?= base_url('privacy-policy') ?>" class="nav-link p-0 text-muted">Privacy & Policy</a></li>
+                    <li class="nav-item mb-2"><a href="<?= base_url('about-us') ?>" class="nav-link p-0 text-muted">About Us</a></li>
+                    <li class="nav-item mb-2"><a href="<?= base_url('contact-us') ?>" class="nav-link p-0 text-muted">Contact Us</a></li>
                 </ul>
             </div>
 
-            <div class="col-6 col-md-2">
-                <!-- <h5>Section</h5> -->
+            <!-- <div class="col-6 col-md-2">
                 <ul class="nav flex-column">
                     <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Home</a></li>
                     <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Features</a></li>
@@ -31,7 +31,7 @@
             </div>
 
             <div class="col-6 col-md-2">
-                <!-- <h5>Section</h5> -->
+                <h5>Section</h5>
                 <ul class="nav flex-column">
                     <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Home</a></li>
                     <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Features</a></li>
@@ -39,7 +39,7 @@
                     <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">FAQs</a></li>
                     <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">About</a></li>
                 </ul>
-            </div>
+            </div> -->
             <div class="col-12 col-md-4 offset-md-1 mt-3 mt-md-0">
                 <div class="widget color-primary">
                     <h3 class="utf_block_title"><span>ফলো করুন</span></h3>
@@ -50,8 +50,9 @@
                     </ul>
                 </div>
                 <form class="mt-3">
-                    <h5>আমাদের নিউজলেটার সদস্যতা উপভোগ করুন</h5>
-                    <p>আমাদের কাছ থেকে নতুন খবরের নটিফিকেশন পান।</p>
+                    <h5>নতুন খবরের আপডেট পেতে এখনই সাস্ক্রাইব করুন।</h5>
+                    <!-- <h5>আমাদের নিউজলেটার সদস্যতা উপভোগ করুন</h5> -->
+                    <!-- <p>নতুন খবরের আপডেট পেতে এখনই সাস্ক্রাইব করুন।</p> -->
                     <div class="d-flex w-100 gap-2">
                         <label for="newsletter1" class="visually-hidden">ইমেল অ্যাড্রেস</label>
                         <input id="newsletter1" type="text" class="form-control" placeholder="Email address">
@@ -61,7 +62,7 @@
             </div>
         </div>
         <div class="d-md-flex justify-content-between pt-4 my-4 border-top">
-            <p>© <?= date('Y') ?> <a class="navbar-brand brand-logo" href="<?= base_url() ?>">খবর বাংলা </a>|| All rights reserved.</p>
+            <p>© <?= date('Y') ?> <a class="navbar-brand brand-logo" href="<?= base_url() ?>">Purulia Mirror </a>|| All rights reserved.</p>
             <p>Developed By <a href="https://wmsn.in" target="_blank">Web Marketing Solutions Network</a></p>
         </div>
     </footer>

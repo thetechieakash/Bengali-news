@@ -239,6 +239,31 @@
                 }
             });
         });
+        $('#deleteReply').on('click', function() {
+            const commentId = $('#replyCommentId').val();
 
+            $.ajax({
+                url: "<?= base_url('admin/reply/delete') ?>",
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    id: commentId,
+                    <?= csrf_token() ?>: "<?= csrf_hash() ?>"
+                },
+                success(res) {
+                    if (res.success) {
+                        $('#replyModal').modal('hide');
+                        showSuccessToast(res.message ? 'Reply deleted' : '');
+                        setTimeout(() => location.reload(), 800);
+                    } else {
+                        showDangerToast(res.message);
+                    }
+                },
+                error(err) {
+                    showDangerToast('Server error. Try again.');
+                    console.error('Reply error', err)
+                }
+            });
+        })
     });
 </script>

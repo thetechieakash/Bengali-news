@@ -52,7 +52,6 @@ $defaultThumb = base_url('assets/images/news/placeholder.png');
                                                 <a href="<?= base_url('news/' . $post['slug']) ?>"><?= StringShort::truncate($post['headline']) ?></a>
                                             </h2>
                                             <div class="utf_post_meta">
-                                                <span class="utf_post_author"><?= esc($post['author']) ?></span>
                                                 <span class="utf_post_date">
                                                     <?php $formattedPostDate = (new DateTime($post['post_date_time']))->format('d M, Y'); ?>
                                                     <?= $formattedPostDate ?>
@@ -64,7 +63,7 @@ $defaultThumb = base_url('assets/images/news/placeholder.png');
                                 </div>
                             </div>
                         <?php endforeach; ?>
-                     <?php else: ?>
+                    <?php else: ?>
                         <div class="row">
                             <div class="col-12">
                                 <div class="card shadow-sm border-0 text-center p-4 my-4">
@@ -134,7 +133,6 @@ $defaultThumb = base_url('assets/images/news/placeholder.png');
                                                     <a href="<?= base_url('news/' . $news['slug']) ?>"><?= StringShort::truncate($news['headline'], 30)  ?></a>
                                                 </h2>
                                                 <div class="utf_post_meta">
-                                                    <span class="utf_post_author"><?= esc($news['author']) ?></span>
                                                     <span class="utf_post_date"><?= date('d M, Y', strtotime($news['post_date_time'])) ?></span>
                                                 </div>
                                             </div>

@@ -13,10 +13,15 @@ $routes->get('category/(:segment)/(:segment)/(:segment)', 'User\ChildCategory::i
 $routes->post('comment', 'User\PostComment::store');
 $routes->get('tag/(:segment)', 'User\Tag::index/$1');
 $routes->get('search', 'User\Search::index');
+$routes->get('privacy-policy', 'User\PrivacyPolicy::index');
+$routes->get('about-us', 'User\AboutUs::index');
+$routes->get('contact-us', 'User\ContactUs::index');
+$routes->post('contact/send', 'User\ContactUs::send');
 
-
+// auth routes
 service('auth')->routes($routes);
-
+// If you want to create permissions based on your route just put  $modules array in permission method in userController and $permissions in authgroup
+// and roles are coming from authgorup in app dir
 $routes->group('admin', ['filter' => 'group:superadmin,admin,author'], function ($routes) {
 
     $routes->get('/', 'Admin\DashboardController::index', ['filter' => 'permission:dashboard.view']);
@@ -53,7 +58,9 @@ $routes->group('admin', ['filter' => 'group:superadmin,admin,author'], function 
     $routes->post('comments/reply', 'Admin\CommentsController::store', ['filter' => 'permission:comments.reply']);
     $routes->post('comments/unpublish', 'Admin\CommentsController::unpublish', ['filter' => 'permission:comments.unpublish']);
     $routes->post('comments/delete', 'Admin\CommentsController::delete', ['filter' => 'permission:comments.delete']);
+    $routes->post('reply/delete', 'Admin\CommentsController::delete', ['filter' => 'permission:comments.delete']);
 
+    // Tags
     $routes->get('tags', 'Admin\TagsController::index', ['filter' => 'permission:tags.view']);
     $routes->post('tag/create', 'Admin\TagsController::createTag', ['filter' => 'permission:tags.create']);
     $routes->post('tag/update', 'Admin\TagsController::updateTag', ['filter' => 'permission:tags.update']);
@@ -67,13 +74,14 @@ $routes->group('admin', ['filter' => 'group:superadmin,admin,author'], function 
     $routes->post('document/upload', 'Admin\DocumentController::upload', ['filter' => 'permission:documents.create']);
     $routes->delete('delete-document/(:num)', 'Admin\DocumentController::delete/$1', ['filter' => 'permission:documents.delete']);
 
-
+    // Authors
     $routes->get('author', 'Admin\SubAuthorController::index', ['filter' => 'permission:author.view']);
     $routes->get('author-get/(:num)', 'Admin\SubAuthorController::getAuthor/$1');
     $routes->post('author-create', 'Admin\SubAuthorController::store', ['filter' => 'permission:author.create']);
     $routes->post('author-update/(:num)', 'Admin\SubAuthorController::update/$1', ['filter' => 'permission:author.update']);
     $routes->post('author-delete/(:num)', 'Admin\SubAuthorController::delete/$1', ['filter' => 'permission:author.delete']);
 
+    // Ads
     $routes->get('ads', 'Admin\AdsController::index', ['filter' => 'permission:ads.view']);
     $routes->get('ads/(:num)', 'Admin\AdsController::getAd/$1');
     $routes->post('ads/store', 'Admin\AdsController::store', ['filter' => 'permission:ads.create']);
@@ -81,6 +89,7 @@ $routes->group('admin', ['filter' => 'group:superadmin,admin,author'], function 
     $routes->post('ads/update/(:num)', 'Admin\AdsController::update/$1', ['filter' => 'permission:ads.update']);
     $routes->post('ads/delete', 'Admin\AdsController::delete', ['filter' => 'permission:ads.delete']);
 
+    // News
     $routes->get('published-news', 'Admin\Post\ViewsController::index', ['filter' => 'permission:news.view']);
     $routes->get('draft-news', 'Admin\Post\ViewsController::draft', ['filter' => 'permission:news.view']);
 
@@ -94,6 +103,10 @@ $routes->group('admin', ['filter' => 'group:superadmin,admin,author'], function 
 
     $routes->post('news/update-status', 'Admin\Post\TogglersPost::updateStatus', ['filter' => 'permission:news.status']);
     $routes->post('news/delete/(:num)', 'Admin\Post\DeletePostController::deletePost/$1', ['filter' => 'permission:news.delete']);
+
+    // Messages
+    $routes->get('messages', 'Admin\MessagesController::index', ['filter' => 'permission:messages.view']);
+    $routes->post('messages/delete/(:num)', 'Admin\MessagesController::delete/$1', ['filter' => 'permission:messages.delete']);
 
     /*
     |--------------------------------------------------------------------------
@@ -109,6 +122,10 @@ $routes->group('admin', ['filter' => 'group:superadmin,admin,author'], function 
         $routes->post('user/restore', 'Admin\UserController::restoreUser');
         $routes->get('user/permission/(:num)', 'Admin\UserController::permission/$1');
         $routes->post('user/permission/(:num)', 'Admin\UserController::setPermission/$1');
+
+        $routes->get('about-us', 'Admin\Pages::aboutUs');
+        $routes->get('privacy-policy', 'Admin\Pages::privacyPolicy');
+        $routes->post('pages/save', 'Admin\Pages::save');
     });
 
     $routes->group('api', function ($routes) {

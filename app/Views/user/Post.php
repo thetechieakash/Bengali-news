@@ -224,7 +224,7 @@ function formattedPostDate($date)
                         </h3>
                         <ul class="comments-list">
                             <?php foreach ($comments as $comment): ?>
-                                <li>
+                                <li id="comment-<?= $comment['id'] ?>">
                                     <div class="comment mb-3 p-3">
                                         <div class="comment-body">
                                             <div class="meta-data">
@@ -357,7 +357,6 @@ function formattedPostDate($date)
                                                     </a>
                                                 </h2>
                                                 <div class="utf_post_meta">
-                                                    <span class="utf_post_author"><?= esc($readMore['author']) ?></span>
                                                     <?php if ($postDate): ?>
                                                         <span class="utf_post_date"><?= esc($postDate) ?></span>
                                                     <?php endif; ?>
@@ -435,7 +434,7 @@ function formattedPostDate($date)
 <script src="<?= base_url() ?>assets/vendors/glightbox/glightbox.min.js"></script>
 <?= $this->endSection() ?>
 <?= $this->section('customjs') ?>
-<script src="https://www.google.com/recaptcha/api.js?render=<?= $recapcha_key ?>"></script>
+<script src="https://www.google.com/recaptcha/api.js?render=<?= $recaptcha_key ?>"></script>
 <script>
     const lightbox = GLightbox({
         selector: '.glightbox',
@@ -448,7 +447,7 @@ function formattedPostDate($date)
         e.preventDefault();
 
         grecaptcha.ready(function() {
-            grecaptcha.execute('<?= $recapcha_key ?>', {
+            grecaptcha.execute('<?= $recaptcha_key ?>', {
                     action: 'comment'
                 })
                 .then(function(token) {

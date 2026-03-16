@@ -28,16 +28,16 @@ $defaultThumb = base_url('assets/images/news/placeholder.png');
 </div>
 <!-- Page Breadcrumb end -->
 
-<section class="utf_block_wrapper py-3">
+<section class="utf_block_wrapper pb-3 pt-0">
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-md-12">
                 <div class="block category-listing category-style2 color-primary">
                     <h3 class="utf_block_title"><span>News</span></h3>
                     <?php if (!empty($childCategory)): ?>
-                        <ul class="subCategory unstyled">
+                        <ul class="subCategory unstyled mb-3">
                             <?php foreach ($childCategory as $childCat): ?>
-                                <li>
+                                <li class="mb-2">
                                     <a href="<?= base_url("category/{$category['slug']}/{$subCategory['sub_cat_slug']}/{$childCat['child_cat_slug']}") ?>">
                                         <?= esc($childCat['child_cat_name']) ?>
                                     </a>
@@ -62,13 +62,12 @@ $defaultThumb = base_url('assets/images/news/placeholder.png');
                                                 <a href="<?= base_url('news/' . $post['slug']) ?>"><?= StringShort::truncate($post['headline']) ?></a>
                                             </h2>
                                             <div class="utf_post_meta">
-                                                <span class="utf_post_author"><?= esc($post['author']) ?></span>
                                                 <span class="utf_post_date">
                                                     <?php $formattedPostDate = (new DateTime($post['post_date_time']))->format('d M, Y'); ?>
                                                     <?= $formattedPostDate ?>
                                                 </span>
                                             </div>
-                                            <p><?= $post['short_description'] ?></p>
+                                            <p><?= StringShort::truncate($post['short_description']) ?></p>
                                         </div>
                                     </div>
                                 </div>
@@ -144,7 +143,6 @@ $defaultThumb = base_url('assets/images/news/placeholder.png');
                                                     <a href="<?= base_url('news/' . $news['slug']) ?>"><?= StringShort::truncate($news['headline'], 30)  ?></a>
                                                 </h2>
                                                 <div class="utf_post_meta">
-                                                    <span class="utf_post_author"><?= esc($news['author']) ?></span>
                                                     <span class="utf_post_date"><?= date('d M, Y', strtotime($news['post_date_time'])) ?></span>
                                                 </div>
                                             </div>

@@ -59,10 +59,19 @@ foreach ($navbarCategories as $cat) {
                                 <ul class="submenu-item">
                                     <?php foreach ($cat['subs'] as $sub): ?>
                                         <li class="nav-item sub-parent">
-                                            <a class="nav-link sub-cat-link"
-                                                href="<?= base_url('category/' . $cat['slug'] . '/' . $sub['slug']) ?>">
-                                                <?= esc($sub['name']) ?>
-                                            </a>
+                                            <div class="d-flex justify-content-between align-items-center sub-link-wrapper">
+
+                                                <a class="nav-link sub-cat-link"
+                                                    href="<?= base_url('category/' . $cat['slug'] . '/' . $sub['slug']) ?>">
+                                                    <?= esc($sub['name']) ?>
+                                                </a>
+
+                                                <?php if (!empty($sub['children'])): ?>
+                                                    <span class="dropdown-toggle-icon">
+                                                        <i class="fa fa-caret-down"></i> </span>
+                                                <?php endif ?>
+
+                                            </div>
                                             <!-- CHILD DROPDOWN -->
                                             <?php if (!empty($sub['children'])): ?>
                                                 <ul class="child-menu dropdown-child">
@@ -159,11 +168,19 @@ foreach ($navbarCategories as $cat) {
         position: relative;
     }
 
+    .sub-cat-link {
+        font-size: 16px;
+    }
+
+    .child-cat-link {
+        font-size: 14px;
+    }
+
     /* default child dropdown (for normal navbar) */
     .dropdown-child {
         display: none;
         position: absolute;
-        left: 125%;
+        left: 100%;
         top: 0;
         min-width: 180px;
         background: #fff;
@@ -208,24 +225,63 @@ foreach ($navbarCategories as $cat) {
         }
 
     }
+
+    .sub-link-wrapper {
+        display: flex;
+        align-items: center;
+    }
+
+    .dropdown-toggle-icon {
+        cursor: pointer;
+        padding: 5px 10px;
+        font-size: 12px;
+    }
+
+    .dropdown-child {
+        display: none;
+    }
+
+    .sub-parent.open>.dropdown-child {
+        display: block;
+    }
+    /* desktop hover */
+    @media (min-width:992px) {
+
+        .sub-parent:hover>.dropdown-child {
+            display: block;
+        }
+
+    }
 </style>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        if (window.innerWidth <= 991) {
-            document.querySelectorAll(".sub-parent > a").forEach(function(link) {
-                link.addEventListener("click", function(e) {
-                    const parent = this.parentElement;
-                    const dropdown = parent.querySelector(".dropdown-child");
-                    if (!dropdown) return;
-                    if (!parent.classList.contains("open")) {
-                        e.preventDefault();
-                        document.querySelectorAll(".sub-parent.open").forEach(function(el) {
-                            el.classList.remove("open");
-                        });
-                        parent.classList.add("open");
-                    }
-                });
+
+        const isMobile = window.innerWidth <= 991;
+
+        if (!isMobile) return;
+
+        document.querySelectorAll(".dropdown-toggle-icon").forEach(function(toggle) {
+
+            toggle.addEventListener("click", function(e) {
+
+                e.preventDefault();
+                e.stopPropagation();
+
+                const parent = this.closest(".sub-parent");
+
+                if (parent.classList.contains("open")) {
+                    parent.classList.remove("open");
+                } else {
+
+                    document.querySelectorAll(".sub-parent.open")
+                        .forEach(el => el.classList.remove("open"));
+
+                    parent.classList.add("open");
+                }
+
             });
-        }
+
+        });
+
     });
 </script>

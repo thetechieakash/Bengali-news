@@ -44,6 +44,7 @@ class SubCategory extends BaseController
 
         $data = [
             'pageTitle'   => $subCategory['sub_cat_name'],
+            'tickerActive' => true,
             'category'    => $category,
             'subCategory' => $subCategory,
             'childCategory' => $this->childCatModel->getChildBySubCatId($subCategory['id']),

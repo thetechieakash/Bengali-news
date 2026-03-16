@@ -147,9 +147,6 @@ use App\Helpers\ThumbHelper;
                                 </h2>
 
                                 <div class="utf_post_meta">
-                                    <span class="utf_post_author">
-                                        Puruliamirror Desk
-                                    </span>
                                     <span class="utf_post_date">
                                         <?= date('d M, Y', strtotime($featured['post_date_time'])) ?>
                                     </span>
@@ -181,9 +178,6 @@ use App\Helpers\ThumbHelper;
                                                     </h2>
 
                                                     <div class="utf_post_meta">
-                                                        <span class="utf_post_author">
-                                                            Puruliamirror Desk
-                                                        </span>
                                                         <span class="utf_post_date">
                                                             <?= date('d M, Y', strtotime($listPost['post_date_time'])) ?>
                                                         </span>
@@ -209,7 +203,7 @@ use App\Helpers\ThumbHelper;
 </div>
 <?php foreach ($getPostAndCategory as $rCatPost): ?>
     <div class="section-header mt-4 mb-3">
-        <span class="header-title"><a href=""><?= esc($rCatPost['category']['cat']) ?></a></span>
+        <span class="header-title"><a href="<?= base_url('category/'. $rCatPost['category']['slug']) ?>"><?= esc($rCatPost['category']['cat']) ?></a></span>
     </div>
     <!-- 2rd Block Wrapper Start -->
     <section class="utf_block_wrapper solid-bg mb-3">
@@ -226,7 +220,6 @@ use App\Helpers\ThumbHelper;
                                     <a href="<?= base_url('news/' . $rpc['slug']) ?>"><?= StringShort::truncate($rpc['headline']) ?></a>
                                 </h2>
                                 <div class="utf_post_meta">
-                                    <span class="utf_post_author">Puruliamirror Desk</span>
                                     <span class="utf_post_date"><?= date('d M, Y', strtotime($rpc['post_date_time'])) ?></span>
                                 </div>
                             </div>
@@ -255,10 +248,9 @@ use App\Helpers\ThumbHelper;
                                 <h2 class="utf_post_title">
                                     <a href="<?= base_url('news/' . $pd['slug']) ?>"><?= StringShort::truncate($pd['headline'], 40)  ?></a>
                                 </h2>
-                                <div class="utf_post_meta">
-                                    <span class="utf_post_author"> John Wick</span> <span class="utf_post_date">25 Jan, 2022</span>
+                                <div class="utf_post_meta"> <span class="utf_post_date"><?= date('d M, Y', strtotime($pd['post_date_time'])) ?></span>
                                 </div>
-                                <p><?= StringShort::truncate($pd['short_description'], 250)  ?></p>
+                                <p><?= StringShort::truncate($pd['short_description'])  ?></p>
                             </div>
                         </div>
                     <?php endforeach; ?>
@@ -282,7 +274,6 @@ use App\Helpers\ThumbHelper;
                                                     <a href="<?= base_url('news/' . $pN['slug']) ?>"><?= StringShort::truncate($pN['headline'], 30)  ?></a>
                                                 </h2>
                                                 <div class="utf_post_meta">
-                                                    <span class="utf_post_author"><?= esc($pN['author']) ?></span>
                                                     <span class="utf_post_date"><?= date('d M, Y', strtotime($pN['post_date_time'])) ?></span>
                                                 </div>
                                             </div>
