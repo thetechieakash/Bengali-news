@@ -11,11 +11,8 @@ class TagsController extends BaseController
 {
     public function index()
     {
-        $model = new TagModel();
-        $tags = $model->orderBy('id', 'DESC')->findAll();
         $data = [
             'pageTitle' => 'Tags',
-            'tags' => $tags,
         ];
         return view('admin/Tags', $data);
     }
@@ -131,6 +128,71 @@ class TagsController extends BaseController
         return $this->response->setJSON([
             'success' => true,
             'message' => 'Tag deleted successfully',
+        ]);
+    }
+    public function getTagsList()
+    {
+        $request = service('request');
+        $tagModel = new TagModel();
+
+        $start  = (int) $request->getGet('start');
+        $length = (int) $request->getGet('length');
+        $draw   = (int) $request->getGet('draw');
+        $search = $request->getGet('search')['value'] ?? '';
+
+        $order         = $request->getGet('order');
+        $orderColIndex = $order[0]['column'] ?? 0;
+        $orderDir      = strtolower($order[0]['dir'] ?? 'desc');
+
+        $columns = [
+            0 => null,          // SL — not sortable
+            1 => 'name',
+        ];
+
+        // Total records
+        $totalRecords = $tagModel->countAll();
+
+        // Base builder
+        $builder = $tagModel->builder();
+
+        // Search
+        if (!empty($search)) {
+            $builder->groupStart()
+                ->like('name', $search)
+                ->groupEnd();
+        }
+
+        // Filtered count
+        $filteredRecords = $builder->countAllResults(false);
+
+        // Sort
+        if (isset($columns[$orderColIndex]) && $columns[$orderColIndex]) {
+            $builder->orderBy($columns[$orderColIndex], $orderDir);
+        } else {
+            $builder->orderBy('id', 'DESC');
+        }
+
+        // Paginate
+        $builder->limit($length, $start);
+        $tags = $builder->get()->getResultArray();
+
+        $data = [];
+        $sl = $start;
+
+        foreach ($tags as $tag) {
+            $sl++;
+            $data[] = [
+                'sl'      => $sl . '.',
+                'id'      => $tag['id'],
+                'name'    => $tag['name'],
+            ];
+        }
+
+        return $this->response->setJSON([
+            'draw'            => $draw,
+            'recordsTotal'    => $totalRecords,
+            'recordsFiltered' => $filteredRecords,
+            'data'            => $data,
         ]);
     }
 }

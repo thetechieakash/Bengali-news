@@ -2,10 +2,8 @@
 $uri  = uri_string();
 $user = auth()->user();
 ?>
-
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
     <ul class="nav">
-
         <?php if ($user->can('dashboard.view')): ?>
             <li class="nav-item <?= $uri === 'admin' ? 'active' : '' ?>">
                 <a class="nav-link" href="<?= base_url('admin') ?>">
@@ -14,10 +12,8 @@ $user = auth()->user();
                 </a>
             </li>
         <?php endif; ?>
-
         <?php if ($user->can('news.view') || $user->can('news.create')): ?>
             <li class="nav-item nav-category">News Manager</li>
-
             <?php if ($user->can('news.view')): ?>
                 <li class="nav-item <?= $uri === 'admin/published-news' ? 'active' : '' ?>">
                     <a class="nav-link" href="<?= base_url('admin/published-news') ?>">
@@ -41,10 +37,8 @@ $user = auth()->user();
                 </li>
             <?php endif; ?>
         <?php endif; ?>
-
         <?php if ($user->can('comments.view')): ?>
             <li class="nav-item nav-category">Comments Manager</li>
-
             <li class="nav-item <?= $uri === 'admin/approved-comments' ? 'active' : '' ?>">
                 <a class="nav-link" href="<?= base_url('admin/approved-comments') ?>">
                     <i class="fa fa-comments"></i>
@@ -60,7 +54,6 @@ $user = auth()->user();
         <?php endif; ?>
         <?php if ($user->can('tags.view')): ?>
             <li class="nav-item nav-category">Tags Manager</li>
-
             <li class="nav-item <?= $uri === 'admin/tags' ? 'active' : '' ?>">
                 <a class="nav-link" href="<?= base_url('admin/tags') ?>">
                     <i class="fa fa-tags"></i>
@@ -70,11 +63,10 @@ $user = auth()->user();
         <?php endif; ?>
         <?php if ($user->can('media.view')): ?>
             <li class="nav-item nav-category">Media Manager</li>
-
             <li class="nav-item <?= $uri === 'admin/media' ? 'active' : '' ?>">
                 <a class="nav-link" href="<?= base_url('admin/media') ?>">
                     <i class="fa fa-image"></i>
-                    <span class="menu-title">Media</span>
+                    <span class="menu-title">Gallery</span>
                 </a>
             </li>
         <?php endif; ?>
@@ -86,7 +78,6 @@ $user = auth()->user();
                 </a>
             </li>
         <?php endif; ?>
-
         <?php if ($user->can('categories.view') || $user->can('sub_categories.view') || $user->can('child_categories.view')): ?>
             <li class="nav-item nav-category">Categories Manager</li>
             <?php if ($user->can('categories.view')): ?>
@@ -114,7 +105,6 @@ $user = auth()->user();
                 </li>
             <?php endif; ?>
         <?php endif; ?>
-
         <?php if ($user->can('ads.view')): ?>
             <li class="nav-item nav-category">Ads Manager</li>
             <li class="nav-item <?= $uri === 'admin/ads' ? 'active' : '' ?>">
@@ -124,17 +114,6 @@ $user = auth()->user();
                 </a>
             </li>
         <?php endif; ?>
-
-        <?php if ($user->can('author.view')): ?>
-            <li class="nav-item nav-category">Author Manager</li>
-            <li class="nav-item <?= $uri === 'admin/author' ? 'active' : '' ?>">
-                <a class="nav-link" href="<?= base_url('admin/author') ?>">
-                    <i class="fa fa-user"></i>
-                    <span class="menu-title">Create Author</span>
-                </a>
-            </li>
-        <?php endif; ?>
-
         <?php if ($user->can('messages.view')): ?>
             <li class="nav-item nav-category">Messages Manager</li>
             <li class="nav-item <?= $uri === 'admin/messages' ? 'active' : '' ?>">
@@ -144,9 +123,14 @@ $user = auth()->user();
                 </a>
             </li>
         <?php endif; ?>
-
         <?php if ($user->inGroup('superadmin')): ?>
             <li class="nav-item nav-category">Pages Manager</li>
+            <li class="nav-item <?= $uri === 'admin/navbar' ? 'active' : '' ?>">
+                <a class="nav-link" href="<?= base_url('admin/navbar') ?>">
+                    <i class="fa fa-user"></i>
+                    <span class="menu-title">Menu Setup</span>
+                </a>
+            </li>
             <li class="nav-item <?= $uri === 'admin/about-us' ? 'active' : '' ?>">
                 <a class="nav-link" href="<?= base_url('admin/about-us') ?>">
                     <i class="fa fa-user"></i>
@@ -159,7 +143,17 @@ $user = auth()->user();
                     <span class="menu-title">Privacy & Policy</span>
                 </a>
             </li>
-
+        <?php endif; ?>
+        <?php if ($user->can('author.view')): ?>
+            <li class="nav-item nav-category">Author Manager</li>
+            <li class="nav-item <?= $uri === 'admin/author' ? 'active' : '' ?>">
+                <a class="nav-link" href="<?= base_url('admin/author') ?>">
+                    <i class="fa fa-user"></i>
+                    <span class="menu-title">Create Author</span>
+                </a>
+            </li>
+        <?php endif; ?>
+        <?php if ($user->inGroup('superadmin')): ?>
             <li class="nav-item nav-category">User Manager</li>
             <li class="nav-item <?= $uri === 'admin/all-users' ? 'active' : '' ?>">
                 <a class="nav-link" href="<?= base_url('admin/all-users') ?>">
@@ -167,7 +161,6 @@ $user = auth()->user();
                     <span class="menu-title">All Users</span>
                 </a>
             </li>
-
             <li class="nav-item <?= $uri === 'admin/user' ? 'active' : '' ?>">
                 <a class="nav-link" href="<?= base_url('admin/user') ?>">
                     <i class="fa fa-user"></i>
@@ -175,7 +168,5 @@ $user = auth()->user();
                 </a>
             </li>
         <?php endif; ?>
-
-
     </ul>
 </nav>

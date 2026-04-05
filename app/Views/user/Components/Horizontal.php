@@ -12,19 +12,12 @@ foreach ($navbarCategories as $cat) {
         $megaMenu[] = $cat;
     }
 }
-
-// echo "<pre>";
-// print_r($navbarCategories); 
-// print_r($mainNav);
-// print_r($megaMenu);
-// echo "</pre>";
-
 ?>
 <div class="horizontal-menu">
     <nav class="navbar top-navbar bg-transparent col-lg-12 col-12 p-0 py-2">
-        <div class="container justify-content-center position-relative">
+        <div class="container justify-content-evenly justify-content-md-between position-relative">
             <button class="navbar-toggler navbar-toggler-right d-lg-none position-absolute" type="button"
-                style="left:2%"
+                style="left:1%; border: none;"
                 data-toggle="horizontal-menu-toggle">
                 <span class="ti-menu"></span>
             </button>
@@ -38,12 +31,26 @@ foreach ($navbarCategories as $cat) {
                     </a>
                 </div>
             </div>
+            <div>
+                <ul class="social-icon mt-1 mt-sm-0 mb-1 text-center text-md-start">
+                    <li><a href="https://www.facebook.com/puruliamirror" target="_blank"><i class="fa-brands fa-facebook-f"></i></a></li>
+                    <li><a href="https://www.instagram.com/purulia_mirror" target="_blank"><i class="fa-brands fa-instagram"></i></a></li>
+                    <li><a href="https://wa.me/916295142737" target="_blank"><i class="fa-brands fa-whatsapp"></i></a></li>
+                    <li><a href="https://x.com/PuruliaMirror" target="_blank"><i class="fa-brands fa-x-twitter"></i></a></li>
+                    <li><a href="https://www.youtube.com/@PuruliaMirror" target="_blank"><i class="fa-brands fa-youtube"></i></a></li>
+                </ul>
+                <div id="bnDateTime" class="fs-6"></div>
+            </div>
         </div>
     </nav>
     <nav class="bottom-navbar">
         <div class="container">
             <ul class="nav page-navigation">
-
+                <li class="nav-item ">
+                    <a class="nav-link" style="color: red;" href="<?= base_url() ?>">
+                        <span class="menu-title">হোম <i class="fa fa-home"></i></span>
+                    </a>
+                </li>
                 <?php foreach ($mainNav as $cat): ?>
 
                     <?php
@@ -153,7 +160,7 @@ foreach ($navbarCategories as $cat) {
                 <?php endif; ?>
                 <?php if ($uri !== 'search'): ?>
                     <li class="nav-item">
-                        <button class="btn search-btn"><i class="fa fa-search"></i></button>
+                        <button class="btn nav-link search-btn px-md-0" style="font-size: 20px;"><i class="fa fa-search"></i> <span class="menu-title">Search</span></button>
                     </li>
                 <?php endif ?>
             </ul>

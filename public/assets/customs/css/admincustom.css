@@ -136,3 +136,18 @@ table tbody tr td {
 .media-box:hover .copy-link {
     opacity: 1;
 }
+.password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #6c757d;
+}
+
+.password-toggle:hover {
+    color: #000;
+}
+.ck-editor__editable {
+    min-height: 500px !important;
+}

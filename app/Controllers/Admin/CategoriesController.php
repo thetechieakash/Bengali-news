@@ -10,7 +10,7 @@ use App\Models\ChildCategories;
 
 class CategoriesController extends BaseController
 {
-    private int $navbarLimit = 10;
+    private int $navbarLimit = 9;
     public function index()
     {
         $model = new Categories();

@@ -17,12 +17,14 @@ $routes->get('privacy-policy', 'User\PrivacyPolicy::index');
 $routes->get('about-us', 'User\AboutUs::index');
 $routes->get('contact-us', 'User\ContactUs::index');
 $routes->post('contact/send', 'User\ContactUs::send');
+$routes->post('subscribe', 'User\EmailSubscribe::subscribe');
+$routes->get('unsubscribe/(:any)', 'User\EmailSubscribe::unsubscribe/$1');
 
 // auth routes
 service('auth')->routes($routes);
 // If you want to create permissions based on your route just put  $modules array in permission method in userController and $permissions in authgroup
 // and roles are coming from authgorup in app dir
-$routes->group('admin', ['filter' => 'group:superadmin,admin,author'], function ($routes) {
+$routes->group('admin', ['filter' => 'group:superadmin,admin,author,user'], function ($routes) {
 
     $routes->get('/', 'Admin\DashboardController::index', ['filter' => 'permission:dashboard.view']);
 
@@ -55,10 +57,10 @@ $routes->group('admin', ['filter' => 'group:superadmin,admin,author'], function 
     $routes->get('approved-comments', 'Admin\CommentsController::approved', ['filter' => 'permission:comments.view']);
     $routes->get('pending-comments', 'Admin\CommentsController::pending', ['filter' => 'permission:comments.view']);
     $routes->post('comments/approve', 'Admin\CommentsController::approve', ['filter' => 'permission:comments.approve']);
-    $routes->post('comments/reply', 'Admin\CommentsController::store', ['filter' => 'permission:comments.reply']);
+    $routes->post('comments/reply', 'Admin\CommentsController::reply', ['filter' => 'permission:comments.reply']);
     $routes->post('comments/unpublish', 'Admin\CommentsController::unpublish', ['filter' => 'permission:comments.unpublish']);
     $routes->post('comments/delete', 'Admin\CommentsController::delete', ['filter' => 'permission:comments.delete']);
-    $routes->post('reply/delete', 'Admin\CommentsController::delete', ['filter' => 'permission:comments.delete']);
+    $routes->post('reply/delete', 'Admin\CommentsController::deleteReply', ['filter' => 'permission:comments.delete']);
 
     // Tags
     $routes->get('tags', 'Admin\TagsController::index', ['filter' => 'permission:tags.view']);
@@ -108,6 +110,7 @@ $routes->group('admin', ['filter' => 'group:superadmin,admin,author'], function 
     $routes->get('messages', 'Admin\MessagesController::index', ['filter' => 'permission:messages.view']);
     $routes->post('messages/delete/(:num)', 'Admin\MessagesController::delete/$1', ['filter' => 'permission:messages.delete']);
 
+
     /*
     |--------------------------------------------------------------------------
     | Superadmin / Admin user management
@@ -123,16 +126,22 @@ $routes->group('admin', ['filter' => 'group:superadmin,admin,author'], function 
         $routes->get('user/permission/(:num)', 'Admin\UserController::permission/$1');
         $routes->post('user/permission/(:num)', 'Admin\UserController::setPermission/$1');
 
+        $routes->get('navbar', 'Admin\NavbarController::index');
+        $routes->post('navbar/update-order', 'Admin\NavbarController::updateOrder');
+
         $routes->get('about-us', 'Admin\Pages::aboutUs');
         $routes->get('privacy-policy', 'Admin\Pages::privacyPolicy');
         $routes->post('pages/save', 'Admin\Pages::save');
-    });
+        });
 
     $routes->group('api', function ($routes) {
+        $routes->get('news-list', 'Admin\Post\ViewsController::getNewsList');
         $routes->get('get-comment', 'Admin\CommentsController::getPostComment');
-        $routes->get('get-reply', 'Admin\CommentsController::getReply');
+        $routes->post('comments-list', 'Admin\CommentsController::fetchComments');
+        $routes->post('get-reply', 'Admin\CommentsController::fetchReply');
         $routes->get('get-media', 'Admin\MediaController::getMedia');
         $routes->get('get-documents', 'Admin\DocumentController::getDocuments');
+        $routes->get('tags-list', 'Admin\TagsController::getTagsList');
     });
 });
 

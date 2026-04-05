@@ -1,18 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 
-
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title><?= $this->renderSection('pageTitle') ?> || Purulia mirror </title>
     <?= $this->renderSection("HomeMeta"); ?>
-
     <!-- plugins:css -->
-    <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/font-awesome/css/font-awesome.min.css">
+    <!-- <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/font-awesome/css/font-awesome.min.css"> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/css/vendor.bundle.base.css">
-
     <!-- endinject -->
     <!-- Plugin css for this page -->
     <link rel="stylesheet" href="<?= base_url() ?>assets/vendors/ti-icons/css/themify-icons.css">
@@ -24,8 +22,8 @@
     <link rel="stylesheet" href="<?= base_url() ?>assets/css/horizontal-layout-light/style.css?v=10.5">
     <!-- endinject -->
     <link rel="shortcut icon" href="<?= base_url() ?>assets/images/insta-logo.jpg" />
-    <link rel="stylesheet" href="<?= base_url() ?>assets/customs/css/style.css?v=10.5">
-    <link rel="stylesheet" href="<?= base_url() ?>assets/customs/css/custom.css?v=10.5">
+    <link rel="stylesheet" href="<?= base_url() ?>assets/customs/css/style.css?v=11.0">
+    <link rel="stylesheet" href="<?= base_url() ?>assets/customs/css/custom.css?v=11.0">
 </head>
 
 <body>
@@ -43,7 +41,6 @@
     </div>
     <!-- End Pre Loader -->
     <div class="container-scroller">
-        <!-- partial:partials/_horizontal-navbar.html -->
         <?= $this->include('user/Components/Horizontal.php') ?>
         <!-- partial -->
         <div class="container-fluid page-body-wrapper">
@@ -68,7 +65,6 @@
                                                             src="<?= base_url($leftAd['image']) ?>"
                                                             alt="<?= esc($leftAd['title']) ?>">
                                                     <?php endif; ?>
-
                                                 </div>
                                             <?php endforeach; ?>
                                         </div>
@@ -100,7 +96,6 @@
                                             </div>
                                         </div>
                                     <?php endif; ?>
-
                                     <?php if (!empty($topAds)) : ?>
                                         <div class="utf_ad_content_area text-center utf_banner_area pt-3 pb-0">
                                             <div class="container">
@@ -118,7 +113,6 @@
                                                                     src="<?= base_url($topAd['image']) ?>"
                                                                     alt="<?= esc($topAd['title']) ?>">
                                                             <?php endif; ?>
-
                                                         </div>
                                                     <?php endforeach; ?>
                                                 </div>
@@ -145,7 +139,6 @@
                                                             src="<?= base_url($rightAd['image']) ?>"
                                                             alt="<?= esc($rightAd['title']) ?>">
                                                     <?php endif; ?>
-
                                                 </div>
                                             <?php endforeach; ?>
                                         </div>
@@ -172,7 +165,6 @@
                                                 src="<?= base_url($bottomAd['image']) ?>"
                                                 alt="<?= esc($bottomAd['title']) ?>">
                                         <?php endif; ?>
-
                                     </div>
                                 <?php endforeach; ?>
                             </div>
@@ -184,13 +176,9 @@
                 <div id="back-to-top" class="back-to-top">
                     <button class="btn" title="Back to Top"> <i class="fa fa-angle-up"></i> </button>
                 </div>
-                <!-- partial -->
             </div>
-            <!-- main-panel ends -->
         </div>
-        <!-- page-body-wrapper ends -->
     </div>
-    <!-- container-scroller -->
     <div class="modal fade" id="searchModal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -211,7 +199,6 @@
             </div>
         </div>
     </div>
-
     <!-- plugins:js -->
     <script src="<?= base_url() ?>assets/vendors/js/vendor.bundle.base.js"></script>
     <!-- endinject -->
@@ -236,11 +223,97 @@
     <?php endif; ?>
     <?= $this->renderSection('jsPlugins') ?>
     <script>
+        function getBengaliDateTime() {
+            const now = new Date();
+
+            // Bengali numbers
+            const bnDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+
+            // Convert number to Bengali
+            const toBengaliNumber = (num) => {
+                return num.toString().split('').map(d => bnDigits[d]).join('');
+            };
+
+            // Bengali months
+            const months = [
+                'জানুয়ারি', 'ফেব্রুয়ারি', 'মার্চ', 'এপ্রিল', 'মে', 'জুন',
+                'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর', 'ডিসেম্বর'
+            ];
+
+            // Bengali days
+            const days = [
+                'রবিবার', 'সোমবার', 'মঙ্গলবার', 'বুধবার', 'বৃহস্পতিবার', 'শুক্রবার', 'শনিবার'
+            ];
+
+            const dayName = days[now.getDay()];
+            const date = toBengaliNumber(now.getDate());
+            const month = months[now.getMonth()];
+            const year = toBengaliNumber(now.getFullYear());
+
+            let hours = now.getHours();
+            const minutes = toBengaliNumber(now.getMinutes().toString().padStart(2, '0'));
+            const seconds = toBengaliNumber(now.getSeconds().toString().padStart(2, '0'));
+
+            let ampm = 'AM';
+            // let ampm = 'এএম';
+            if (hours >= 12) {
+                ampm = 'PM';
+                // ampm = 'পিএম';
+                if (hours > 12) hours -= 12;
+            } else if (hours === 0) {
+                hours = 12;
+            }
+
+            hours = toBengaliNumber(hours);
+
+            return `${dayName}, ${date} ${month} ${year} | ${hours}:${minutes}:${seconds} ${ampm}`;
+        }
+
+        setInterval(() => {
+            document.getElementById('bnDateTime').innerText = getBengaliDateTime();
+        }, 1000);
         /* Loading Js*/
         $(window).on('load', function() {
             $('#global-loader').fadeOut();
         });
         $(document).ready(function() {
+            // Disable copying content or download content
+            // Disable Right Click
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+            });
+
+            // Disable Keys
+            document.addEventListener('keydown', function(e) {
+
+                const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+                const ctrlOrCmd = isMac ? e.metaKey : e.ctrlKey;
+
+                if (
+                    (ctrlOrCmd && ['c', 'u', 's', 'p', 'a'].includes(e.key.toLowerCase())) ||
+                    (ctrlOrCmd && e.shiftKey && ['i', 'j', 'c'].includes(e.key.toLowerCase())) ||
+                    e.key === 'F12'
+                ) {
+                    e.preventDefault();
+                }
+            });
+
+            // Disable Image Drag (dynamic safe)
+            document.addEventListener('dragstart', function(e) {
+                if (e.target.tagName === 'IMG') {
+                    e.preventDefault();
+                }
+            });
+
+            // Attempt to block PrintScreen
+            document.addEventListener('keyup', function(e) {
+                if (e.key === 'PrintScreen') {
+                    try {
+                        navigator.clipboard.writeText('');
+                    } catch (err) {}
+                }
+            });
+
             $('[data-toggle="horizontal-menu-toggle-new"]').on("click", function() {
 
                 $(".horizontal-menu .bottom-navbar").toggleClass("header-toggled");
@@ -342,9 +415,31 @@
                 $('#searchModal').modal('show');
             });
         }
+        $('#subscribe').on('click', function() {
+
+            let email = $('#newsletter1').val().trim();
+
+            if (!email) {
+                alert('Enter email');
+                return;
+            }
+
+            $.post("<?= base_url('subscribe') ?>", {
+                email: email,
+                <?= csrf_token() ?>: "<?= csrf_hash() ?>"
+            }, function(res) {
+
+                if (res.success) {
+                    $('#newsletter1').val('');
+                    $('#subscribe').html('✔ Subscribed').prop('disabled', true);
+                } else {
+                    alert(res.message);
+                }
+
+            }, 'json');
+        });
     </script>
     <?= $this->renderSection('customjs') ?>
-
     <!-- End custom js for this page-->
 </body>
 

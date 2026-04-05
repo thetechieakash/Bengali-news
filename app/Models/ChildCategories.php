@@ -51,7 +51,7 @@ class ChildCategories extends Model
             'sub_cat_id' => $subCatId,
             'status'     => 1
         ])
-            ->orderBy('created_at', 'DESC')
+            ->orderBy('created_at', 'ASC')
             ->findAll();
     }
 

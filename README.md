@@ -1,68 +1,262 @@
-# CodeIgniter 4 Application Starter
+# Bengali News Portal (CodeIgniter 4)
 
-## What is CodeIgniter?
+A modern **Bengali News Portal CMS** built using **CodeIgniter 4**, designed for publishing news articles, managing categories, tags, comments, advertisements, and user messages.
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+This project includes an **admin dashboard** for content management and a **frontend news portal** for readers.
 
-This repository holds a composer-installable app starter.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+---
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+## 🚀 Features
 
-You can read the [user guide](https://codeigniter.com/user_guide/)
-corresponding to the latest version of the framework.
+### Frontend
 
-## Installation & updates
+* News article listing
+* Category, sub-category and child category navigation
+* Mega menu navigation
+* Article detail page
+* Post comments with **Google reCAPTCHA v3 protection**
+* Contact form with spam protection
+* Tag based article filtering
+* Advertisement placement system
+* Responsive news layout
 
-`composer create-project codeigniter4/appstarter` then `composer update` whenever
-there is a new release of the framework.
+### Admin Panel
 
-When updating, check the release notes to see if there are any changes you might need to apply
-to your `app` folder. The affected files can be copied or merged from
-`vendor/codeigniter4/framework/app`.
+* Dashboard
+* Manage Categories / Subcategories / Child Categories
+* Manage News Posts
+* Manage Tags
+* Manage Advertisements
+* Manage Contact Messages
+* Manage Comments (approve / reject)
+* DataTables powered listings
+* AJAX operations for CRUD
+* Secure form handling
 
-## Setup
+### Security
 
-Copy `env` to `.env` and tailor for your app, specifically the baseURL
-and any database settings.
+* CSRF protection
+* reCAPTCHA v3 verification
+* AJAX request validation
+* Input validation
+* Spam protection for comments and contact forms
+* IP and user agent logging
 
-## Important Change with index.php
+---
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
+## 🛠 Tech Stack
 
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
+| Technology          | Usage                  |
+| ------------------- | ---------------------- |
+| PHP                 | Backend                |
+| CodeIgniter 4       | MVC Framework          |
+| MySQL               | Database               |
+| jQuery              | AJAX / UI interactions |
+| Bootstrap           | UI framework           |
+| DataTables          | Admin data tables      |
+| SweetAlert2         | Confirmation dialogs   |
+| Google reCAPTCHA v3 | Spam protection        |
 
-**Please** read the user guide for a better explanation of how CI4 works!
+---
 
-## Repository Management
+## 📂 Project Structure
 
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
+```
+app
+ ├ Controllers
+ │   ├ Admin
+ │   └ User
+ │
+ ├ Models
+ │
+ ├ Views
+ │   ├ admin
+ │   └ user
+ │
+ ├ Libraries
+ │   └ RecaptchaService.php
+ │
+ ├ Database
+ │   └ Migrations
+ │
+public
+ ├ assets
+ └ uploads
+```
 
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
+---
 
-## Server Requirements
+## ⚙️ Installation
 
-PHP version 8.1 or higher is required, with the following extensions installed:
+### 1️⃣ Clone Repository
 
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
+```bash
+git clone https://github.com/thetechieakash/Bengali-news.git
+cd bengali-news-portal
+```
 
-> [!WARNING]
-> - The end of life date for PHP 7.4 was November 28, 2022.
-> - The end of life date for PHP 8.0 was November 26, 2023.
-> - If you are still using PHP 7.4 or 8.0, you should upgrade immediately.
-> - The end of life date for PHP 8.1 will be December 31, 2025.
+---
 
-Additionally, make sure that the following extensions are enabled in your PHP:
+### 2️⃣ Install Dependencies
 
-- json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+```bash
+composer install
+```
+
+---
+
+### 3️⃣ Configure Environment
+
+Copy `.env.example`:
+
+```bash
+cp env .env
+```
+
+Update database configuration:
+
+```
+database.default.hostname = localhost
+database.default.database = your_database
+database.default.username = root
+database.default.password =
+database.default.DBDriver = MySQLi
+```
+
+---
+
+### 4️⃣ Configure reCAPTCHA
+
+Add your keys in `.env`:
+
+```
+GOOGLE_RECAPTCHA_KEY=
+GOOGLE_RECAPTCHA_SECRET=
+```
+
+---
+
+### 5️⃣ Run Migrations
+
+```bash
+php spark migrate
+```
+
+---
+
+### 6️⃣ Run Development Server
+
+```bash
+php spark serve
+```
+
+Open in browser:
+
+```
+http://localhost:8080
+```
+
+---
+
+## 📌 Important Modules
+
+### News Posts
+
+Posts can have:
+
+* Category
+* Subcategory
+* Child Category
+* Tags
+* Author
+* Featured Image
+
+---
+
+### Tag System
+
+Tags are stored using a **pivot table**:
+
+```
+tags
+news_post_tag
+```
+
+Foreign keys are configured with **ON DELETE CASCADE** to maintain integrity.
+
+---
+
+### Comments
+
+Comments include:
+
+* Name
+* Email
+* Comment
+* Post reference
+* IP address
+* User agent
+* reCAPTCHA score
+
+Comments require **admin approval** before appearing publicly.
+
+---
+
+### Contact Messages
+
+Visitors can send messages through the contact form.
+
+Stored data includes:
+
+* Name
+* Email
+* Phone
+* Subject
+* Message
+* IP Address
+* User Agent
+
+Admins can **view and delete messages** from the dashboard.
+
+---
+
+## 🔒 Security
+
+The system includes multiple security layers:
+
+* CSRF tokens
+* Google reCAPTCHA v3
+* Server-side validation
+* AJAX request checks
+* Database prepared queries
+* Spam prevention
+
+---
+
+## 📊 Admin UI Features
+
+* DataTables listing
+* AJAX CRUD operations
+* SweetAlert confirmations
+* Modal views
+* Responsive dashboard
+
+---
+
+## 🧑‍💻 Author
+
+**Akash Halder**
+
+Developer of this Bengali News Portal CMS.
+
+---
+
+## 📜 License
+
+This project is open-source and available under the **MIT License**.
+
+---
+
+## ⭐ Support
+
+If you find this project useful, please consider giving it a **star on GitHub**.

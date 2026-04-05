@@ -28,7 +28,7 @@ class CategoryService
 
         $cats = $catModel
             ->where('status', 1)
-            ->orderBy('created_at', 'ASC')
+            ->orderBy('position', 'ASC')
             ->findAll();
 
         foreach ($cats as $cat) {
@@ -61,6 +61,7 @@ class CategoryService
                 'id'        => $cat['id'],
                 'name'      => $cat['cat'],
                 'slug'      => $cat['slug'],
+                'position'  => $cat['position'],
                 'is_active' => $cat['is_active'],
                 'subs'      => $subs
             ];

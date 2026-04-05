@@ -23,10 +23,10 @@
     <?= $this->renderSection('plugin') ?>
     <!-- End plugin css for this page -->
     <!-- inject:css -->
-    <link rel="stylesheet" href="<?= base_url() ?>assets/css/vertical-layout-light/style.css?v=10.5">
+    <link rel="stylesheet" href="<?= base_url() ?>assets/css/vertical-layout-light/style.css?v=12.5">
     <!-- endinject -->
     <link rel="shortcut icon" href="<?= base_url() ?>assets/images/insta-logo.jpg" />
-    <link rel="stylesheet" href="<?= base_url('assets/customs/css/admincustom.css') ?>?v=10.5">
+    <link rel="stylesheet" href="<?= base_url('assets/customs/css/admincustom.css') ?>?v=12.5">
     <style>
         #global-loader {
             position: fixed;
@@ -61,49 +61,17 @@
     </div>
     <!-- End Pre Loader -->
     <div class="container-scroller">
-        <!-- <div class="row p-0 m-0 proBanner" id="proBanner">
-            <div class="col-md-12 p-0 m-0">
-                <div class="card-body card-body-padding px-3 d-flex align-items-center justify-content-between">
-                    <div class="ps-lg-3">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <p class="mb-0 fw-medium me-3 buy-now-text">Free 24/7 customer support, updates, and more!</p>
-                            <a href="<?= base_url() ?>" target="_blank"
-                                class="btn me-2 buy-now-btn border-0">Visit site</a>
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-center justify-content-between">
-                        <a href="<?= base_url() ?>"><i class="ti-home me-3 text-white"></i></a>
-                        <button id="bannerClose" class="btn border-0 p-0">
-                            <i class="ti-close text-white"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div> -->
-        <!-- partial:partials/_navbar.html -->
         <?= $this->include('admin/Components/Topbar.php') ?>
-
-        <!-- partial -->
         <div class="container-fluid page-body-wrapper">
-            <!-- partial -->
             <?= $this->include('admin/Components/Sidebar.php') ?>
-
-            <!-- partial -->
             <div class="main-panel">
                 <div class="content-wrapper">
                     <?= $this->renderSection('content') ?>
                 </div>
-                <!-- content-wrapper ends -->
-                <!-- partial:partials/_footer.html -->
                 <?= $this->include('admin/Components/Footer.php') ?>
-                <!-- partial -->
             </div>
-            <!-- main-panel ends -->
         </div>
-        <!-- page-body-wrapper ends -->
     </div>
-    <!-- container-scroller -->
-
     <!-- plugins:js -->
     <script src="<?= base_url() ?>assets/vendors/js/vendor.bundle.base.js"></script>
     <script src="<?= base_url() ?>assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>

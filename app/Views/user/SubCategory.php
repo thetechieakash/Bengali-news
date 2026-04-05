@@ -9,8 +9,6 @@
 
 use App\Helpers\StringShort;
 use App\Helpers\ThumbHelper;
-
-$defaultThumb = base_url('assets/images/news/placeholder.png');
 ?>
 <!-- Page Breadcrumb Start -->
 <div class="page-title">

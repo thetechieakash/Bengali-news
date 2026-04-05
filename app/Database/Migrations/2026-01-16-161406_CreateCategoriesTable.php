@@ -23,6 +23,11 @@ class CreateCategoriesTable extends Migration
                 'constraint' => 100,
                 'unique' => true
             ],
+            'position' => [
+                'type' => 'INT',
+                'null'       => true,
+                'default' => 0,
+            ],
             'is_active' => [
                 'type' => 'BOOLEAN',
                 'default' => false,

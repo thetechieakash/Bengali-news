@@ -39,6 +39,24 @@
     <script src="<?= base_url() ?>assets/js/template.js"></script>
     <script src="<?= base_url() ?>assets/js/settings.js"></script>
     <script src="<?= base_url() ?>assets/js/todolist.js"></script>
+    <script>
+        $(document).ready(function() {
+            document.getElementById('togglePassword').addEventListener('click', function() {
+                const input = document.getElementById('password');
+                const icon = this;
+
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    input.type = 'password';
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            });
+        });
+    </script>
     <!-- endinject -->
 </body>
 

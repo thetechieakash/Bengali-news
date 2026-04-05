@@ -115,7 +115,7 @@ function formattedPostDate($date)
                                 $post['thumbnail']['type'] ?? null
                             );
                             ?>
-                            <a href="<?= esc($thumbUrl) ?>" class="glightbox">
+                            <a href="<?= esc($thumbUrl) ?>" class="glightbox-single">
                                 <img src="<?= esc($thumbUrl) ?>" class="img-fluid" alt="<?= $post['headline'] ?>">
                             </a>
                         </div>
@@ -159,19 +159,33 @@ function formattedPostDate($date)
                             </div>
                         <?php endif; ?>
                         <div class="share-items clearfix">
-                            <ul class="post-social-icons unstyled">
-                                <?php $postUrl   = current_url(); ?>
-                                <li class="facebook">
-                                    <a href="https://www.facebook.com/sharer/sharer.php?u=<?= $postUrl ?>" target="_blank" rel="noopener">
-                                        <i class="fa fa-facebook"></i>
-                                        <span class="ts-social-title">Facebook</span>
+                            <?php
+                            $postUrl = current_url();
+                            $encodedUrl = urlencode($postUrl);
+                            $encodedText = urlencode($post['headline']);
+                            ?>
+                            <ul class="social-icon mb-1 text-end text-md-start">
+                                <li title="Copy Link">
+                                    <a href="javascript:void(0)" onclick="copyLink(this, '<?= $postUrl ?>')">
+                                        <i class="fa-solid fa-copy"></i>
                                     </a>
                                 </li>
-                                <li class="twitter">
-                                    <a href="https://twitter.com/intent/tweet?url=<?= $postUrl ?>&text=<?= esc($post['headline']) ?>" target="_blank" rel="noopener"> <i class="fa fa-twitter"></i>
-                                        <span class="ts-social-title">Twitter</span>
+                                <li title="Share on Facebook">
+                                    <a href="https://www.facebook.com/sharer/sharer.php?u=<?= $encodedUrl ?>" target="_blank">
+                                        <i class="fa-brands fa-facebook-f"></i>
                                     </a>
                                 </li>
+                                <li title="Share on WhatsApp">
+                                    <a href="https://wa.me/?text=<?= $encodedText ?>%20<?= $encodedUrl ?>" target="_blank">
+                                        <i class="fa-brands fa-whatsapp"></i>
+                                    </a>
+                                </li>
+                                <li title="Share on Twitter">
+                                    <a href="https://twitter.com/intent/tweet?url=<?= $encodedUrl ?>&text=<?= $encodedText ?>" target="_blank">
+                                        <i class="fa-brands fa-x-twitter"></i>
+                                    </a>
+                                </li>
+
                             </ul>
                         </div>
                     </div>
@@ -243,7 +257,7 @@ function formattedPostDate($date)
                                                     <div class="comment mb-3">
                                                         <div class="comment-body">
                                                             <div class="meta-data">
-                                                                <span class="comment-author"><i class="fa fa-mail-reply me-2"></i><?= esc($reply['guest_name']) ?></span>
+                                                                <span class="comment-author"><i class="fa fa-mail-reply me-2"></i>Puruliamirror Digital Desk</span>
                                                                 <span class="comment-date pull-right">
                                                                     <?= formattedPostDate($reply['created_at']) ?>
                                                                 </span>
@@ -436,12 +450,30 @@ function formattedPostDate($date)
 <?= $this->section('customjs') ?>
 <script src="https://www.google.com/recaptcha/api.js?render=<?= $recaptcha_key ?>"></script>
 <script>
+    function copyLink(el, url) {
+        const icon = el.querySelector('i');
+
+        navigator.clipboard.writeText(url).then(() => {
+            // change to tick
+            icon.classList.remove('fa-solid', 'fa-copy');
+            icon.classList.add('fa-solid', 'fa-check');
+            showSuccessToast("Post Link copied");
+
+            // revert after 2 seconds
+            setTimeout(() => {
+                icon.classList.remove('fa-solid', 'fa-check');
+                icon.classList.add('fa-solid', 'fa-copy');
+            }, (1000 * 10));
+        }).catch((err) => {
+            showWarningToast("Link copied failed");
+
+            console.error("Copy failed", err);
+        });
+    }
     const lightbox = GLightbox({
-        selector: '.glightbox',
-        touchNavigation: true,
-        loop: true,
-        zoomable: true,
-        maxZoom: 2
+        selector: '.glightbox-single',
+        touchNavigation: false,
+        loop: false
     });
     $(document).on('click', '#commentSubmit', function(e) {
         e.preventDefault();

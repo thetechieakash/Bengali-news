@@ -13,6 +13,7 @@ class Categories extends Model
     protected $allowedFields    = [
         'cat',
         'slug',
+        'position',
         'is_active',
         'status',
     ];

@@ -92,7 +92,7 @@ class CreatePostController extends BaseController
 
     private function insertPost(array $data, string $slug): int
     {
-        $user = auth()->user();
+        $user = auth();
 
         return (new NewsPostModel())->insert([
             'headline'          => $data['headline'],
@@ -102,7 +102,7 @@ class CreatePostController extends BaseController
             'description'       => $data['description'],
             'status'            => 0,
             'post_date_time'    => null,
-            'author'            => $user ? ($user->username ?? $user->getEmail()) : 'system',
+            'author'            => $user->id(),
         ], true);
     }
 

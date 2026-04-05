@@ -32,8 +32,16 @@
                                 <option value="user">user</option>
                             </select>
                         </div>
-                        <div class="form-group">
-                            <input type="password" class="form-control form-control-lg" name="password" placeholder="Password">
+                        <div class="form-group position-relative">
+                            <input type="password"
+                                class="form-control form-control-lg pr-5"
+                                id="password"
+                                name="password"
+                                placeholder="Password">
+
+                            <span class="password-toggle" id="togglePassword">
+                                <i class="fa fa-eye"></i>
+                            </span>
                         </div>
                         <div class="mt-3 d-grid gap-2">
                             <button class="btn btn-block btn-primary btn-lg fw-medium auth-form-btn" type="submit">Save</button>
@@ -50,47 +58,8 @@
 <?= $this->endSection() ?>
 
 <?= $this->section('script') ?>
-<script>
-    $(document).ready(function() {
-        $("#createUser").submit(function(e) {
-            e.preventDefault();
-
-            const formData = new FormData(this);
-            const btn = $(this).find('button[type="submit"]').prop('disabled', true);
-
-            $.ajax({
-                url: "<?= base_url('admin/user/create') ?>",
-                type: "POST",
-                data: formData,
-                processData: false,
-                contentType: false,
-                success(res) {
-                    if (res.success) {
-                        showSuccessToast(res.message);
-                        $("#createUser")[0].reset();
-
-                        setTimeout(() => window.location.href = res.redirect, 1000);
-                    } else {
-                        if (res.errors) {
-                            Object.values(res.errors).forEach(err => {
-                                showDangerToast(err);
-                            });
-                        } else {
-                            showDangerToast(res.message);
-                        }
-                    }
-                },
-                error(e) {
-                    showDangerToast('Something went wrong');
-                    console.error("User create ajax error", e);
-
-                },
-                complete() {
-                    btn.prop('disabled', false);
-                }
-            });
-        });
-    });
-</script>
+<!-- Page js start -->
+<?= $this->include('admin/Js/CreateUsers.js.php'); ?>
+<!-- Page js ends  -->
 
 <?= $this->endSection() ?>

@@ -1,61 +1,161 @@
 <script>
     $(document).ready(function() {
 
+        const highlightId = "<?= $highlightId ?? '' ?>";
+
         /* -------------------------------
          * DataTable Init
          * ------------------------------- */
-        const table = $('#comments-listing').DataTable();
+        const table = $('#comments-listing').DataTable({
+            processing: true,
+            serverSide: true,
+            ordering: true,
+            searching: true,
+            lengthMenu: [10, 25, 50, 100],
 
-        const highlightId = "<?= $highlightId ?? '' ?>";
-        if (highlightId) {
+            ajax: {
+                url: "<?= base_url('admin/api/comments-list') ?>",
+                type: "POST",
+                data: function(d) {
+                    d.type = "<?= $status ?>";
+                    d.highlight = "<?= $highlightId ?? '' ?>";
+                }
+            },
 
-            const rowNode = table.rows().nodes().to$().filter('#comment-row-' + highlightId);
+            columns: [{
+                    data: 'sl',
+                    orderable: false
+                },
 
-            if (rowNode.length) {
+                {
+                    data: 'status',
+                    orderable: false,
+                    render: function(data) {
+                        return data === 1 ?
+                            '<span class="badge bg-success">Approved</span>' :
+                            '<span class="badge bg-warning">Pending</span>';
+                    }
+                },
 
-                const rowIndex = table.row(rowNode).index();
-                const pageIndex = Math.floor(rowIndex / table.page.len());
+                {
+                    data: 'comment',
+                    render: function(data) {
+                        let safeText = $('<div>').text(data).html();
+                        let shortText = safeText.length > 25 ?
+                            safeText.substring(0, 25) + '...' :
+                            safeText;
 
-                // Go to correct page
-                table.page(pageIndex).draw(false);
+                        return `
+                    <a href="#!" class="viewcomment" data-text="${safeText}">
+                        ${shortText}
+                    </a>
+                `;
+                    }
+                },
 
-                // Wait for redraw
-                setTimeout(function() {
+                {
+                    data: null,
+                    render: function(row) {
+                        return `
+                    <strong>${row.guest_name}</strong><br>
+                    <small>${row.guest_email}</small>
+                `;
+                    }
+                },
 
+                {
+                    data: 'score',
+                    render: function(score) {
+                        let cls = score >= 0.7 ?
+                            'text-success' :
+                            (score >= 0.4 ? 'text-warning' : 'text-danger');
+
+                        return `<span class="${cls}">${score.toFixed(2)}</span>`;
+                    }
+                },
+
+                {
+                    data: 'date',
+                    render: function(date) {
+                        let d = new Date(date);
+
+                        return `
+                    ${d.toLocaleDateString()}<br>
+                    <small>${d.toLocaleTimeString()}</small>
+                `;
+                    }
+                },
+
+                {
+                    data: null,
+                    orderable: false,
+                    render: function(row) {
+
+                        let actions = `
+                    <div class="dropdown">
+                        <button class="btn btn-success btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                            Modify
+                        </button>
+                        <div class="dropdown-menu">
+                `;
+
+                        if (row.status === 0) {
+                            actions += `<button class="dropdown-item approveBtn" data-id="${row.id}">Approve</button>`;
+                        } else {
+                            actions += `
+                        <button class="dropdown-item unpublishBtn" data-id="${row.id}">Unpublish</button>
+                        <button class="dropdown-item replyBtn"
+                            data-id="${row.id}">
+                            Reply
+                        </button>
+                    `;
+                        }
+
+                        actions += `
+                    <button class="dropdown-item viewpost" data-url="${row.post_url}">View Post</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item text-danger deleteBtn" data-id="${row.id}">Delete</button>
+                    </div>
+                </div>
+                `;
+
+                        return actions;
+                    }
+                }
+            ],
+
+            drawCallback: function() {
+                const highlightId = "<?= $highlightId ?? '' ?>";
+
+                if (highlightId) {
                     const row = $('#comment-row-' + highlightId);
-
-                    row.addClass('table-warning');
-                    row.fadeOut(200).fadeIn(200).fadeOut(200).fadeIn(200);
-
-                    row[0].scrollIntoView({
-                        behavior: "smooth",
-                        block: "center"
-                    });
-
-                }, 300);
+                    if (row.length) {
+                        row.addClass('table-warning');
+                        row[0].scrollIntoView({
+                            behavior: "smooth",
+                            block: "center"
+                        });
+                    }
+                }
             }
-        }
+        });
+
         /* -------------------------------
-         * Reusable comment action handler
+         * Common Action Handler
          * ------------------------------- */
         function commentAction({
             url,
             id,
-            row,
             confirmTitle = 'Are you sure?',
             confirmText = 'This action cannot be undone.',
-            confirmButton = 'Yes',
-            onSuccess = null
+            confirmButton = 'Yes'
         }) {
-
             Swal.fire({
                 title: confirmTitle,
                 text: confirmText,
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonText: confirmButton,
-                cancelButtonText: 'Cancel',
-                reverseButtons: true
+                confirmButtonText: confirmButton
             }).then((result) => {
 
                 if (!result.isConfirmed) return;
@@ -71,16 +171,13 @@
                     success(res) {
                         if (res.success) {
                             showSuccessToast(res.message);
-
-                            if (typeof onSuccess === 'function') {
-                                onSuccess(row);
-                            }
+                            table.ajax.reload(null, false); // NO reload page
                         } else {
-                            showDangerToast(res.message || 'Action failed');
+                            showDangerToast(res.message);
                         }
                     },
                     error() {
-                        showDangerToast('Server error. Try again.');
+                        showDangerToast('Server error');
                     }
                 });
 
@@ -88,96 +185,38 @@
         }
 
         /* -------------------------------
-         * APPROVE COMMENT
+         * ACTIONS
          * ------------------------------- */
-        $(document).on('click', '.approveBtn', function() {
-            const id = $(this).data('id');
-            const row = $(this).closest('tr');
 
+        $(document).on('click', '.approveBtn', function() {
             commentAction({
                 url: "<?= base_url('admin/comments/approve') ?>",
-                id: id,
-                row: row,
+                id: $(this).data('id'),
                 confirmTitle: 'Approve comment?',
-                confirmText: 'This comment will be visible publicly.',
-                confirmButton: 'Approve',
-                onSuccess: function(row) {
-
-                    // Status badge
-                    row.find('td:eq(1)')
-                        .html('<span class="badge bg-success">Approved</span>');
-
-                    // Dropdown actions
-                    const menu = row.find('.dropdown-menu');
-                    menu.find('.approveBtn').remove();
-
-                    if (!menu.find('.unpublishBtn').length) {
-                        menu.prepend(
-                            `<button class="dropdown-item unpublishBtn" data-id="${id}">
-                                Unpublish
-                            </button>`
-                        );
-                    }
-                }
+                confirmButton: 'Approve'
             });
         });
 
-        /* -------------------------------
-         * UNPUBLISH COMMENT
-         * ------------------------------- */
         $(document).on('click', '.unpublishBtn', function() {
-            const id = $(this).data('id');
-            const row = $(this).closest('tr');
-
             commentAction({
                 url: "<?= base_url('admin/comments/unpublish') ?>",
-                id: id,
-                row: row,
+                id: $(this).data('id'),
                 confirmTitle: 'Unpublish comment?',
-                confirmText: 'This comment will be hidden from the site.',
-                confirmButton: 'Unpublish',
-                onSuccess: function(row) {
-
-                    // Status badge
-                    row.find('td:eq(1)')
-                        .html('<span class="badge bg-warning">Pending</span>');
-
-                    // Dropdown actions
-                    const menu = row.find('.dropdown-menu');
-                    menu.find('.unpublishBtn').remove();
-
-                    if (!menu.find('.approveBtn').length) {
-                        menu.prepend(
-                            `<button class="dropdown-item approveBtn" data-id="${id}">
-                                Approve
-                            </button>`
-                        );
-                    }
-                }
+                confirmButton: 'Unpublish'
             });
         });
 
-        /* -------------------------------
-         * DELETE COMMENT
-         * ------------------------------- */
         $(document).on('click', '.deleteBtn', function() {
-            const id = $(this).data('id');
-            const row = $(this).closest('tr');
-
             commentAction({
                 url: "<?= base_url('admin/comments/delete') ?>",
-                id: id,
-                row: row,
+                id: $(this).data('id'),
                 confirmTitle: 'Delete comment?',
-                confirmText: 'This action cannot be undone.',
-                confirmButton: 'Delete',
-                onSuccess: function(row) {
-                    table
-                        .row(row)
-                        .remove()
-                        .draw(false);
-                }
+                confirmButton: 'Delete'
             });
+        });
+
+        $(document).on('click', '.viewpost', function() {
+            window.location.href = $(this).data('url');
         });
 
         $(document).on('click', '.viewcomment', function(e) {
@@ -185,27 +224,77 @@
             $('#modaltitle').html('Comment');
             $('#reply').val($(this).data('text')).prop('disabled', true);
             $('#viewModal').modal('show');
-        })
-        $(document).on('click', '.viewpost', function(e) {
-            e.preventDefault();
-            const id = $(this).data('id');
-            window.location.href = "<?= base_url('admin/published-news') ?>?highlight=" + id;
-        })
-        /* -------------------------------
-         * OPEN REPLY MODAL
-         * ------------------------------- */
-        $(document).on('click', '.replyBtn', function() {
-            const commentId = $(this).data('id');
-            const replyText = $(this).data('reply') || '';
-
-            $('#replyCommentId').val(commentId);
-            $('#replyText').val(replyText); // textarea
-            $('#replyModal').modal('show');
         });
 
         /* -------------------------------
-         * SUBMIT ADMIN REPLY
+         * REPLY MODAL
          * ------------------------------- */
+        $(document).on('click', '.replyBtn', function() {
+
+            const id = $(this).data('id');
+
+            // Set ID
+            $('#replyCommentId').val(id);
+
+            // Show loading state
+            $('#replyText')
+                .val('Loading reply...')
+                .prop('disabled', true);
+
+            $('#submitReply')
+                .text('Please wait...')
+                .prop('disabled', true);
+
+            $('#deleteReply').hide();
+
+            // Open modal
+            $('#replyModal').modal('show');
+
+            $.ajax({
+                url: "<?= base_url('admin/api/get-reply') ?>",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    id: id,
+                    <?= csrf_token() ?>: "<?= csrf_hash() ?>"
+                },
+
+                success: function(res) {
+
+                    // Enable inputs again
+                    $('#replyText').prop('disabled', false);
+                    $('#submitReply').prop('disabled', false);
+
+                    if (res && res.success && res.reply) {
+
+                        $('#replyText').val(res.reply.comment);
+                        $('#submitReply').text('Update');
+                        $('#deleteReply').show();
+
+                    } else {
+
+                        $('#replyText').val('');
+                        $('#submitReply').text('Reply');
+                        $('#deleteReply').hide();
+                    }
+                },
+
+                error: function() {
+
+                    $('#replyText')
+                        .val('')
+                        .prop('disabled', false);
+
+                    $('#submitReply')
+                        .text('Reply')
+                        .prop('disabled', false);
+
+                    showDangerToast('Failed to load reply');
+                }
+            });
+
+        });
+
         $('#submitReply').on('click', function() {
 
             const commentId = $('#replyCommentId').val();
@@ -229,17 +318,19 @@
                     if (res.success) {
                         $('#replyModal').modal('hide');
                         showSuccessToast(res.message);
-                        setTimeout(() => location.reload(), 800);
+                        table.ajax.reload(null, false); // FIXED
                     } else {
                         showDangerToast(res.message);
                     }
                 },
                 error() {
-                    showDangerToast('Server error. Try again.');
+                    showDangerToast('Server error');
                 }
             });
         });
+
         $('#deleteReply').on('click', function() {
+
             const commentId = $('#replyCommentId').val();
 
             $.ajax({
@@ -253,17 +344,17 @@
                 success(res) {
                     if (res.success) {
                         $('#replyModal').modal('hide');
-                        showSuccessToast(res.message ? 'Reply deleted' : '');
-                        setTimeout(() => location.reload(), 800);
+                        showSuccessToast('Reply deleted');
+                        table.ajax.reload(null, false);
                     } else {
                         showDangerToast(res.message);
                     }
                 },
-                error(err) {
-                    showDangerToast('Server error. Try again.');
-                    console.error('Reply error', err)
+                error() {
+                    showDangerToast('Server error');
                 }
             });
-        })
+        });
+
     });
 </script>

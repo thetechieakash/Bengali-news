@@ -22,9 +22,10 @@ class DashboardController extends BaseController
         $tagModel = new TagModel();
         $commentModel = new NewsPostCommentModel();
         $visitModel = new WebsiteVisitModel();
-
+        $user = auth();
         // Basic Counts
         $totalPosts       = $postModel->countAll();
+        $postedBy         = $postModel->where('author', $user->id())->countAllResults();
         $publishedPosts   = $postModel->where('status', '1')->countAllResults();
         $draftPosts       = $postModel->where('status', '0')->countAllResults();
         $totalCategories  = $catModel->countAll();
@@ -32,8 +33,8 @@ class DashboardController extends BaseController
         $totalChildCats     = $childCatModel->countAll();
         $totalTags        = $tagModel->countAll();
         $totalComments    = $commentModel->countAll();
-        $publishedComments    = $commentModel->where('status', 1)->countAllResults();
-        $pendingComments  = $commentModel->where('status', 0)->countAllResults();
+        $publishedComments    = $commentModel->where(['status' => 1, 'parent_id' => null])->countAllResults();
+        $pendingComments  = $commentModel->where(['status' => 0, 'parent_id' => null])->countAllResults();
 
         // Latest 5 Posts
         // $latestPosts = $postModel
@@ -55,6 +56,7 @@ class DashboardController extends BaseController
         $data = [
             'pageTitle'        => 'Dashboard',
             'totalPosts'       => $totalPosts,
+            'postedBy'         => $postedBy,
             'publishedPosts'   => $publishedPosts,
             'draftPosts'       => $draftPosts,
             'totalCategories'  => $totalCategories,

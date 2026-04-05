@@ -1,12 +1,10 @@
 <div class="modal fade" id="editSubCatModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
-
             <div class="modal-header">
                 <h5 class="modal-title">Edit Sub Category</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-
             <div class="modal-body ">
                 <form id="newSubCat">
                     <?= csrf_field() ?>
@@ -23,11 +21,9 @@
                     </div>
                 </form>
             </div>
-
             <div class="modal-footer">
                 <button class="btn btn-primary" id="updateSubCatBtn">Update</button>
             </div>
-
         </div>
     </div>
 </div>

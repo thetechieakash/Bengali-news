@@ -1,0 +1,14 @@
+[
+    {
+        "name": "newsletter_morning",
+        "type": "command",
+        "action": "newsletter:send",
+        "environment": null,
+        "start_at": "2026-04-04 11:11:18",
+        "end_at": "2026-04-04 11:11:18",
+        "duration": "00:00:00",
+        "output": "\"No subscribers\\n\"",
+        "error": null,
+        "test_time": null
+    }
+]

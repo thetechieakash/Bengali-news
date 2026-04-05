@@ -34,6 +34,7 @@ class UpdatePostController extends BaseController
 
             $data = $this->applyStatusRules($post, $data);
 
+            $user = auth();
             (new NewsPostModel())->update($id, [
                 'headline'          => $data['headline'],
                 'slug'              => $slug,
@@ -42,6 +43,7 @@ class UpdatePostController extends BaseController
                 'description'       => $data['description'],
                 'status'            => $data['status'],
                 'post_date_time'    => $data['post_date_time'],
+                'author'            => $user->id(),
             ]);
 
             $this->syncPivot(new NewsPostCategoryModel(), $id, 'category_id', $data['categories']);

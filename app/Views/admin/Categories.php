@@ -147,5 +147,4 @@
 <!-- Page js start -->
 <?= $this->include('admin/Js/Catagories.js.php'); ?>
 <!-- Page js ends  -->
-
 <?= $this->endSection() ?>

@@ -22,6 +22,11 @@ class CreateWebsiteVisitsTable extends Migration
             'visit_date' => [
                 'type' => 'DATE',
             ],
+            'hits' => [
+                'type'       => 'INT',
+                'constraint' => 11,
+                'default'    => 1,
+            ],
             'created_at' => [
                 'type' => 'DATETIME',
                 'null' => true,
@@ -32,7 +37,7 @@ class CreateWebsiteVisitsTable extends Migration
 
         // Prevent duplicate visit per IP per day
         $this->forge->addUniqueKey(['ip_address', 'visit_date']);
-
+        $this->forge->addKey('visit_date');
         $this->forge->createTable('website_visits');
     }
 

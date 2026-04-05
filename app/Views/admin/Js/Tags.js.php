@@ -1,36 +1,87 @@
 <script>
-    $(document).ready(function() {
-        // DataTable
-        $('#tag-listing').DataTable();
+    $(function() {
 
-        /* -----------------------------
-                ADD TAG
-            ------------------------------*/
-        $('#tagform').on('submit', function(e) {
+        const BASE_URL = '<?= base_url() ?>';
+
+        /* -----------------------------------------------
+         * Server-side DataTable
+         * --------------------------------------------- */
+        const table = $('#tag-listing').DataTable({
+            processing: true,
+            serverSide: true,
+            responsive: true,
+
+            ajax: {
+                url: BASE_URL + 'admin/api/tags-list',
+                type: 'GET',
+            },
+
+            columns: [{
+                    data: 'sl',
+                    orderable: false
+                },
+                {
+                    data: 'name',
+                    orderable: true
+                },
+                {
+                    data: null,
+                    orderable: false,
+                    render: function(data) {
+                        return `
+                        <div class="dropdown">
+                            <button class="btn btn-success btn-sm dropdown-toggle"
+                                data-bs-toggle="dropdown">Modify</button>
+                            <div class="dropdown-menu">
+                                <button class="dropdown-item editBtn"
+                                    data-id="${data.id}"
+                                    data-name="${data.name}">Edit</button>
+                                <button class="dropdown-item deleteBtn"
+                                    data-id="${data.id}">Delete</button>
+                            </div>
+                        </div>
+                    `;
+                    }
+                }
+            ],
+
+            order: [
+                [1, 'asc']
+            ],
+
+            language: {
+                emptyTable: 'No tags found',
+                zeroRecords: 'No matching tags found',
+                processing: 'Loading...',
+            }
+        });
+
+        /* -----------------------------------------------
+         * ADD TAG
+         * --------------------------------------------- */
+        $('#tagForm').on('submit', function(e) {
             e.preventDefault();
 
-            const form = this;
-            const formData = new FormData(form);
-            const tagName = $('#tag').val().trim();
-
-            if (!tagName) {
+            const name = $('#tagName').val().trim();
+            if (!name) {
                 showDangerToast('Tag name is required');
                 return;
             }
 
             $.ajax({
-                url: $(form).attr('action'),
+                url: BASE_URL + 'admin/tag/create',
                 type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
+                data: {
+                    tag: name,
+                    <?= csrf_token() ?>: '<?= csrf_hash() ?>'
+                },
                 success(res) {
                     if (res.success) {
                         showSuccessToast(res.message);
-                        form.reset();
-                        setTimeout(() => location.reload(), 700);
+                        $('#tagName').val('');
+                        table.ajax.reload(null, false);
                     } else {
-                        showDangerToast(res.message || 'Tag create failed');
+                        showDangerToast(res.message || 'Failed to create tag');
                     }
                 },
                 error() {
@@ -38,89 +89,92 @@
                 }
             });
         });
-        /* -----------------------------
-        EDIT TAG
-    ------------------------------*/
-        $('#tag-listing').on('click', '.editBtn', async function() {
-            const id = $(this).data('id');
 
-            const { value: tagName } = await Swal.fire({
-                title: 'Edit Tag',
-                input: 'text',
-                inputLabel: 'Tag name',
-                inputPlaceholder: 'Enter tag name',
-                showCancelButton: true,
-                confirmButtonText: 'Update',
-                cancelButtonText: 'Cancel',
-                inputValidator: (value) => {
-                    if (!value) {
-                        return 'Tag name is required';
-                    }
-                }
-            });
+        /* -----------------------------------------------
+         * EDIT TAG — open modal
+         * --------------------------------------------- */
+        $('#tag-listing').on('click', '.editBtn', function() {
+            $('#editTagId').val($(this).data('id'));
+            $('#editTagName').val($(this).data('name'));
+            $('#editTagModal').modal('show');
+        });
 
-            if (!tagName) return;
+        $('#saveEditBtn').on('click', function() {
+            const id = $('#editTagId').val();
+            const name = $('#editTagName').val().trim();
+
+            if (!name) {
+                showDangerToast('Tag name is required');
+                return;
+            }
+
+            $(this).prop('disabled', true);
 
             $.ajax({
-                url: "<?= base_url('admin/tag/update') ?>",
-                type: "POST",
+                url: BASE_URL + 'admin/tag/update',
+                type: 'POST',
                 data: {
                     id: id,
-                    tag: tagName,
-                    <?= csrf_token() ?>: "<?= csrf_hash() ?>"
+                    tag: name,
+                    <?= csrf_token() ?>: '<?= csrf_hash() ?>'
                 },
                 success(res) {
                     if (res.success) {
                         showSuccessToast(res.message);
-                        setTimeout(() => location.reload(), 700);
+                        $('#editTagModal').modal('hide');
+                        table.ajax.reload(null, false);
                     } else {
                         showDangerToast(res.message || 'Update failed');
                     }
                 },
                 error() {
                     showDangerToast('Something went wrong');
+                },
+                complete() {
+                    $('#saveEditBtn').prop('disabled', false);
                 }
             });
         });
 
-
-        /* -----------------------------
-            DELETE TAG
-        ------------------------------*/
-        $('#tag-listing').on('click', '.deletebtn', async function() {
+        /* -----------------------------------------------
+         * DELETE TAG
+         * --------------------------------------------- */
+        $('#tag-listing').on('click', '.deleteBtn', function() {
             const id = $(this).data('id');
 
-            const confirmed = await Swal.fire({
+            Swal.fire({
                 title: 'Delete Tag?',
                 text: 'This tag will be permanently deleted!',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Yes, delete',
+                confirmButtonColor: '#dc3545',
                 cancelButtonText: 'Cancel',
                 reverseButtons: true
-            });
+            }).then((result) => {
+                if (!result.isConfirmed) return;
 
-            if (!confirmed.isConfirmed) return;
-
-            $.ajax({
-                url: "<?= base_url('admin/tag/delete') ?>",
-                type: "POST",
-                data: {
-                    id: id,
-                    <?= csrf_token() ?>: "<?= csrf_hash() ?>"
-                },
-                success(res) {
-                    if (res.success) {
-                        showSuccessToast(res.message);
-                        setTimeout(() => location.reload(), 700);
-                    } else {
-                        showDangerToast(res.message || 'Delete failed');
+                $.ajax({
+                    url: BASE_URL + 'admin/tag/delete',
+                    type: 'POST',
+                    data: {
+                        id: id,
+                        <?= csrf_token() ?>: '<?= csrf_hash() ?>'
+                    },
+                    success(res) {
+                        if (res.success) {
+                            showSuccessToast(res.message);
+                            table.ajax.reload(null, false);
+                        } else {
+                            showDangerToast(res.message || 'Delete failed');
+                        }
+                    },
+                    error() {
+                        showDangerToast('Something went wrong');
                     }
-                },
-                error() {
-                    showDangerToast('Something went wrong');
-                }
+                });
             });
         });
+
     });
 </script>

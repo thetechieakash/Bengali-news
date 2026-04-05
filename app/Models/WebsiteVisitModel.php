@@ -12,6 +12,7 @@ class WebsiteVisitModel extends Model
 
     protected $allowedFields = [
         'ip_address',
-        'visit_date'
+        'visit_date',
+        'hits'
     ];
 }

@@ -48,8 +48,10 @@ abstract class BaseController extends Controller
     }
     protected function trackVisit()
     {
+        $path = trim($this->request->getUri()->getPath(), '/');
+
         // Don't track admin panel
-        if (strpos($this->request->getUri()->getPath(), 'admin') === 0) {
+        if (str_starts_with($path, 'admin')) {
             return;
         }
 
@@ -57,23 +59,26 @@ abstract class BaseController extends Controller
         if ($this->request->getUserAgent()->isRobot()) {
             return;
         }
+        // Get real IP (Cloudflare safe)
+        $ip = $this->request->getServer('HTTP_CF_CONNECTING_IP');
 
-        $visitModel = new WebsiteVisitModel();
-
-        // If using Cloudflare
-        $ip = $this->request->getServer('HTTP_CF_CONNECTING_IP')
-            ?? $this->request->getIPAddress();
-
-        $today = date('Y-m-d');
-
-        try {
-            $visitModel->insert([
-                'ip_address' => $ip,
-                'visit_date' => $today,
-                'created_at' => date('Y-m-d H:i:s')
-            ]);
-        } catch (\Exception $e) {
-            // Ignore duplicate error (because UNIQUE key exists)
+        if (empty($ip)) {
+            $ip = $this->request->getIPAddress();
         }
+        $db = \Config\Database::connect();
+
+        // Query Builder + safe compiled SQL
+        $builder = $db->table('website_visits');
+
+        $sql = $builder->set([
+            'ip_address' => $ip,
+            'visit_date' => date('Y-m-d'),
+            'hits'       => 1,
+            'created_at' => date('Y-m-d H:i:s')
+        ])
+            ->getCompiledInsert();
+
+        // Handle duplicate safely
+        $db->query($sql . ' ON DUPLICATE KEY UPDATE hits = hits + 1');
     }
 }

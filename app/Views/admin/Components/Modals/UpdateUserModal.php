@@ -1,12 +1,10 @@
 <div class="modal fade" id="userEditModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
-
             <div class="modal-header">
                 <h5 class="modal-title">Edit User</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-
             <div class="modal-body ">
                 <form class="pt-3" id="updateUser">
                     <?= csrf_field() ?>
@@ -27,8 +25,15 @@
                             <option value="user">user</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <input type="password" class="form-control form-control-lg" name="password" placeholder="New Password">
+                    <div class="form-group position-relative">
+                        <input type="password"
+                            class="form-control form-control-lg pe-5"
+                            id="password"
+                            name="password"
+                            placeholder="New Password">
+                        <span class="password-toggle" id="togglePassword">
+                            <i class="fa fa-eye"></i>
+                        </span>
                     </div>
                     <div class="mt-3 d-grid gap-2">
                         <button class="btn btn-block btn-primary btn-lg fw-medium auth-form-btn" type="submit" id="updateBtn">Update</button>

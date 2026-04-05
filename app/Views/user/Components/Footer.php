@@ -1,10 +1,3 @@
-<!-- <footer>
-    <div class="d-sm-flex justify-content-center justify-content-sm-between">
-        <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Made by <a
-                href="https://github.com/thetechieakash" target="_blank">akash</a> .</span>
-        <span class="float-none float-sm-end d-block mt-1 mt-sm-0 text-center">Copyright © <?= date('Y') ?>. All rights reserved.</span>
-    </div>
-</footer> -->
 <div class="container">
     <footer class="pt-5">
         <div class="row align-items-center">
@@ -20,43 +13,23 @@
                 </ul>
             </div>
 
-            <!-- <div class="col-6 col-md-2">
-                <ul class="nav flex-column">
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Home</a></li>
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Features</a></li>
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Pricing</a></li>
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">FAQs</a></li>
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">About</a></li>
-                </ul>
-            </div>
-
-            <div class="col-6 col-md-2">
-                <h5>Section</h5>
-                <ul class="nav flex-column">
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Home</a></li>
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Features</a></li>
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Pricing</a></li>
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">FAQs</a></li>
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">About</a></li>
-                </ul>
-            </div> -->
             <div class="col-12 col-md-4 offset-md-1 mt-3 mt-md-0">
                 <div class="widget color-primary">
                     <h3 class="utf_block_title"><span>ফলো করুন</span></h3>
                     <ul class="social-icon">
-                        <li><a href="#" target="_blank"><i class="fa fa-facebook"></i></a></li>
-                        <li><a href="#" target="_blank"><i class="fa fa-twitter"></i></a></li>
-                        <li><a href="#" target="_blank"><i class="fa fa-youtube"></i></a></li>
+                        <li><a href="https://www.facebook.com/puruliamirror" target="_blank"><i class="fa-brands fa-facebook-f"></i></a></li>
+                        <li><a href="https://www.instagram.com/purulia_mirror" target="_blank"><i class="fa-brands fa-instagram"></i></a></li>
+                        <li><a href="https://wa.me/916295142737" target="_blank"><i class="fa-brands fa-whatsapp"></i></a></li>
+                        <li><a href="https://x.com/PuruliaMirror" target="_blank"><i class="fa-brands fa-x-twitter"></i></a></li>
+                        <li><a href="https://www.youtube.com/@PuruliaMirror" target="_blank"><i class="fa-brands fa-youtube"></i></a></li>
                     </ul>
                 </div>
                 <form class="mt-3">
                     <h5>নতুন খবরের আপডেট পেতে এখনই সাস্ক্রাইব করুন।</h5>
-                    <!-- <h5>আমাদের নিউজলেটার সদস্যতা উপভোগ করুন</h5> -->
-                    <!-- <p>নতুন খবরের আপডেট পেতে এখনই সাস্ক্রাইব করুন।</p> -->
                     <div class="d-flex w-100 gap-2">
                         <label for="newsletter1" class="visually-hidden">ইমেল অ্যাড্রেস</label>
-                        <input id="newsletter1" type="text" class="form-control" placeholder="Email address">
-                        <button class="btn btn-primary" type="button">সাসক্রাইব</button>
+                        <input id="newsletter1" type="email" class="form-control" placeholder="Email address">
+                        <button class="btn btn-primary" type="button" id="subscribe">সাসক্রাইব</button>
                     </div>
                 </form>
             </div>

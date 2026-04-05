@@ -52,14 +52,32 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="exampleInputPassword"><?= lang('Auth.password') ?></label>
+                                <label for="password"><?= lang('Auth.password') ?></label>
+
                                 <div class="input-group">
+                                    <!-- LEFT ICON -->
                                     <div class="input-group-prepend bg-transparent">
                                         <span class="input-group-text bg-transparent border-right-0 h-100">
                                             <i class="ti-lock text-primary"></i>
                                         </span>
                                     </div>
-                                    <input type="password" class="form-control form-control-lg border-left-0" name="password" inputmode="text" autocomplete="current-password" placeholder="<?= lang('Auth.password') ?>" required>
+
+                                    <!-- INPUT -->
+                                    <input type="password"
+                                        id="password"
+                                        class="form-control form-control-lg border-left-0 border-right-0"
+                                        name="password"
+                                        inputmode="text"
+                                        autocomplete="current-password"
+                                        placeholder="<?= lang('Auth.password') ?>"
+                                        required>
+
+                                    <!-- RIGHT TOGGLE ICON -->
+                                    <div class="input-group-append bg-transparent">
+                                        <span class="input-group-text bg-transparent border-left-0 h-100 password-toggle">
+                                            <i class="fa fa-eye" id="togglePassword"></i>
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                             <?php if (setting('Auth.sessionConfig')['allowRemembering']): ?>

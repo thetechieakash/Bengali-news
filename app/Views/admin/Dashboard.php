@@ -17,8 +17,16 @@
             </div>
         </div>
     </div>
-
     <div class="col-6 col-sm-4 grid-margin stretch-card">
+        <div class="card card-rounded">
+            <div class="card-body">
+                <h2><?= $postedBy ?></h2>
+                <p>News Posted by You</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-6 col-sm-2 grid-margin stretch-card">
         <a class="card card-rounded text-decoration-none" href="<?= base_url('admin/published-news') ?>">
             <div class="card-body">
                 <h2><?= $publishedPosts ?></h2>
@@ -26,7 +34,7 @@
             </div>
         </a>
     </div>
-    <div class="col-6 col-sm-4 grid-margin stretch-card">
+    <div class="col-6 col-sm-2 grid-margin stretch-card">
         <a class="card card-rounded text-decoration-none" href="<?= base_url('admin/draft-news') ?>">
             <div class="card-body">
                 <h2><?= $draftPosts ?></h2>

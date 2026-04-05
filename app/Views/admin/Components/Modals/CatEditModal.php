@@ -5,7 +5,6 @@
                 <h5 class="modal-title">Edit Category</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-
             <div class="modal-body ">
                 <form id="newSubCat">
                     <?= csrf_field() ?>
@@ -45,12 +44,10 @@
                     </div>
                 </form>
             </div>
-
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" id="addSubCatBtn">Add Sub Category</button>
                 <button class="btn btn-primary" id="updateBtn">Update</button>
             </div>
-
         </div>
     </div>
 </div>
