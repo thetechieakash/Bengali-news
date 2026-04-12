@@ -19,11 +19,11 @@
     <?= $this->renderSection('cssPlugins') ?>
     <!-- End plugin css for this page -->
     <!-- inject:css -->
-    <link rel="stylesheet" href="<?= base_url() ?>assets/css/horizontal-layout-light/style.css?v=10.5">
+    <link rel="stylesheet" href="<?= base_url() ?>assets/css/horizontal-layout-light/style.css?v=13.0">
     <!-- endinject -->
     <link rel="shortcut icon" href="<?= base_url() ?>assets/images/insta-logo.jpg" />
-    <link rel="stylesheet" href="<?= base_url() ?>assets/customs/css/style.css?v=11.0">
-    <link rel="stylesheet" href="<?= base_url() ?>assets/customs/css/custom.css?v=11.0">
+    <link rel="stylesheet" href="<?= base_url() ?>assets/customs/css/style.css?v=13.0">
+    <link rel="stylesheet" href="<?= base_url() ?>assets/customs/css/custom.css?v=13.0">
 </head>
 
 <body>
@@ -322,6 +322,32 @@
                 $(this).find('.ti-close').toggleClass('d-none');
 
             });
+            
+            $(".homeBannerCarousel").owlCarousel({
+                loop: true,
+                animateOut: 'fadeOut',
+                autoplay: true,
+                autoplayHoverPause: true,
+                nav: true,
+                margin: 0,
+                dots: false,
+                mouseDrag: true,
+                touchDrag: true,
+                slideSpeed:200,
+                autoplayTimeout: 2000,
+                navText: ["<i class='fa fa-angle-left'></i>", "<i class='fa fa-angle-right'></i>"],
+                items: 1,
+                responsive: {
+                    0: {
+                        items: 1
+                    },
+                    600: {
+                        items: 1
+                    }
+                }
+            });
+            
+            
             $('.ticker').owlCarousel({
                 loop: true,
                 margin: 20,
@@ -331,7 +357,7 @@
                 slideTransition: 'linear',
                 smartSpeed: 9000,
                 autoplay: true,
-                autoplayTimeout: 0,
+                autoplayTimeout: 1,
                 autoplaySpeed: 9000,
                 autoplayHoverPause: true,
                 dots: false,
@@ -346,7 +372,7 @@
                 loop: true,
                 margin: 10,
                 autoplay: true,
-                autoplayTimeout: 7000,
+                autoplayTimeout: 4000,
                 autoplayHoverPause: false,
                 nav: false,
                 dots: true,
@@ -356,7 +382,7 @@
                 loop: true,
                 margin: 10,
                 autoplay: true,
-                autoplayTimeout: 8000,
+                autoplayTimeout: 4500,
                 autoplayHoverPause: false,
                 nav: false,
                 dots: true
@@ -366,7 +392,7 @@
                 loop: true,
                 margin: 10,
                 autoplay: true,
-                autoplayTimeout: 8000,
+                autoplayTimeout: 5500,
                 autoplayHoverPause: false,
                 nav: false,
                 dots: true,
@@ -377,7 +403,7 @@
                 loop: true,
                 margin: 10,
                 autoplay: true,
-                autoplayTimeout: 5000,
+                autoplayTimeout: 3500,
                 autoplayHoverPause: false,
                 nav: false,
                 dots: true

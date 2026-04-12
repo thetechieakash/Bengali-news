@@ -37,7 +37,7 @@ use App\Helpers\ThumbHelper;
                                     </div>
                                     <div class="col-lg-7 col-md-6">
                                         <div class="utf_post_content">
-                                            <h2 class="utf_post_title title-large">
+                                            <h2 class="utf_post_title title-large mt-2 mt-md-0">
                                                 <a href="<?= base_url('news/' . $post['slug']) ?>"><?= StringShort::truncate($post['headline']) ?></a>
                                             </h2>
                                             <div class="utf_post_meta">

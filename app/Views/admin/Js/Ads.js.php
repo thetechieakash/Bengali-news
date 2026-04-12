@@ -208,43 +208,59 @@
             $.get("<?= base_url('admin/ads') ?>/" + id, function(res) {
 
                 if (!res.success) return;
-                console.log(res);
 
-                let ad = res.data;
+                let ad = res.data; // FIRST define
 
                 $("#editAdId").val(ad.id);
-
                 $("#editAdForm [name=title]").val(ad.title);
-                if (ad.ad_type == "image") {
 
-                }
-                $("#editAdForm [name=edit-ad-type]").val(ad.ad_type).trigger("change");
+                $("#editAdForm [name=edit-ad-type]").val(ad.ad_type);
+                $("#editAdForm [name=edit-ad-type]").prop("disabled", true);
 
-
-                // reset
+                // RESET UI
                 $("#editPositionImages").html("");
                 $(".edit-position-check").prop("checked", false);
+                $(".edit-position-check").prop("disabled", true);
+                $("#editAdForm input[name='pages[]']").prop("checked", false);
 
+                // HANDLE TYPE UI
+                if (ad.ad_type === "script") {
 
-                // pages
+                    $(".script-wrapper").removeClass("d-none");
+                    $(".position-wrapper").addClass("d-none");
+
+                } else {
+
+                    $(".script-wrapper").addClass("d-none");
+                    $(".position-wrapper").removeClass("d-none");
+
+                }
+
+                // PAGES
                 if (ad.pages) {
                     const pages = JSON.parse(ad.pages);
                     pages.forEach(page => {
-                        $("#editAdForm input[name='pages[]'][value='" + page + "']").prop("checked", true);
+                        $("#editAdForm input[name='pages[]'][value='" + page + "']")
+                            .prop("checked", true);
                     });
                 }
 
+                // IMAGE AD
+                if (ad.ad_type === "image" && ad.position) {
 
-                // positions
-                if (ad.position) {
+                    $(".edit-position-check[value='" + ad.position + "']")
+                        .prop("checked", true)
+                        .prop("disabled", true); // 🔥 lock position
 
-                    $(".edit-position-check[value='" + ad.position + "']").prop("checked", true);
-                    createEditImageInput(ad.position, ad.image ?? null, ad.url ?? null);
+                    createEditImageInput(
+                        ad.position,
+                        ad.image ?? null,
+                        ad.url ?? null
+                    );
                 }
 
-
-                // script
-                if (ad.script) {
+                // SCRIPT AD
+                if (ad.ad_type === "script") {
                     $("#editAdForm textarea[name=script]").val(ad.script);
                 }
 
@@ -283,23 +299,6 @@
             $('.dropify').dropify();
 
         }
-        $(".edit-ad-type").on("change", function() {
-
-            let type = $(this).val();
-
-            if (type == "script") {
-
-                $(".script-wrapper").removeClass("d-none");
-                $(".position-wrapper,#editPositionImages").addClass("d-none");
-
-            } else {
-
-                $(".script-wrapper").addClass("d-none");
-                $(".position-wrapper").removeClass("d-none");
-
-            }
-
-        });
 
         $("#editAdForm").submit(function(e) {
 

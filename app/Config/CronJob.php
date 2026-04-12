@@ -130,8 +130,8 @@ class CronJob extends \Daycry\CronJob\Config\CronJob
 
         // $schedule->call( function() { do something.... } )->everyMonday()->named( 'foo' )
         $schedule->command('newsletter:send')
-            // ->daily('08:00')
-            ->everyMinute()
+        // ->everyMinute()
+            ->daily('08:00')
             ->named('newsletter_morning');
 
         // Evening (6 PM)

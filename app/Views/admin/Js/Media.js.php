@@ -106,7 +106,20 @@
         $('#mediaform').on('submit', function(e) {
             e.preventDefault();
 
+            const input = document.getElementById('media');
+
+            if (!input.files.length) {
+                showDangerToast('Please select at least one image');
+                return;
+            }
+
             let formData = new FormData(this);
+
+            const $btn = $(this).find('button[type="submit"]');
+
+            // Disable + Loader ON
+            $btn.prop('disabled', true)
+                .html('<span class="spinner-border spinner-border-sm me-2"></span> Uploading...');
 
             $.ajax({
                 url: "<?= base_url('admin/upload-media') ?>",
@@ -115,26 +128,56 @@
                 processData: false,
                 contentType: false,
                 success: function(res) {
-
                     if (res.success) {
                         let dr = $('#media').data('dropify');
                         dr.clearElement();
-                        showSuccessToast(res.message);
-
                         $('#media').val('');
-
                         currentPage = 1;
                         nextPage = 1;
                         loading = false;
-
                         loadMedia(1);
-
+                        showSuccessToast(res.message);
+                        //  Partial errors
+                        if (res.error && (Array.isArray(res.error) ? res.error.length : true)) {
+                            let errors = Array.isArray(res.error) ?
+                                res.error :
+                                [res.error];
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Some files failed',
+                                html: errors.join('<br>')
+                            });
+                        }
                     } else {
-                        showDangerToast(res.error || res.message);
+                        let errors = [];
+                        if (res.message) errors.push(res.message);
+                        if (res.error) {
+                            if (Array.isArray(res.error)) {
+                                errors = errors.concat(res.error);
+                            } else {
+                                errors.push(res.error);
+                            }
+                        }
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Upload Failed',
+                            html: errors.map(err => `<div>• ${err}</div>`).join('')
+                        });
                     }
                 },
+
                 error: function() {
-                    showDangerToast('Upload failed.');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Upload Failed',
+                        text: 'Server error'
+                    });
+                },
+
+                complete: function() {
+                    // Enable + Restore button
+                    $btn.prop('disabled', false)
+                        .html('Upload');
                 }
             });
         });

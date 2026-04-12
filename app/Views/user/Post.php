@@ -81,7 +81,7 @@ function formattedPostDate($date)
                     <div class="utf_post_title-area">
                         <?php if (!empty($post['categories'])): ?>
                             <?php foreach ($post['categories'] as $cats): ?>
-                                <a class="utf_post_cat" href="<?= $cats['slug'] ?>"><?= $cats['name'] ?></a>
+                                <a class="utf_post_cat" href="<?= base_url('category/' . $cats['slug']) ?>"><?= $cats['name'] ?></a>
                             <?php endforeach; ?>
                         <?php endif; ?>
                         <h1 class="utf_post_title"><?= esc($post['headline']) ?></h1>
@@ -115,8 +115,8 @@ function formattedPostDate($date)
                                 $post['thumbnail']['type'] ?? null
                             );
                             ?>
-                            <a href="<?= esc($thumbUrl) ?>" class="glightbox-single">
-                                <img src="<?= esc($thumbUrl) ?>" class="img-fluid" alt="<?= $post['headline'] ?>">
+                            <a href="<?= $thumbUrl ?>" class="glightbox-single">
+                                <img src="<?= $thumbUrl ?>" class="img-fluid" alt="<?= $post['headline'] ?>">
                             </a>
                         </div>
                         <?php if (!empty($post['sub_author'])): ?>

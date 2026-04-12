@@ -27,6 +27,7 @@ service('auth')->routes($routes);
 $routes->group('admin', ['filter' => 'group:superadmin,admin,author,user'], function ($routes) {
 
     $routes->get('/', 'Admin\DashboardController::index', ['filter' => 'permission:dashboard.view']);
+    $routes->get('news-preview/(:segment)', 'User\Post::preview/$1');
 
     // Categories
     $routes->get('categories', 'Admin\CategoriesController::index', ['filter' => 'permission:categories.view']);

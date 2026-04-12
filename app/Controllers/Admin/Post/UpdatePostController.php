@@ -130,25 +130,59 @@ class UpdatePostController extends BaseController
     private function handleThumbnail(int $postId, array $data): void
     {
         $model = new NewsPostThumbnailModel();
-        $model->where('news_post_id', $postId)->delete();
+        $existing = $model->where('news_post_id', $postId)->first();
 
-        if ($data['thumbRemoved']) return;
+        // If removed explicitly
+        if ($data['thumbRemoved']) {
+            if ($existing) {
+                $model->where('news_post_id', $postId)->delete();
+            }
+            return;
+        }
 
         $type = null;
         $url  = null;
 
+        // Image upload
         if ($data['thumbType'] === 'image') {
-            $url  = $this->uploadImage();
-            $type = $url ? 'image' : null;
-        } elseif ($data['thumbType'] === 'link' && $data['thumbLink']) {
+
+            $file = $this->request->getFile('thumbnail_image');
+
+            //  If no new file uploaded → KEEP OLD
+            if (!$file || $file->getError() === 4) {
+                return;
+            }
+
+            $newUrl = uploadImage($file);
+
+            //  Upload failed → KEEP OLD
+            if (!$newUrl) {
+                return;
+            }
+
+            $type = 'image';
+            $url  = $newUrl;
+        }
+
+        //  Link
+        elseif ($data['thumbType'] === 'link' && $data['thumbLink']) {
             $type = 'link';
             $url  = $data['thumbLink'];
-        } elseif ($data['thumbType'] === 'media' && $data['selectedMedia']) {
+        }
+
+        //  Media
+        elseif ($data['thumbType'] === 'media' && $data['selectedMedia']) {
             $type = 'media';
             $url  = $data['selectedMedia'];
         }
 
+        //  Replace only if new data exists
         if ($type && $url) {
+
+            if ($existing) {
+                $model->where('news_post_id', $postId)->delete();
+            }
+
             $model->insert([
                 'news_post_id'  => $postId,
                 'type'          => $type,
@@ -156,44 +190,7 @@ class UpdatePostController extends BaseController
             ]);
         }
     }
-
-    private function uploadImage(): ?string
-    {
-        $file = $this->request->getFile('thumbnail_image');
-
-        if (!$file || !$file->isValid() || $file->hasMoved()) {
-            return null;
-        }
-
-        if (!str_starts_with($file->getMimeType(), 'image/')) {
-            throw new \Exception('Invalid image type.');
-        }
-
-        $year  = date('Y');
-        $month = date('m');
-
-        $path = FCPATH . "uploads/$year/$month/images/";
-
-        if (!is_dir($path)) {
-            mkdir($path, 0775, true);
-        }
-
-        $newName = $file->getRandomName();
-        $file->move($path, $newName);
-
-        $relativePath = "uploads/$year/$month/images/$newName";
-
-        (new MediaModel())->insert([
-            'file_name' => $newName,
-            'file_path' => $relativePath,
-            'file_type' => 'image',
-            'folder'    => "$year/$month/image",
-            'file_size' => $file->getSize()
-        ]);
-
-        return $relativePath;
-    }
-
+    
     private function validatePost(array $data): void
     {
         if (!$data['headline'] || !$data['description']) {
@@ -202,6 +199,10 @@ class UpdatePostController extends BaseController
 
         if (empty($data['categories'])) {
             throw new \Exception('At least one category required.');
+        }
+        
+        if (!in_array($data['thumbType'], ['link', 'image', 'media'], true)) {
+            throw new \Exception('Invalid thumbnail type.');
         }
     }
 

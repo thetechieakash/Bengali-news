@@ -369,6 +369,10 @@
                 if (!res.next_page) mediaHasMore = false;
 
                 applyPreselectedMedia();
+            }).fail(function() {
+                $('.loading-media').remove();
+                mediaLoading = false;
+                showDangerToast('Failed to load media');
             });
         }
 
@@ -425,6 +429,7 @@
 
         toggleThumbnailInput($('input[name="thumbnail_type"]:checked').val());
         $('.thumb-type').on('change', function() {
+            userRemovedImage = false;
             $('#thumbnail_removed').val('0');
             toggleThumbnailInput(this.value);
         });
@@ -459,7 +464,14 @@
          * Dropify
          * -------------------------------------------------- */
         $('#thumbnail_image').dropify();
+        let userRemovedImage = false;
+
+        $('#thumbnail_image').on('dropify.beforeClear', function(event, element) {
+            return confirm("Do you really want to remove the image?");
+        });
+
         $('#thumbnail_image').on('dropify.afterClear', function() {
+            userRemovedImage = true;
             $('#thumbnail_removed').val('1');
         });
 
@@ -485,7 +497,7 @@
                 return;
             }
 
-            // ✅ Sync CKEditor 5 → hidden textarea before FormData
+            // Sync CKEditor 5 → hidden textarea before FormData
             document.querySelector('#editorOutput').value = editorData;
 
             $.ajax({
@@ -502,8 +514,14 @@
                         showDangerToast(res.message);
                     }
                 },
-                error() {
-                    showDangerToast('Server error');
+                error(xhr) {
+                    let msg = 'Something went wrong';
+
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        msg = xhr.responseJSON.message;
+                    }
+
+                    showDangerToast(msg);
                 },
                 complete() {
                     btn.prop('disabled', false);

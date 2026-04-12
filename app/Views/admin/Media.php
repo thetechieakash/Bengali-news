@@ -12,7 +12,8 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">Upload Images</h4>
+                <h4 class="card-title mb-1">Upload Images</h4>
+                <p class="text-muted mb-3">Max upload size: <?= ini_get('upload_max_filesize'); ?></p>
                 <form class="forms-sample" id="mediaform" action="<?= base_url('admin/upload-media') ?>" method="post" enctype="multipart/form-data">
                     <?= csrf_field() ?>
                     <div class="form-group">
@@ -20,7 +21,7 @@
                             class="dropify"
                             id="media"
                             name="media[]"
-                            accept="image/*" multiple>
+                            accept="image/*">
                     </div>
                     <button type="submit" class="btn btn-primary text-white me-2">Upload</button>
                 </form>

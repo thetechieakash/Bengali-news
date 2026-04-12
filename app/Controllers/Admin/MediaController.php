@@ -20,64 +20,51 @@ class MediaController extends BaseController
     {
         $files = $this->request->getFiles();
 
-        if (!isset($files['media'])) {
+        if (!isset($files['media']) || empty($files['media'])) {
             return $this->response->setJSON([
                 'success' => false,
                 'error'   => 'No files selected'
             ]);
         }
 
-        $mediaModel = new MediaModel();
-
-        $year  = date('Y');
-        $month = date('m');
-
-        $path = FCPATH . "uploads/$year/$month/images/";
-
-        if (!is_dir($path)) {
-            mkdir($path, 0775, true);
-        }
+        $uploaded = 0;
+        $errors   = [];
 
         foreach ($files['media'] as $file) {
 
-            if (!$file->isValid()) {
+            // Skip empty inputs (VERY IMPORTANT)
+            if (!$file || $file->getError() === 4) {
                 continue;
             }
 
-            $originalName = $file->getClientName();
+            try {
+                $result = uploadImage($file);
 
-            // sanitize filename
-            $fileName = preg_replace('/[^A-Za-z0-9\-\_\.]/', '-', $originalName);
-
-            $targetPath = $path . $fileName;
-
-            // prevent overwrite
-            $i = 1;
-            $nameOnly = pathinfo($fileName, PATHINFO_FILENAME);
-            $ext = pathinfo($fileName, PATHINFO_EXTENSION);
-
-            while (file_exists($targetPath)) {
-                $fileName = $nameOnly . '-' . $i . '.' . $ext;
-                $targetPath = $path . $fileName;
-                $i++;
+                if ($result) {
+                    $uploaded++;
+                } else {
+                    $errors[] = $file->getClientName() . ' failed';
+                }
+            } catch (\Throwable $e) {
+                $errors[] = $e->getMessage();
+                log_message('error', $file->getClientName() . ' : ' . $e->getMessage());
             }
+        }
 
-            $file->move($path, $fileName);
-
-            $relativePath = "uploads/$year/$month/images/$fileName";
-
-            $mediaModel->insert([
-                'file_name' => $fileName,
-                'file_path' => $relativePath,
-                'file_type' => $file->getClientMimeType(),
-                'folder'    => "$year/$month/images",
-                'file_size' => $file->getSize()
+        // No file uploaded at all
+        if ($uploaded === 0) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message'   => 'No valid images uploaded',
+                'error' => $errors
             ]);
         }
 
+        // Success
         return $this->response->setJSON([
             'success' => true,
-            'message' => 'Images uploaded successfully.'
+            'message' => "$uploaded image(s) uploaded successfully",
+            'error'  => $errors // optional (for partial fail)
         ]);
     }
 

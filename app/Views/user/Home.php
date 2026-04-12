@@ -46,7 +46,7 @@ use App\Helpers\ThumbHelper;
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-md-12 pad-r">
-                <div id="utf_featured_slider" class="owl-carousel owl-theme utf_featured_slider content-bottom">
+                <div id="homeBannerCarousel" class="owl-carousel homeBannerCarousel owl-theme content-bottom">
                     <?php foreach ($carousal as $items): ?>
                         <?php
                         $thumbUrl = ThumbHelper::getThumbUrl(
@@ -63,7 +63,7 @@ use App\Helpers\ThumbHelper;
                                         </a>
                                     </h2>
                                     <div class="utf_post_meta">
-                                        <span class="utf_post_author">Puruliamirror Desk</span>
+                                        <span class="utf_post_author">Puruliamirror Digital Desk</span>
                                         <span class="utf_post_date"><?= date('d M, Y', strtotime($items['created_at'])) ?></span>
                                     </div>
                                 </div>
@@ -203,7 +203,7 @@ use App\Helpers\ThumbHelper;
 </div>
 <?php foreach ($getPostAndCategory as $rCatPost): ?>
     <div class="section-header mt-4 mb-3">
-        <span class="header-title"><a href="<?= base_url('category/'. $rCatPost['category']['slug']) ?>"><?= esc($rCatPost['category']['cat']) ?></a></span>
+        <span class="header-title"><a href="<?= base_url('category/' . $rCatPost['category']['slug']) ?>"><?= esc($rCatPost['category']['cat']) ?></a></span>
     </div>
     <!-- 2rd Block Wrapper Start -->
     <section class="utf_block_wrapper solid-bg mb-3">

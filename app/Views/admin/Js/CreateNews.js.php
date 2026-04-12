@@ -278,6 +278,10 @@
                 mediaPage++;
                 mediaLoading = false;
                 if (!res.next_page) mediaHasMore = false;
+            }).fail(function() {
+                $('.loading-media').remove();
+                mediaLoading = false;
+                showDangerToast('Failed to load media');
             });
         }
 
@@ -311,7 +315,8 @@
             if ($(this).scrollTop() + $(this).innerHeight() >= this.scrollHeight - 50) loadMediaImages();
         });
 
-        toggleThumbnailInput($('input[name="thumbnail_type"]:checked').val());
+        const initialType = $('input[name="thumbnail_type"]:checked').val() || 'link';
+        toggleThumbnailInput(initialType);
 
         $('.thumb-type').on('change', function() {
             toggleThumbnailInput(this.value);
@@ -350,33 +355,49 @@
          * -------------------------------------------------- */
         $('#newsForm').on('submit', function(e) {
             e.preventDefault();
-
             const submitBtn = $(this).find('button[type="submit"]');
-            submitBtn.prop('disabled', true);
+            const originalText = submitBtn.html();
+            const thumbType = $('input[name="thumbnail_type"]:checked').val();
+            submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span> Saving...');
 
             if (!$('#headline').val().trim()) {
                 showDangerToast('Headline is required');
-                submitBtn.prop('disabled', false);
+                submitBtn.prop('disabled', false).html(originalText);
                 return;
             }
 
             if (!categoriesTS.getValue().length) {
                 showDangerToast('Please select at least one category');
-                submitBtn.prop('disabled', false);
+                submitBtn.prop('disabled', false).html(originalText);
                 return;
             }
 
+            if (thumbType === 'image') {
+                if (!$('#thumbnail_image')[0].files.length) {
+                    showDangerToast('Thumbnail image is required');
+                    submitBtn.prop('disabled', false).html(originalText);
+                    return;
+                }
+            }
+
+            if (thumbType === 'media') {
+                if (!$('#selected_media').val()) {
+                    showDangerToast('Please select media image');
+                    submitBtn.prop('disabled', false).html(originalText);
+                    return;
+                }
+            }
             //  CKEditor 5 — use window.ckEditorInstance
             if (!window.ckEditorInstance) {
                 showDangerToast('Editor not ready, please wait');
-                submitBtn.prop('disabled', false);
+                submitBtn.prop('disabled', false).html(originalText);
                 return;
             }
 
             const editorData = window.ckEditorInstance.getData();
             if (!editorData.replace(/<[^>]*>/g, '').trim()) {
                 showDangerToast('Description is required');
-                submitBtn.prop('disabled', false);
+                submitBtn.prop('disabled', false).html(originalText);
                 return;
             }
 
@@ -397,12 +418,17 @@
                         showDangerToast(res.message);
                     }
                 },
-                error(err) {
-                    showDangerToast('Something went wrong');
-                    console.error(err);
+                error(xhr) {
+                    let msg = 'Something went wrong';
+
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        msg = xhr.responseJSON.message;
+                    }
+
+                    showDangerToast(msg);
                 },
                 complete() {
-                    submitBtn.prop('disabled', false);
+                    submitBtn.prop('disabled', false).html(originalText);
                 }
             });
         });

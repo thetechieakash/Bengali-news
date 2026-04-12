@@ -39,7 +39,7 @@ foreach ($navbarCategories as $cat) {
                     <li><a href="https://x.com/PuruliaMirror" target="_blank"><i class="fa-brands fa-x-twitter"></i></a></li>
                     <li><a href="https://www.youtube.com/@PuruliaMirror" target="_blank"><i class="fa-brands fa-youtube"></i></a></li>
                 </ul>
-                <div id="bnDateTime" class="fs-6"></div>
+                <div id="bnDateTime" class="fs-6" ></div>
             </div>
         </div>
     </nav>

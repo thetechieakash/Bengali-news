@@ -15,7 +15,7 @@
                 <div class="col-lg-6 d-flex align-items-center justify-content-center">
                     <div class="auth-form-transparent text-left p-3">
                         <div class="brand-logo">
-                            <img class="w-50" src="<?= base_url() ?>assets/images/bengali-logo.svg" alt="logo">
+                            <img class="w-50" src="<?= base_url() ?>assets/images/purulia_logo.png" alt="logo">
                         </div>
                         <h4><?= lang('Auth.useMagicLink') ?></h4>
                         <?php if (session('error') !== null) : ?>

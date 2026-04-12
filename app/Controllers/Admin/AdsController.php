@@ -143,7 +143,8 @@ class AdsController extends BaseController
 
         if (!$ad) {
             return $this->response->setJSON([
-                'success' => false
+                'success' => false,
+                'message' => 'Ad not found'
             ]);
         }
 
@@ -157,19 +158,22 @@ class AdsController extends BaseController
             'pages' => json_encode($pages)
         ];
 
-        if ($request->getPost('edit-ad-type') == "script") {
+        /* ---------------- SCRIPT AD ---------------- */
+        if ($ad['ad_type'] === "script") {
 
             $data['script'] = $request->getPost('script');
         }
 
-        if ($request->getPost('edit-ad-type') == "image") {
+        /* ---------------- IMAGE AD ---------------- */
+        if ($ad['ad_type'] === "image") {
 
             $pos = $ad['position'];
 
             $file = $request->getFile("position_images.$pos");
 
-            if ($file && $file->isValid()) {
+            if ($file && $file->isValid() && !$file->hasMoved()) {
 
+                // delete old image
                 if (!empty($ad['image']) && file_exists(FCPATH . $ad['image'])) {
                     unlink(FCPATH . $ad['image']);
                 }
@@ -180,6 +184,7 @@ class AdsController extends BaseController
                 $data['image'] = 'uploads/ads/' . $newName;
             }
 
+            // update redirect URL
             $data['url'] = $request->getPost($pos . '_redirect_url');
         }
 

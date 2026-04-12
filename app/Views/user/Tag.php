@@ -58,7 +58,7 @@ use App\Helpers\ThumbHelper;
                                     </div>
                                     <div class="col-lg-7 col-md-6">
                                         <div class="utf_post_content">
-                                            <h2 class="utf_post_title title-large">
+                                            <h2 class="utf_post_title title-large mt-2 mt-md-0">
                                                 <a href="<?= base_url('news/' . $post['slug']) ?>"><?= StringShort::truncate($post['headline']) ?></a>
                                             </h2>
                                             <div class="utf_post_meta">
@@ -67,7 +67,7 @@ use App\Helpers\ThumbHelper;
                                                     <?= $formattedPostDate ?>
                                                 </span>
                                             </div>
-                                            <p><?= $post['short_description'] ?></p>
+                                            <p><?= StringShort::truncate($post['short_description']) ?></p>
                                         </div>
                                     </div>
                                 </div>
@@ -112,7 +112,7 @@ use App\Helpers\ThumbHelper;
                                                 <img class="img-fluid" src="<?= ThumbHelper::getThumbUrl($news['thumbnail_url'], $news['type']) ?>" alt="<?= $news['headline'] ?>" />
                                             </div>
                                             <div class="utf_post_content">
-                                                <h2 class="utf_post_title title-small">
+                                                <h2 class="utf_post_title title-small ">
                                                     <a href="<?= base_url('news/' . $news['slug']) ?>"><?= StringShort::truncate($news['headline'], 30)  ?></a>
                                                 </h2>
                                                 <div class="utf_post_meta">

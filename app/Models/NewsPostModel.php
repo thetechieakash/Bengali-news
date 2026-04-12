@@ -29,9 +29,9 @@ class NewsPostModel extends Model
     ];
 
     // Frontend / public use ONLY
-    public function getActivePostForUser(string $slug)
+    public function getActivePostForUser(string $slug, bool $onlyActive = true)
     {
-        return $this->getPostWithRelations($slug, true);
+        return $this->getPostWithRelations($slug, $onlyActive);
     }
     // Admin / internal use (unchanged behavior)
     public function getPostForEdit(int|string $identifier): ?array

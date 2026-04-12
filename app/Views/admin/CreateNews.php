@@ -129,6 +129,7 @@
 
                     <div id="thumbnail-upload-wrapper" style="display:none;">
                         <h4>Upload Image</h4>
+                        <p class="text-muted mb-3">Max upload size: <?= ini_get('upload_max_filesize'); ?></p>
                         <input type="file" class="dropify" id="thumbnail_image"
                             name="thumbnail_image" accept="image/*">
                     </div>
@@ -360,7 +361,7 @@
             },
         })
         .then(editor => {
-            window.ckEditorInstance = editor; 
+            window.ckEditorInstance = editor;
         })
         .catch(error => {
             console.error('CKEditor5 init error:', error);

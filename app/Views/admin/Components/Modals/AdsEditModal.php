@@ -12,13 +12,8 @@
                             <input type="text" name="title" class="form-control" required>
                         </div>
                         <!-- Ad Type -->
-                        <div class="mb-3">
-                            <label class="form-label">Ad Type</label>
-                            <select name="edit-ad-type" class="form-select edit-ad-type" required>
-                                <option value="image">Image</option>
-                                <option value="script">Script</option>
-                            </select>
-                        </div>
+                        <input type="hidden" name="edit-ad-type">
+                        
                         <!-- Pages -->
                         <div class="mb-3 pages-wrapper">
                             <label class="form-label d-block">Show On Pages</label>

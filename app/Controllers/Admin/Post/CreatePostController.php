@@ -81,6 +81,20 @@ class CreatePostController extends BaseController
             throw new \Exception('Invalid thumbnail type.');
         }
 
+        if ($data['thumbType'] === 'image') {
+            $file = $this->request->getFile('thumbnail_image');
+
+            if (!$file || $file->getError() === 4) {
+                throw new \Exception('Thumbnail image is required.');
+            }
+        }
+
+        // MEDIA REQUIRED
+        if ($data['thumbType'] === 'media') {
+            if (empty($data['selectedMedia'])) {
+                throw new \Exception('Please select media image.');
+            }
+        }
         if (
             $data['thumbType'] === 'link' &&
             $data['thumbLink'] &&
@@ -122,8 +136,21 @@ class CreatePostController extends BaseController
         $url  = null;
 
         if ($data['thumbType'] === 'image') {
-            $url  = $this->uploadImage();
-            $type = $url ? 'image' : null;
+            $file = $this->request->getFile('thumbnail_image');
+
+            // No file selected
+            if (!$file || $file->getError() === 4) {
+                throw new \Exception('Thumbnail image is required');
+            }
+
+            // Upload failed → stop everything
+            $url = uploadImage($file);
+
+            if (!$url) {
+                throw new \Exception('Thumbnail upload failed');
+            }
+
+            $type = 'image';
         }
 
         if ($data['thumbType'] === 'link' && $data['thumbLink']) {
@@ -132,6 +159,9 @@ class CreatePostController extends BaseController
         }
 
         if ($data['thumbType'] === 'media' && $data['selectedMedia']) {
+            if (!$data['selectedMedia']) {
+                throw new \Exception('Media image required');
+            }
             $type = 'media';
             $url  = $data['selectedMedia'];
         }
@@ -145,42 +175,6 @@ class CreatePostController extends BaseController
         }
     }
 
-    private function uploadImage(): ?string
-    {
-        $file = $this->request->getFile('thumbnail_image');
-
-        if (!$file || !$file->isValid() || $file->hasMoved()) {
-            return null;
-        }
-
-        if (!str_starts_with($file->getMimeType(), 'image/')) {
-            throw new \Exception('Invalid image type.');
-        }
-
-        $year  = date('Y');
-        $month = date('m');
-
-        $path = FCPATH . "uploads/$year/$month/images/";
-
-        if (!is_dir($path)) {
-            mkdir($path, 0775, true);
-        }
-
-        $newName = $file->getRandomName();
-        $file->move($path, $newName);
-
-        $relativePath = "uploads/$year/$month/images/$newName";
-        
-        (new MediaModel())->insert([
-            'file_name' => $newName,
-            'file_path' => $relativePath,
-            'file_type' => 'image',
-            'folder'    => "$year/$month/image",
-            'file_size' => $file->getSize()
-        ]);
-
-        return $relativePath;
-    }
 
     private function assertUniqueSlug(string $slug): void
     {

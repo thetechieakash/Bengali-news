@@ -116,7 +116,12 @@
             </div>
         </div>
 
-        <?php $thumbType = $post['thumbnail']['type'] ?? 'image'; ?>
+        <?php
+        $thumbnail = $post['thumbnail'] ?? null;
+        $thumbType = $thumbnail['type'] ?? 'image';
+        $thumbUrl  = $thumbnail['thumbnail_url'] ?? '';
+        $thumbFullUrl = (!empty($thumbUrl)) ? base_url($thumbUrl) : '';
+        ?>
         <div class="col-12">
             <div class="card mt-3">
                 <div class="card-body">
@@ -158,15 +163,16 @@
                             <label for="thumbnail_link">URL</label>
                             <input type="text" class="form-control" id="thumbnail_link"
                                 name="thumbnail_link" placeholder="https://example.com/image.jpg"
-                                value="<?= $thumbType === 'link' ? esc($post['thumbnail']['thumbnail_url'] ?? '') : '' ?>">
+                                value="<?= $thumbType === 'link' ? esc(($thumbUrl)) : '' ?>">
                         </div>
                     </div>
 
                     <div id="thumbnail-upload-wrapper">
                         <h4>Drop image</h4>
+                        <p class="text-muted mb-3">Max upload size: <?= ini_get('upload_max_filesize'); ?></p>
                         <input type="file" class="dropify" id="thumbnail_image"
                             name="thumbnail_image"
-                            data-default-file="<?= $thumbType === 'image' ? esc($post['thumbnail']['thumbnail_url'] ?? '') : '' ?>"
+                            data-default-file="<?= $thumbType === 'image' ? esc($thumbFullUrl) : '' ?>"
                             accept="image/*">
                     </div>
 
@@ -186,7 +192,7 @@
         </div>
 
         <input type="hidden" name="selected_media" id="selected_media"
-            value="<?= $thumbType === 'media' ? esc($post['thumbnail']['thumbnail_url'] ?? '') : '' ?>">
+            value="<?= $thumbType === 'media' ? esc($thumbUrl) : '' ?>">
 
         <div class="col-12">
             <div class="card mt-3">
